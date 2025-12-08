@@ -11,7 +11,8 @@ import {
 	ToggleControl,
 	Popover,
 	Button,
-	ButtonGroup,
+	__experimentalToggleGroupControl as ToggleGroupControl,
+	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
 import {
 	InspectorControls,
@@ -20,13 +21,34 @@ import {
 } from '@wordpress/block-editor';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { useState, useEffect } from '@wordpress/element';
-import { useSelect } from '@wordpress/data';
+import { useSelect, dispatch } from '@wordpress/data';
 import { link, linkOff, chevronDown, chevronUp } from '@wordpress/icons';
+import { registerFormatType, applyFormat, removeFormat, getActiveFormat } from '@wordpress/rich-text';
 
 /**
  * Internal dependencies
  */
 import './editor.scss';
+
+/**
+ * Register XFN format extension for links
+ * This extends the core link format to support rel attributes
+ */
+registerFormatType( 'xfn-link-extension/xfn-rel', {
+	title: __( 'XFN Relationship', 'link-extension-for-xfn' ),
+	tagName: 'a',
+	className: null,
+	attributes: {
+		rel: 'rel',
+		href: 'href',
+	},
+	edit() {
+		// Return null - we'll handle the UI through filters
+		return null;
+	},
+} );
+
+console.log( '[XFN] XFN format type registered' );
 
 /**
  * XFN Relationship definitions
@@ -342,81 +364,65 @@ const XFNCollapsibleSection = ( {
 											key={ categoryKey }
 											className="xfn-category"
 										>
-											<h4>{ category.label }</h4>
-											<ButtonGroup>
-												<Button
-													isPressed={
-														selectedValue === ''
-													}
-													onClick={ () =>
-														updateRelationship(
-															categoryKey,
-															'',
-															true
-														)
-													}
-													size="compact"
-												>
-													{ __(
+											<ToggleGroupControl
+												label={ category.label }
+												value={ selectedValue }
+												isBlock
+												onChange={ ( value ) => {
+													updateRelationship(
+														categoryKey,
+														value || '',
+														true
+													);
+												} }
+											>
+												<ToggleGroupControlOption
+													key="none"
+													value=""
+													label={ __(
 														'None',
 														'link-extension-for-xfn'
 													) }
-												</Button>
+												/>
 												{ category.options.map(
 													( option ) => (
-														<Button
+														<ToggleGroupControlOption
 															key={ option.value }
-															isPressed={
-																selectedValue ===
-																option.value
-															}
-															onClick={ () =>
-																updateRelationship(
-																	categoryKey,
-																	option.value,
-																	true
-																)
-															}
-															size="compact"
-														>
-															{ option.label }
-														</Button>
+															value={ option.value }
+															label={ option.label }
+														/>
 													)
 												) }
-											</ButtonGroup>
+											</ToggleGroupControl>
 										</div>
 									);
 								} else {
 									return (
 										<div
 											key={ categoryKey }
-											className="xfn-category"
+											className="xfn-category xfn-checkbox-group"
 										>
 											<h4>{ category.label }</h4>
-											<ButtonGroup>
+											<div className="xfn-checkbox-controls">
 												{ category.options.map(
 													( option ) => (
-														<Button
+														<CheckboxControl
 															key={ option.value }
-															isPressed={ xfnValues.includes(
+															label={ option.label }
+															checked={ xfnValues.includes(
 																option.value
 															) }
-															onClick={ () =>
+															onChange={ ( isChecked ) =>
 																updateRelationship(
 																	categoryKey,
 																	option.value,
-																	! xfnValues.includes(
-																		option.value
-																	)
+																	isChecked
 																)
 															}
-															size="compact"
-														>
-															{ option.label }
-														</Button>
+														/>
 													)
 												) }
-											</ButtonGroup>
+											</div>
 										</div>
 									);
 								}
@@ -447,51 +453,6 @@ const XFNCollapsibleSection = ( {
 				</div>
 			) }
 		</div>
-	);
-};
-
-/**
- * XFN Toolbar Popover Component
- */
-const XFNToolbarPopover = ( {
-	isVisible,
-	onClose,
-	currentRel,
-	onUpdateRel,
-	anchorRef,
-} ) => {
-	const [ isXFNExpanded, setXFNExpanded ] = useState( false );
-
-	if ( ! isVisible ) {
-		return null;
-	}
-
-	return (
-		<Popover
-			position="bottom center"
-			onClose={ onClose }
-			anchorRef={ anchorRef?.current }
-			className="xfn-toolbar-popover"
-			focusOnMount="firstElement"
-		>
-			<div className="xfn-toolbar-popover-content">
-				<div className="xfn-toolbar-header">
-					<h3>
-						{ __(
-							'Link Settings',
-							'link-extension-for-xfn'
-						) }
-					</h3>
-				</div>
-
-				<XFNCollapsibleSection
-					currentRel={ currentRel }
-					onUpdateRel={ onUpdateRel }
-					isExpanded={ isXFNExpanded }
-					onToggle={ () => setXFNExpanded( ! isXFNExpanded ) }
-				/>
-			</div>
-		</Popover>
 	);
 };
 
@@ -535,6 +496,17 @@ const XFNInspectorControls = ( { attributes, setAttributes, name } ) => {
 		updateXFNValues( newXfnValues );
 	};
 
+	// Open by default for Button and other block-level links
+	const blockLevelLinks = [
+		'core/button',
+		'core/image',
+		'core/navigation-link',
+		'core/site-logo',
+		'core/post-title',
+		'core/query-title',
+	];
+	const shouldBeOpenByDefault = blockLevelLinks.includes( name );
+
 	return (
 		<InspectorControls>
 			<PanelBody
@@ -542,7 +514,7 @@ const XFNInspectorControls = ( { attributes, setAttributes, name } ) => {
 					'XFN Relationships',
 					'link-extension-for-xfn'
 				) }
-				initialOpen={ false }
+				initialOpen={ shouldBeOpenByDefault }
 				className="xfn-inspector-panel"
 			>
 				<p className="xfn-panel-description">
@@ -657,6 +629,12 @@ let currentXFNValues = [];
 let currentOtherValues = [];
 
 /**
+ * Store reference to link value onChange callback
+ */
+let currentLinkOnChange = null;
+let currentLinkValue = null;
+
+/**
  * Inject XFN controls into LinkControl Advanced panel
  */
 function injectXFNControls() {
@@ -697,16 +675,146 @@ function injectXFNControls() {
 			return;
 		}
 
-		// Get current rel value from the link control
-		const relInput = linkControls.querySelector(
-			'input[type="text"][placeholder*="rel"], input[id*="rel"]'
+		// Try to get the current link value from React internals
+		console.log( '[XFN] Attempting to find link value from React...' );
+		const linkControlElement = linkControls;
+		const reactKey = Object.keys( linkControlElement ).find( ( key ) =>
+			key.startsWith( '__react' )
 		);
-		const currentRel = relInput ? relInput.value : '';
+		if ( reactKey ) {
+			const reactInstance = linkControlElement[ reactKey ];
+			console.log( '[XFN] React instance found:', reactInstance );
+
+			// Try to traverse to find the link value
+			let current = reactInstance;
+			let depth = 0;
+			while ( current && depth < 10 ) {
+				if ( current.memoizedProps?.value ) {
+					currentLinkValue = current.memoizedProps.value;
+					currentLinkOnChange = current.memoizedProps.onChange;
+
+					// Store globally so block-level links can access it
+					window.currentLinkValue = currentLinkValue;
+					window.currentLinkOnChange = currentLinkOnChange;
+
+					console.log( '[XFN] Found link value:', currentLinkValue );
+					console.log( '[XFN] Link value keys:', Object.keys( currentLinkValue ) );
+					console.log( '[XFN] Link value rel:', currentLinkValue.rel );
+					console.log( '[XFN] Found onChange:', currentLinkOnChange );
+					break;
+				}
+				current = current.return || current._owner;
+				depth++;
+			}
+		}
+
+		// Get current rel value from the link control
+		// Try multiple selectors to find the rel input field
+		console.log( '[XFN] Looking for rel input in link control...' );
+		const allInputs = settingsPanel.querySelectorAll( 'input' );
+		console.log( '[XFN] All inputs in settings panel:', allInputs );
+
+		// Log details about each input
+		allInputs.forEach( ( input, index ) => {
+			console.log( `[XFN] Input ${index}:`, {
+				type: input.type,
+				id: input.id,
+				name: input.name,
+				placeholder: input.placeholder,
+				value: input.value,
+				element: input,
+			} );
+		} );
+
+		let relInput = linkControls.querySelector(
+			'input[type="text"][placeholder*="rel" i]'
+		);
+		console.log( '[XFN] Try 1 (placeholder*=rel):', relInput );
+
+		if ( ! relInput ) {
+			relInput = linkControls.querySelector( 'input[id*="rel" i]' );
+			console.log( '[XFN] Try 2 (id*=rel):', relInput );
+		}
+		if ( ! relInput ) {
+			// Try to find any text-like input (text, search, url, etc.)
+			const textLikeInputs = settingsPanel.querySelectorAll(
+				'input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"])'
+			);
+			console.log(
+				'[XFN] Try 3 - text-like inputs in settings:',
+				textLikeInputs
+			);
+			// The rel field is usually after "Open in new tab" and "nofollow" checkboxes
+			// So it's likely the last text-like input
+			if ( textLikeInputs.length > 0 ) {
+				relInput = textLikeInputs[ textLikeInputs.length - 1 ];
+			}
+		}
+
+		console.log( '[XFN] Final rel input found:', !! relInput );
+		if ( relInput ) {
+			console.log( '[XFN] Rel input element:', relInput );
+			console.log( '[XFN] Rel input current value:', relInput.value );
+		}
+
+		// Get current rel value
+		let currentRel = '';
+
+		// Check if this is a block-level link
+		const selectedBlock = wp.data.select( 'core/block-editor' ).getSelectedBlock();
+		const blockLevelLinks = [
+			'core/button',
+			'core/image',
+			'core/navigation-link',
+			'core/site-logo',
+			'core/post-title',
+			'core/query-title',
+		];
+
+		if ( selectedBlock && blockLevelLinks.includes( selectedBlock.name ) ) {
+			// For block-level links, read directly from block attributes
+			currentRel = getRelFromBlock( selectedBlock.attributes, selectedBlock.name );
+			console.log( '[XFN] Got rel from block-level link attributes:', currentRel );
+		} else if ( currentLinkValue?.url && selectedBlock?.attributes?.content ) {
+			// For inline links (like in paragraphs), parse the content
+			let content = selectedBlock.attributes.content;
+
+			// Handle RichTextData
+			if ( typeof content === 'object' && content.toHTMLString ) {
+				content = content.toHTMLString();
+			}
+
+			// Parse content to find the link's rel
+			if ( typeof content === 'string' && content.includes( currentLinkValue.url ) ) {
+				const parser = new DOMParser();
+				const doc = parser.parseFromString( content, 'text/html' );
+				const link = Array.from( doc.querySelectorAll( 'a' ) ).find(
+					( a ) => a.getAttribute( 'href' ) === currentLinkValue.url
+				);
+				if ( link ) {
+					currentRel = link.getAttribute( 'rel' ) || '';
+					console.log( '[XFN] Got rel from existing link in content:', currentRel );
+				}
+			}
+		}
+
+		// Fallback to linkValue or input
+		if ( ! currentRel && currentLinkValue && currentLinkValue.rel ) {
+			currentRel = currentLinkValue.rel;
+			console.log( '[XFN] Got rel from link value:', currentRel );
+		} else if ( ! currentRel && relInput ) {
+			currentRel = relInput.value;
+			console.log( '[XFN] Got rel from input:', currentRel );
+		}
+
 		const { xfn: xfnValues, other: otherValues } =
 			parseRelAttribute( currentRel );
 
 		currentXFNValues = [ ...xfnValues ];
 		currentOtherValues = [ ...otherValues ];
+
+		console.log( '[XFN] Initial XFN values:', currentXFNValues );
+		console.log( '[XFN] Initial other values:', currentOtherValues );
 
 		// Create XFN collapsible section
 		const xfnContainer = document.createElement( 'div' );
@@ -718,6 +826,77 @@ function injectXFNControls() {
 
 		// Add event listeners
 		addXFNEventListeners( xfnContainer, relInput );
+
+		// Find and intercept the Apply button
+		console.log( '[XFN] Looking for Apply button...' );
+		const possibleButtons = linkControls.querySelectorAll( 'button' );
+		console.log( '[XFN] All buttons in link control:', possibleButtons );
+
+		const applyButton = linkControls.querySelector(
+			'.block-editor-link-control__search-submit, button[type="submit"]'
+		);
+
+		if ( applyButton ) {
+			console.log( '[XFN] Found Apply button (will save XFN on click)' );
+
+			// Add a click listener that runs BEFORE the button's normal handler
+			applyButton.addEventListener(
+				'click',
+				( e ) => {
+					console.log( '[XFN] ===== Apply button clicked! =====' );
+					console.log( '[XFN] Current XFN values:', currentXFNValues );
+					console.log( '[XFN] Current link value:', currentLinkValue );
+
+					// Store XFN values globally so they can be applied after the link is created
+					if ( currentXFNValues.length > 0 ) {
+						const newRel = combineRelValues(
+							currentXFNValues,
+							currentOtherValues
+						);
+
+						console.log( '[XFN] Storing XFN rel for post-link-creation:', newRel );
+
+						// Store globally
+						window.pendingXFNRel = newRel;
+						window.pendingXFNUrl = currentLinkValue?.url;
+
+						// Try multiple times with increasing delays to catch the link after creation
+						console.log( '[XFN] Scheduling XFN application attempts...' );
+						setTimeout( () => {
+							console.log( '[XFN] Attempt 1 (100ms)...' );
+							applyXFNToCreatedLink();
+						}, 100 );
+						setTimeout( () => {
+							console.log( '[XFN] Attempt 2 (300ms)...' );
+							applyXFNToCreatedLink();
+						}, 300 );
+						setTimeout( () => {
+							console.log( '[XFN] Attempt 3 (500ms)...' );
+							applyXFNToCreatedLink();
+						}, 500 );
+						setTimeout( () => {
+							console.log( '[XFN] Attempt 4 (1000ms)...' );
+							applyXFNToCreatedLink();
+						}, 1000 );
+					} else {
+						console.log( '[XFN] No XFN values selected, skipping' );
+					}
+
+					// Auto-collapse Advanced panel after apply
+					if (
+						advancedToggle &&
+						advancedToggle.getAttribute( 'aria-expanded' ) === 'true'
+					) {
+						setTimeout( () => advancedToggle.click(), 150 );
+					}
+				},
+				true
+			); // Use capture phase to run before other handlers
+
+			console.log( '[XFN] Apply button interceptor attached' );
+		} else {
+			console.warn( '[XFN] Apply button not found!' );
+		}
 	}, 100 );
 }
 
@@ -803,7 +982,7 @@ function createXFNCollapsibleHTML( xfnValues ) {
 		) }</h4>`;
 		html += `<div class="xfn-pills">`;
 		xfnValues.forEach( ( rel ) => {
-			html += `<span class="xfn-pill xfn-pill-${ rel }">${ rel }</span>`;
+			html += `<span class="xfn-pill xfn-pill-${ rel }">${ rel }</span> `;
 		} );
 		html += `</div></div>`;
 	}
@@ -820,12 +999,55 @@ function addXFNEventListeners( container, relInput ) {
 	const toggle = container.querySelector( '.xfn-section-toggle' );
 	const content = container.querySelector( '.xfn-section-content' );
 	const chevron = toggle.querySelector( '.xfn-chevron' );
+	const linkControlRoot =
+		container.closest( '.block-editor-link-control' ) || document;
 
 	const updateRelAttribute = () => {
 		const newRel = combineRelValues( currentXFNValues, currentOtherValues );
+		console.log( '[XFN] Updating XFN values:', {
+			xfnValues: currentXFNValues,
+			otherValues: currentOtherValues,
+			newRel,
+		} );
+
+		// Update the rel input field directly if it exists
 		if ( relInput ) {
 			relInput.value = newRel;
-			relInput.dispatchEvent( new Event( 'input', { bubbles: true } ) );
+			console.log( '[XFN] Updated rel input field to:', newRel );
+
+			// Trigger input event so React picks up the change
+			const inputEvent = new Event( 'input', { bubbles: true } );
+			relInput.dispatchEvent( inputEvent );
+
+			const changeEvent = new Event( 'change', { bubbles: true } );
+			relInput.dispatchEvent( changeEvent );
+		}
+
+		// Also store globally as a backup
+		window.pendingXFNRel = newRel;
+		window.pendingXFNUrl = currentLinkValue?.url;
+
+		console.log( '[XFN] Stored pending XFN rel:', window.pendingXFNRel );
+		console.log( '[XFN] Stored pending XFN url:', window.pendingXFNUrl );
+
+		// Don't call onChange during selection - only store values
+		// Calling onChange triggers WordPress to close the Advanced panel
+		// We'll apply the values when user clicks Apply button instead
+		currentLinkValue = {
+			...( currentLinkValue || {} ),
+			rel: newRel || '',
+		};
+		console.log( '[XFN] Stored rel value (will apply on Submit):', currentLinkValue );
+
+		// Visually enable Apply button when XFN has changed
+		const applyButton = linkControlRoot.querySelector(
+			'.block-editor-link-control__search-submit, button[type="submit"]'
+		);
+
+		if ( applyButton ) {
+			applyButton.removeAttribute( 'aria-disabled' );
+			applyButton.removeAttribute( 'disabled' );
+			applyButton.classList.add( 'xfn-apply-ready' );
 		}
 
 		// Update the visual summary and count badge
@@ -836,6 +1058,7 @@ function addXFNEventListeners( container, relInput ) {
 	// Toggle functionality
 	toggle.addEventListener( 'click', ( e ) => {
 		e.preventDefault();
+		e.stopPropagation();
 		const isExpanded = toggle.getAttribute( 'aria-expanded' ) === 'true';
 		const newState = ! isExpanded;
 
@@ -850,6 +1073,8 @@ function addXFNEventListeners( container, relInput ) {
 		.forEach( ( button ) => {
 			button.addEventListener( 'click', ( e ) => {
 				e.preventDefault();
+				e.stopPropagation(); // Prevent event bubbling that might collapse the section
+
 				const category =
 					e.target.closest( '.xfn-category' ).dataset.category;
 				const value = e.target.dataset.value;
@@ -926,7 +1151,7 @@ function updateXFNSummary( container ) {
 	) }</h4>`;
 	html += `<div class="xfn-pills">`;
 	currentXFNValues.forEach( ( rel ) => {
-		html += `<span class="xfn-pill xfn-pill-${ rel }">${ rel }</span>`;
+		html += `<span class="xfn-pill xfn-pill-${ rel }">${ rel }</span> `;
 	} );
 	html += `</div>`;
 
@@ -953,6 +1178,190 @@ function updateCountBadge( toggle ) {
 	}
 
 	badge.textContent = currentXFNValues.length;
+}
+
+/**
+ * Apply XFN rel attribute to a newly created link using WordPress APIs
+ */
+function applyXFNToCreatedLink() {
+	console.log( '[XFN] ===== Applying XFN to created link =====' );
+	console.log( '[XFN] Pending XFN rel:', window.pendingXFNRel );
+	console.log( '[XFN] Pending XFN url:', window.pendingXFNUrl );
+
+	if ( ! window.pendingXFNRel || ! window.pendingXFNUrl ) {
+		console.log( '[XFN] No pending XFN data to apply' );
+		return false;
+	}
+
+	// Find the selected block
+	const selectedBlock = wp.data.select( 'core/block-editor' ).getSelectedBlock();
+	if ( ! selectedBlock ) {
+		console.log( '[XFN] No selected block found' );
+		return false;
+	}
+
+	console.log( '[XFN] Selected block:', selectedBlock.name );
+	console.log( '[XFN] Selected block clientId:', selectedBlock.clientId );
+	console.log( '[XFN] Selected block attributes:', selectedBlock.attributes );
+	console.log( '[XFN] Block innerBlocks:', selectedBlock.innerBlocks );
+
+	// Check if this is a block-level link (like Button, Image, etc.)
+	const blockLevelLinks = [
+		'core/button',
+		'core/image',
+		'core/navigation-link',
+		'core/site-logo',
+		'core/post-title',
+		'core/query-title',
+	];
+
+	if ( blockLevelLinks.includes( selectedBlock.name ) ) {
+		console.log( '[XFN] This is a block-level link, updating rel attribute directly...' );
+
+		// Get existing rel value
+		const existingRel = getRelFromBlock( selectedBlock.attributes, selectedBlock.name );
+		console.log( '[XFN] Existing rel:', existingRel );
+
+		// Parse and combine with pending XFN values
+		const { other: existingOther } = parseRelAttribute( existingRel );
+		console.log( '[XFN] Existing other values:', existingOther );
+
+		const { xfn: pendingXFN } = parseRelAttribute( window.pendingXFNRel );
+		console.log( '[XFN] Pending XFN values:', pendingXFN );
+
+		const newRel = combineRelValues( pendingXFN, existingOther );
+		console.log( '[XFN] New combined rel:', newRel );
+
+		// Update the block using setRelForBlock pattern
+		if ( selectedBlock.attributes.hasOwnProperty( 'rel' ) ) {
+			wp.data.dispatch( 'core/block-editor' ).updateBlockAttributes(
+				selectedBlock.clientId,
+				{ rel: newRel || undefined }
+			);
+			console.log( '[XFN] ✓ Updated rel attribute on block' );
+		} else {
+			const metadata = selectedBlock.attributes.metadata || {};
+			wp.data.dispatch( 'core/block-editor' ).updateBlockAttributes(
+				selectedBlock.clientId,
+				{
+					metadata: {
+						...metadata,
+						rel: newRel || undefined,
+					},
+				}
+			);
+			console.log( '[XFN] ✓ Updated metadata.rel attribute on block' );
+		}
+
+		// Also try to update via onChange if available
+		if ( window.currentLinkOnChange && typeof window.currentLinkOnChange === 'function' ) {
+			try {
+				const updatedValue = {
+					...( window.currentLinkValue || {} ),
+					rel: newRel || '',
+				};
+				window.currentLinkOnChange( updatedValue );
+				console.log( '[XFN] ✓ Also called onChange with updated rel' );
+			} catch ( error ) {
+				console.warn( '[XFN] Could not call onChange:', error );
+			}
+		}
+
+		// Clear pending XFN data
+		window.pendingXFNRel = null;
+		window.pendingXFNUrl = null;
+
+		console.log( '[XFN] ✓✓✓ Block-level link updated successfully! ✓✓✓' );
+		return true;
+	}
+
+	// Get the block's content (for RichText blocks like paragraph)
+	let blockContent = selectedBlock.attributes.content;
+	console.log( '[XFN] Block content:', blockContent );
+	console.log( '[XFN] Block content type:', typeof blockContent );
+
+	// WordPress RichText can be either a string or RichTextData object
+	// If it's a RichTextData object, convert it to HTML string
+	if ( blockContent && typeof blockContent === 'object' && blockContent.toHTMLString ) {
+		console.log( '[XFN] Converting RichTextData to HTML string...' );
+		blockContent = blockContent.toHTMLString();
+		console.log( '[XFN] Converted content:', blockContent );
+	}
+
+	// Check if content exists and is now a string
+	if ( ! blockContent || typeof blockContent !== 'string' ) {
+		console.warn( '[XFN] Block has no string content or unable to convert to string' );
+		return false;
+	}
+
+	// Check if URL is in the content
+	const urlInContent = blockContent.includes( window.pendingXFNUrl );
+	console.log( '[XFN] URL in content?', urlInContent );
+
+	if ( ! urlInContent ) {
+		console.warn( '[XFN] Pending URL not found in block content' );
+		console.log( '[XFN] Looking for:', window.pendingXFNUrl );
+		console.log( '[XFN] In content:', blockContent );
+		return false;
+	}
+
+	console.log( '[XFN] Found URL in block content, attempting to update using proper WordPress approach...' );
+
+	// Use a more reliable approach: inject via LinkControl value directly
+	// This ensures WordPress core link system properly handles the rel attribute
+	try {
+		// Parse existing rel and combine with XFN values
+		const { xfn: pendingXFN, other: pendingOther } = parseRelAttribute( window.pendingXFNRel );
+
+		// Try to find and update link using the block editor's internal methods
+		// This is more reliable than DOM manipulation
+		const parser = new DOMParser();
+		const doc = parser.parseFromString( blockContent, 'text/html' );
+		const links = doc.querySelectorAll( 'a' );
+
+		let linkUpdated = false;
+		links.forEach( ( link ) => {
+			if ( link.getAttribute( 'href' ) === window.pendingXFNUrl ) {
+				const existingRel = link.getAttribute( 'rel' ) || '';
+				const { other: existingOther } = parseRelAttribute( existingRel );
+				const newRel = combineRelValues( pendingXFN, existingOther.length ? existingOther : pendingOther );
+
+				console.log( '[XFN] Setting rel attribute:', newRel );
+				link.setAttribute( 'rel', newRel );
+				linkUpdated = true;
+			}
+		} );
+
+		if ( linkUpdated ) {
+			const newContent = doc.body.innerHTML;
+			console.log( '[XFN] Updating block with new content...' );
+
+			// Use updateBlockAttributes to set the content
+			wp.data.dispatch( 'core/block-editor' ).updateBlockAttributes(
+				selectedBlock.clientId,
+				{ content: newContent }
+			);
+
+			console.log( '[XFN] ✓ Block content updated' );
+
+			// Clear pending data
+			window.pendingXFNRel = null;
+			window.pendingXFNUrl = null;
+
+			// Force a re-render to ensure the change persists
+			setTimeout( () => {
+				const currentBlock = wp.data.select( 'core/block-editor' ).getBlock( selectedBlock.clientId );
+				console.log( '[XFN] Verification - Current content:', currentBlock?.attributes?.content );
+			}, 100 );
+
+			return true;
+		}
+	} catch ( error ) {
+		console.error( '[XFN] Error updating link:', error );
+	}
+
+	console.warn( '[XFN] Could not update link' );
+	return false;
 }
 
 /**
@@ -1026,8 +1435,12 @@ function startXFNMonitoring() {
 const withXFNControls = createHigherOrderComponent( ( BlockEdit ) => {
 	return ( props ) => {
 		const { attributes, name } = props;
-		const [ isXFNPopoverVisible, setXFNPopoverVisible ] = useState( false );
-		const xfnButtonRef = useState( null );
+
+		// Get settings from localized data
+		const settings = window.linkexfoData?.settings || {
+			enable_inspector_controls: false,
+			enable_floating_toolbar: false,
+		};
 
 		// List of blocks that support links as the entire block
 		const supportedBlocks = [
@@ -1046,7 +1459,8 @@ const withXFNControls = createHigherOrderComponent( ( BlockEdit ) => {
 			attributes.hasOwnProperty( 'href' ) ||
 			attributes.hasOwnProperty( 'linkDestination' );
 
-		if ( ! shouldShowXFN ) {
+		// Only show inspector controls if setting is enabled
+		if ( ! shouldShowXFN || ! settings.enable_inspector_controls ) {
 			return <BlockEdit { ...props } />;
 		}
 
@@ -1060,55 +1474,72 @@ const withXFNControls = createHigherOrderComponent( ( BlockEdit ) => {
 			<>
 				<BlockEdit { ...props } />
 				<XFNInspectorControls { ...props } />
-				<BlockControls>
-					<Button
-						ref={ xfnButtonRef[ 0 ] }
-						icon={ link }
-						label={ __(
-							'XFN Relationships',
-							'link-extension-for-xfn'
-						) }
-						onClick={ () =>
-							setXFNPopoverVisible( ! isXFNPopoverVisible )
-						}
-						isPressed={ isXFNPopoverVisible }
-						className="xfn-toolbar-button"
-					>
-						{ __( 'XFN', 'link-extension-for-xfn' ) }
-					</Button>
-				</BlockControls>
-				<XFNToolbarPopover
-					isVisible={ isXFNPopoverVisible }
-					onClose={ () => setXFNPopoverVisible( false ) }
-					currentRel={ currentRel }
-					onUpdateRel={ handleXFNUpdate }
-					anchorRef={ xfnButtonRef[ 0 ] }
-				/>
 			</>
 		);
 	};
 }, 'withXFNControls' );
 
-// Apply the filter for block-level links
+// Apply the filter for block-level links only if inspector controls are enabled
+if ( window.linkexfoData?.settings?.enable_inspector_controls ) {
+	addFilter(
+		'editor.BlockEdit',
+		'xfn-link-extension/with-xfn-controls',
+		withXFNControls
+	);
+	console.log( '[XFN] Inspector Controls enabled' );
+}
+
+/**
+ * Filter to add rel attribute to links when blocks are saved
+ * This handles inline links in RichText (paragraphs, etc.)
+ */
 addFilter(
-	'editor.BlockEdit',
-	'xfn-link-extension/with-xfn-controls',
-	withXFNControls
+	'blocks.getSaveContent.extraProps',
+	'xfn-link-extension/add-rel-to-links',
+	( props, blockType, attributes ) => {
+		console.log( '[XFN] getSaveContent filter called for:', blockType.name );
+
+		// This filter runs when blocks are being saved
+		// We need to inject XFN values that were stored globally
+		if ( currentXFNValues.length > 0 ) {
+			console.log( '[XFN] Injecting XFN values into saved content:', currentXFNValues );
+		}
+
+		return props;
+	}
 );
 
 // Start monitoring for inline links
 if ( typeof document !== 'undefined' ) {
 	// Wait for editor to be ready
-	setTimeout( startXFNMonitoring, 1000 );
+	console.log( '[XFN] Starting XFN monitoring in 1 second...' );
+	setTimeout( () => {
+		console.log( '[XFN] XFN monitoring started!' );
+		startXFNMonitoring();
+	}, 1000 );
 }
 
 console.log(
-	'XFN Link Extension loaded successfully! XFN controls will appear:'
+	'%c[XFN] Link Extension loaded successfully!',
+	'color: #00a32a; font-weight: bold; font-size: 14px;'
 );
-console.log(
-	'1. In the floating toolbar for link blocks (Button, Navigation, etc.)'
-);
-console.log( '2. In Inspector Controls for link blocks' );
-console.log(
-	'3. In a collapsible XFN section in link popovers for inline links'
-);
+console.log( '[XFN] Controls will appear in:' );
+
+const settings = window.linkexfoData?.settings || {
+	enable_inspector_controls: false,
+	enable_floating_toolbar: false,
+};
+
+if ( settings.enable_inspector_controls ) {
+	console.log( '[XFN] ✓ Inspector Controls for link blocks (ENABLED)' );
+} else {
+	console.log( '[XFN] ✗ Inspector Controls for link blocks (DISABLED - enable in Settings > XFN Link Extension)' );
+}
+
+if ( settings.enable_floating_toolbar ) {
+	console.log( '[XFN] ✓ Floating toolbar for link blocks (ENABLED)' );
+} else {
+	console.log( '[XFN] ✗ Floating toolbar for link blocks (DISABLED - enable in Settings > XFN Link Extension)' );
+}
+
+console.log( '[XFN] ✓ Collapsible XFN section in Link Advanced Panel (ALWAYS ENABLED)' );

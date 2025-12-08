@@ -65,6 +65,8 @@ class XFN_Link_Extension {
 	private function __construct() {
 		add_action( 'init', array( $this, 'init' ) );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ) );
+		add_action( 'admin_menu', array( $this, 'add_settings_page' ) );
+		add_action( 'admin_init', array( $this, 'register_settings' ) );
 	}
 
 	/**
@@ -81,6 +83,172 @@ class XFN_Link_Extension {
 	}
 
 	/**
+	 * Add settings page to WordPress admin
+	 *
+	 * @since 1.0.2
+	 */
+	public function add_settings_page() {
+		add_options_page(
+			__( 'XFN Link Extension Settings', 'link-extension-for-xfn' ),
+			__( 'XFN Link Extension', 'link-extension-for-xfn' ),
+			'manage_options',
+			'xfn-link-extension',
+			array( $this, 'render_settings_page' )
+		);
+	}
+
+	/**
+	 * Register plugin settings
+	 *
+	 * @since 1.0.2
+	 */
+	public function register_settings() {
+		register_setting(
+			'xfn_link_extension_settings',
+			'xfn_link_extension_options',
+			array(
+				'sanitize_callback' => array( $this, 'sanitize_settings' ),
+				'default' => array(
+					'enable_inspector_controls' => false,
+					'enable_floating_toolbar' => false,
+				),
+			)
+		);
+
+		add_settings_section(
+			'xfn_interface_settings',
+			__( 'Interface Options', 'link-extension-for-xfn' ),
+			array( $this, 'render_interface_section' ),
+			'xfn-link-extension'
+		);
+
+		add_settings_field(
+			'enable_inspector_controls',
+			__( 'Inspector Controls', 'link-extension-for-xfn' ),
+			array( $this, 'render_inspector_controls_field' ),
+			'xfn-link-extension',
+			'xfn_interface_settings'
+		);
+
+		add_settings_field(
+			'enable_floating_toolbar',
+			__( 'Floating Toolbar Button', 'link-extension-for-xfn' ),
+			array( $this, 'render_floating_toolbar_field' ),
+			'xfn-link-extension',
+			'xfn_interface_settings'
+		);
+	}
+
+	/**
+	 * Get plugin settings
+	 *
+	 * @since 1.0.2
+	 * @return array Plugin settings
+	 */
+	public function get_plugin_settings() {
+		$defaults = array(
+			'enable_inspector_controls' => false,
+			'enable_floating_toolbar' => false,
+		);
+
+		$options = get_option( 'xfn_link_extension_options', $defaults );
+		return wp_parse_args( $options, $defaults );
+	}
+
+	/**
+	 * Sanitize settings
+	 *
+	 * @since 1.0.2
+	 * @param array $input Raw input from settings form
+	 * @return array Sanitized settings
+	 */
+	public function sanitize_settings( $input ) {
+		$sanitized = array();
+
+		$sanitized['enable_inspector_controls'] = ! empty( $input['enable_inspector_controls'] );
+		$sanitized['enable_floating_toolbar'] = ! empty( $input['enable_floating_toolbar'] );
+
+		return $sanitized;
+	}
+
+	/**
+	 * Render settings page
+	 *
+	 * @since 1.0.2
+	 */
+	public function render_settings_page() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+		?>
+		<div class="wrap">
+			<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
+			<form method="post" action="options.php">
+				<?php
+				settings_fields( 'xfn_link_extension_settings' );
+				do_settings_sections( 'xfn-link-extension' );
+				submit_button();
+				?>
+			</form>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Render interface settings section description
+	 *
+	 * @since 1.0.2
+	 */
+	public function render_interface_section() {
+		?>
+		<p><?php esc_html_e( 'Choose where XFN relationship controls appear in the editor. The Link Advanced Panel is always enabled and cannot be disabled.', 'link-extension-for-xfn' ); ?></p>
+		<?php
+	}
+
+	/**
+	 * Render inspector controls setting field
+	 *
+	 * @since 1.0.2
+	 */
+	public function render_inspector_controls_field() {
+		$options = $this->get_plugin_settings();
+		?>
+		<label>
+			<input
+				type="checkbox"
+				name="xfn_link_extension_options[enable_inspector_controls]"
+				value="1"
+				<?php checked( $options['enable_inspector_controls'], true ); ?>
+			/>
+			<?php esc_html_e( 'Show XFN panel in Inspector Controls (sidebar) for block-level links like Buttons and Navigation', 'link-extension-for-xfn' ); ?>
+		</label>
+		<?php
+	}
+
+	/**
+	 * Render floating toolbar setting field
+	 *
+	 * @since 1.0.2
+	 */
+	public function render_floating_toolbar_field() {
+		$options = $this->get_plugin_settings();
+		?>
+		<label>
+			<input
+				type="checkbox"
+				name="xfn_link_extension_options[enable_floating_toolbar]"
+				value="1"
+				<?php checked( $options['enable_floating_toolbar'], true ); ?>
+			/>
+			<?php esc_html_e( 'Show XFN button in floating toolbar for block-level links', 'link-extension-for-xfn' ); ?>
+		</label>
+		<p class="description">
+			<?php esc_html_e( 'Note: The XFN section in the Link Advanced Panel (for inline links) is always available and cannot be disabled.', 'link-extension-for-xfn' ); ?>
+		</p>
+		<?php
+	}
+
+	/**
 	 * Enqueue block editor assets
 	 *
 	 * Loads JavaScript and CSS files needed for the block editor interface.
@@ -89,41 +257,73 @@ class XFN_Link_Extension {
 	 * @since 1.0.0
 	 */
 	public function enqueue_block_editor_assets() {
+		$asset_file_path = XFN_LINK_EXTENSION_PLUGIN_PATH . 'build/index.asset.php';
+		$default_deps    = array(
+			'wp-blocks',
+			'wp-element',
+			'wp-components',
+			'wp-data',
+			'wp-hooks',
+			'wp-i18n',
+			'wp-rich-text',
+			'wp-block-editor',
+			'wp-compose',
+		);
+
+		$asset_meta = file_exists( $asset_file_path )
+			? include $asset_file_path
+			: array(
+				'dependencies' => $default_deps,
+				'version'      => filemtime( XFN_LINK_EXTENSION_PLUGIN_PATH . 'build/index.js' ),
+			);
+
+		$script_hash = file_exists( XFN_LINK_EXTENSION_PLUGIN_PATH . 'build/index.js' )
+			? md5_file( XFN_LINK_EXTENSION_PLUGIN_PATH . 'build/index.js' )
+			: time();
+		$style_hash  = file_exists( XFN_LINK_EXTENSION_PLUGIN_PATH . 'build/index.css' )
+			? md5_file( XFN_LINK_EXTENSION_PLUGIN_PATH . 'build/index.css' )
+			: time();
+
+		$script_version = sprintf(
+			'%s-%s-%s',
+			XFN_LINK_EXTENSION_VERSION,
+			isset( $asset_meta['version'] ) ? $asset_meta['version'] : filemtime( XFN_LINK_EXTENSION_PLUGIN_PATH . 'build/index.js' ),
+			substr( $script_hash, 0, 8 )
+		);
+
+		$style_version = sprintf(
+			'%s-%s-%s',
+			XFN_LINK_EXTENSION_VERSION,
+			substr( $style_hash, 0, 8 ),
+			time() // Add timestamp for aggressive cache busting during development
+		);
+
 		// Enqueue main JavaScript file
 		wp_enqueue_script(
 			'link-extension-for-xfn',
 			XFN_LINK_EXTENSION_PLUGIN_URL . 'build/index.js',
-			array(
-				'wp-blocks',
-				'wp-element',
-				'wp-components',
-				'wp-data',
-				'wp-hooks',
-				'wp-i18n',
-				'wp-rich-text',
-				'wp-block-editor',
-				'wp-compose',
-			),
-			XFN_LINK_EXTENSION_VERSION,
+			! empty( $asset_meta['dependencies'] ) ? $asset_meta['dependencies'] : $default_deps,
+			$script_version,
 			true
 		);
 
 		// Enqueue editor-specific styles
 		wp_enqueue_style(
 			'xfn-link-extension-editor',
-			XFN_LINK_EXTENSION_PLUGIN_URL . 'build/editor.css',
+			XFN_LINK_EXTENSION_PLUGIN_URL . 'build/index.css',
 			array( 'wp-components' ),
-			XFN_LINK_EXTENSION_VERSION
+			$style_version
 		);
 
 		// Localize script with XFN relationship data and translations
 		wp_localize_script(
 			'link-extension-for-xfn',
-			'xfnLinkExtension',
+			'linkexfoData',
 			array(
 				'relationships' => $this->get_xfn_relationships(),
 				'version' => XFN_LINK_EXTENSION_VERSION,
 				'nonce' => wp_create_nonce( 'xfn_link_extension' ),
+				'settings' => $this->get_plugin_settings(),
 				'interfaces' => array(
 					'toolbar' => __( 'Floating Toolbar', 'link-extension-for-xfn' ),
 					'inspector' => __( 'Inspector Controls', 'link-extension-for-xfn' ),

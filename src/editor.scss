@@ -19,29 +19,30 @@
 
 /* XFN Category Sections */
 .xfn-category-section {
-	margin-bottom: 20px;
-	padding-bottom: 16px;
-	border-bottom: 1px solid #e0e0e0;
+	margin-bottom: 24px;
+	padding-bottom: 20px;
+	border-bottom: 1px solid #ddd;
 
 	&:last-child {
 		border-bottom: none;
 		margin-bottom: 0;
+		padding-bottom: 0;
 	}
 }
 
 .xfn-category-title {
 	font-size: 13px;
-	font-weight: 600;
+	font-weight: 500;
 	color: #1e1e1e;
-	margin: 0 0 6px 0;
-	line-height: 1.3;
+	margin: 0 0 8px 0;
+	line-height: 1.4;
 }
 
 .xfn-category-help {
 	font-size: 12px;
 	color: #757575;
 	margin: 0 0 12px 0;
-	line-height: 1.3;
+	line-height: 1.4;
 }
 
 /* WordPress Component Overrides */
@@ -80,58 +81,79 @@
 /* Selected Relationships Summary */
 .xfn-selected-summary {
 	margin-top: 20px;
-	padding: 16px;
-	background: #e7f3ff;
-	border: 1px solid #b3d9ff;
-	border-radius: 4px;
+	padding: 12px 16px;
+	background: #f0f6fc;
+	border: 1px solid #0073aa;
+	border-left-width: 3px;
+	border-radius: 2px;
 
 	h4 {
-		font-size: 13px;
-		font-weight: 600;
+		font-size: 12px;
+		font-weight: 500;
 		color: #1e1e1e;
 		margin: 0 0 8px 0;
-		line-height: 1.3;
+		line-height: 1.4;
 	}
 }
 
 .xfn-pills {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 6px;
+	gap: 8px;
+	column-gap: 8px;
+	row-gap: 8px;
+
+	// Fallback spacing for environments that ignore gap
+	@supports not ( gap: 8px ) {
+		margin-top: -4px;
+
+		.xfn-pill {
+			margin: 4px 8px 0 0;
+		}
+	}
 }
 
 .xfn-pill {
-	display: inline-block;
-	padding: 4px 8px;
-	font-size: 10px;
+	display: inline-flex;
+	align-items: center;
+	padding: 3px 8px;
+	font-size: 11px;
 	font-weight: 500;
-	background: #0073aa;
-	color: white;
-	border-radius: 12px;
-	text-transform: uppercase;
-	letter-spacing: 0.5px;
-	line-height: 1.2;
+	background: #f0f0f0;
+	color: #1e1e1e;
+	border: 1px solid #ddd;
+	border-radius: 2px;
+	line-height: 1.4;
+	white-space: nowrap;
 }
 
 /* Category-specific pill colors */
 .xfn-pill-friend,
 .xfn-pill-acquaintance,
 .xfn-pill-contact {
-	background: #00a32a;
+	background: #edfaef;
+	border-color: #00a32a;
+	color: #007017;
 }
 
 .xfn-pill-met {
-	background: #826eb4;
+	background: #f5f3f9;
+	border-color: #826eb4;
+	color: #50457b;
 }
 
 .xfn-pill-co-worker,
 .xfn-pill-colleague {
-	background: #d63638;
+	background: #fcf0f1;
+	border-color: #cc1818;
+	color: #cc1818;
 }
 
 .xfn-pill-co-resident,
 .xfn-pill-neighbor {
-	background: #dba617;
+	background: #fcf8e8;
+	border-color: #dba617;
+	color: #8a6d05;
 }
 
 .xfn-pill-child,
@@ -139,18 +161,24 @@
 .xfn-pill-sibling,
 .xfn-pill-spouse,
 .xfn-pill-kin {
-	background: #ff6900;
+	background: #fff4ec;
+	border-color: #ff8c00;
+	color: #c75000;
 }
 
 .xfn-pill-muse,
 .xfn-pill-crush,
 .xfn-pill-date,
 .xfn-pill-sweetheart {
-	background: #e91e63;
+	background: #fce8f1;
+	border-color: #e91e63;
+	color: #be0f4c;
 }
 
 .xfn-pill-me {
-	background: #1e1e1e;
+	background: #f0f0f0;
+	border-color: #1e1e1e;
+	color: #1e1e1e;
 }
 
 /* === TOOLBAR POPOVER STYLES === */
@@ -197,10 +225,10 @@
 /* === COLLAPSIBLE SECTION STYLES === */
 
 .xfn-collapsible-section {
-	border: 1px solid #e0e0e0;
-	border-radius: 4px;
-	background: #fff;
-	overflow: hidden;
+	border: none;
+	border-radius: 0;
+	background: transparent;
+	overflow: visible;
 }
 
 .xfn-section-toggle {
@@ -209,30 +237,28 @@
 	justify-content: space-between;
 	width: 100%;
 	padding: 12px 16px;
-	background: #f8f9fa;
+	background: #fff;
 	border: none;
-	border-bottom: 1px solid #e0e0e0;
+	border-bottom: 1px solid #ddd;
 	font-size: 13px;
-	font-weight: 600;
+	font-weight: 500;
 	color: #1e1e1e;
 	cursor: pointer;
-	transition: background-color 0.15s ease;
+	transition: all 0.15s ease;
 	text-align: left;
 
 	&:hover {
-		background: #f0f0f0;
-		color: #0073aa;
+		background: #f6f7f7;
 	}
 
 	&:focus {
-		box-shadow: inset 0 0 0 1px #0073aa;
+		box-shadow: inset 0 0 0 1px #2271b1;
 		outline: none;
 	}
 
 	&[aria-expanded="true"] {
-		background: #f0f8ff;
-		color: #0073aa;
-		border-bottom-color: #b3d9ff;
+		background: #f6f7f7;
+		border-bottom-color: #ddd;
 
 		.xfn-chevron {
 			transform: rotate(180deg);
@@ -241,17 +267,20 @@
 }
 
 .xfn-count-badge {
-	display: inline-block;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
 	margin-left: 8px;
-	padding: 2px 6px;
-	background: #0073aa;
+	padding: 0;
+	background: #1e1e1e;
 	color: white;
-	font-size: 10px;
+	font-size: 11px;
 	font-weight: 500;
-	border-radius: 8px;
-	min-width: 16px;
+	border-radius: 10px;
+	min-width: 20px;
+	height: 20px;
 	text-align: center;
-	line-height: 1.2;
+	line-height: 1;
 }
 
 .xfn-chevron {
@@ -281,53 +310,57 @@
 .xfn-relationships {
 	display: flex;
 	flex-direction: column;
-	gap: 16px;
+	gap: 20px;
 }
 
 .xfn-category {
+	margin-bottom: 20px;
+
+	&:last-child {
+		margin-bottom: 0;
+	}
+
 	h4 {
-		font-size: 12px;
+		font-size: 11px;
 		font-weight: 600;
 		color: #1e1e1e;
 		margin: 0 0 8px 0;
-		line-height: 1.3;
+		line-height: 1.4;
+		text-transform: uppercase;
+		letter-spacing: 0.5px;
 	}
 
-	.components-button-group,
-	.xfn-button-group {
+	.components-toggle-group-control {
+		margin-bottom: 0;
+	}
+
+	.components-toggle-group-control-option {
+		font-size: 12px;
+	}
+}
+
+.xfn-checkbox-group {
+	h4 {
+		font-size: 11px;
+		font-weight: 600;
+		color: #1e1e1e;
+		margin: 0 0 8px 0;
+		line-height: 1.4;
+		text-transform: uppercase;
+		letter-spacing: 0.5px;
+	}
+
+	.xfn-checkbox-controls {
 		display: flex;
-		flex-wrap: wrap;
+		flex-direction: column;
 		gap: 4px;
-		align-items: flex-start;
 
-		.components-button {
-			font-size: 11px;
-			padding: 4px 8px;
-			height: auto;
-			min-height: 28px;
-			border-radius: 14px;
-			border: 1px solid #ddd;
-			background: #fff;
-			color: #1e1e1e;
-			transition: all 0.15s ease;
-			flex: 0 0 auto;
+		.components-checkbox-control {
+			margin-bottom: 0;
+		}
 
-			&:hover {
-				color: #0073aa;
-				border-color: #0073aa;
-				background: #f0f8ff;
-			}
-
-			&.is-pressed {
-				background: #0073aa;
-				color: white;
-				border-color: #0073aa;
-				font-weight: 500;
-			}
-
-			&:focus {
-				box-shadow: 0 0 0 2px rgba(0, 115, 170, 0.3);
-			}
+		.components-checkbox-control__label {
+			font-size: 13px;
 		}
 	}
 }
@@ -336,8 +369,8 @@
 	margin-top: 16px;
 	padding: 12px;
 	background: #f6f7f7;
-	border: 1px solid #e0e0e0;
-	border-radius: 4px;
+	border: 1px solid #ddd;
+	border-radius: 2px;
 
 	h4 {
 		font-size: 11px;
@@ -364,30 +397,39 @@
 
 /* XFN Controls in Link Control Advanced Panel */
 .block-editor-link-control .xfn-collapsible-section {
-	margin-top: 16px;
-	border-color: #ddd;
+	margin-top: 0;
+	border: none;
 }
 
 .block-editor-link-control .xfn-section-toggle {
-	background: #f9f9f9;
-	border-bottom-color: #ddd;
+	background: transparent;
+	border: none;
+	border-bottom: 1px solid #ddd;
+	padding: 16px;
 
 	&:hover {
-		background: #f0f0f0;
+		background: transparent;
+	}
+
+	&:focus {
+		box-shadow: none;
+		outline: 2px solid #2271b1;
+		outline-offset: -2px;
 	}
 
 	&[aria-expanded="true"] {
-		background: #f0f8ff;
-		border-bottom-color: #b3d9ff;
+		background: transparent;
+		border-bottom-color: #ddd;
 	}
 }
 
 .block-editor-link-control .xfn-section-content {
-	padding: 12px;
+	padding: 16px;
+	background: transparent;
 }
 
 .block-editor-link-control .xfn-category {
-	margin-bottom: 12px;
+	margin-bottom: 16px;
 
 	&:last-child {
 		margin-bottom: 0;
@@ -395,7 +437,10 @@
 
 	h4 {
 		font-size: 11px;
-		margin-bottom: 6px;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.5px;
+		margin-bottom: 8px;
 	}
 }
 
@@ -403,6 +448,7 @@
 	margin-top: 12px;
 	padding: 8px 10px;
 	background: #f6f7f7;
+	border-color: #ddd;
 
 	h4 {
 		font-size: 10px;
@@ -417,6 +463,12 @@
 			padding: 2px 5px;
 		}
 	}
+}
+
+.block-editor-link-control .xfn-apply-ready {
+	opacity: 1;
+	filter: none;
+	pointer-events: auto;
 }
 
 .block-editor-link-control .xfn-relationships {

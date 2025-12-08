@@ -140,6 +140,22 @@ Add relationship context to overlay links and media-associated links using any o
 
 ## Technical Implementation
 
+### Source Code
+
+The plugin uses build tools to compile and optimize the JavaScript for production. The complete, uncompiled source code is available in the `src/` directory of the plugin:
+
+* **Source files**: `src/index.js`, `src/view.js`, `src/edit.js`, `src/save.js`
+* **Build output**: `build/index.js`, `build/view.js`
+* **Build tool**: WordPress Scripts (webpack-based)
+* **Build command**: `npm run build` (requires Node.js 14+)
+
+To rebuild from source:
+1. Install dependencies: `npm install`
+2. Build production files: `npm run build`
+3. Or use development mode: `npm start` (watches for changes)
+
+All source code is maintained at: https://github.com/courtneyr-dev/xfn-link-extension
+
 ### Rel Attribute Management
 The plugin intelligently manages the HTML rel attribute:
 
