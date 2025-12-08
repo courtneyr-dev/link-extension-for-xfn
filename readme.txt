@@ -140,21 +140,34 @@ Add relationship context to overlay links and media-associated links using any o
 
 ## Technical Implementation
 
-### Source Code
+### Source Code & Build Tools
 
-The plugin uses build tools to compile and optimize the JavaScript for production. The complete, uncompiled source code is available in the `src/` directory of the plugin:
+**This plugin uses build tools to compile and optimize code for production.**
 
-* **Source files**: `src/index.js`, `src/view.js`, `src/edit.js`, `src/save.js`
-* **Build output**: `build/index.js`, `build/view.js`
-* **Build tool**: WordPress Scripts (webpack-based)
-* **Build command**: `npm run build` (requires Node.js 14+)
+All uncompiled, human-readable source code is included in the plugin's `src/` directory and is publicly available on GitHub.
 
-To rebuild from source:
-1. Install dependencies: `npm install`
-2. Build production files: `npm run build`
-3. Or use development mode: `npm start` (watches for changes)
+**Source files (uncompiled):**
+* JavaScript: `src/index.js` (main plugin logic)
+* Styles: `src/editor.scss` (editor styles)
+* Additional: `src/view.js`, `src/edit.js`, `src/save.js`
 
-All source code is maintained at: https://github.com/courtneyr-dev/xfn-link-extension
+**Compiled files (production):**
+* JavaScript: `build/index.js`, `build/view.js`
+* Styles: `build/index.css`, `build/index-rtl.css`
+
+**Build tools:**
+* Build system: WordPress Scripts (webpack-based)
+* Required: Node.js 14+ and npm
+* Build command: `npm run build`
+* Development mode: `npm start` (watches for file changes)
+
+**How to rebuild from source:**
+1. Clone or download from GitHub: https://github.com/courtneyr-dev/xfn-link-extension
+2. Install dependencies: `npm install`
+3. Build production files: `npm run build`
+4. Output will be in the `build/` directory
+
+**GitHub repository (complete source):** https://github.com/courtneyr-dev/xfn-link-extension
 
 ### Rel Attribute Management
 The plugin intelligently manages the HTML rel attribute:
