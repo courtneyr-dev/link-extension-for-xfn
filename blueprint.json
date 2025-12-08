@@ -1,0 +1,36 @@
+{
+	"$schema": "https://playground.wordpress.net/blueprint-schema.json",
+	"landingPage": "/wp-admin/post-new.php",
+	"preferredVersions": {
+		"php": "8.0",
+		"wp": "latest"
+	},
+	"phpExtensionBundles": [
+		"kitchen-sink"
+	],
+	"features": {
+		"networking": true
+	},
+	"steps": [
+		{
+			"step": "login",
+			"username": "admin",
+			"password": "password"
+		},
+		{
+			"step": "installPlugin",
+			"pluginZipFile": {
+				"resource": "wordpress.org/plugins",
+				"slug": "link-extension-for-xfn"
+			}
+		},
+		{
+			"step": "activatePlugin",
+			"pluginPath": "link-extension-for-xfn/link-extension-for-xfn.php"
+		},
+		{
+			"step": "runPHP",
+			"code": "<?php require '/wordpress/wp-load.php'; wp_insert_post(array('post_title' => 'XFN Demo Post', 'post_content' => '<!-- wp:paragraph --><p>This is a demo post to showcase the XFN Link Extension plugin. Select any text and add a link to see XFN relationship options in action.</p><!-- /wp:paragraph --><!-- wp:paragraph --><p>Try adding a link and exploring the XFN relationships panel!</p><!-- /wp:paragraph --><!-- wp:buttons --><div class=\"wp-block-buttons\"><!-- wp:button --><div class=\"wp-block-button\"><a class=\"wp-block-button__link wp-element-button\" href=\"https://example.com\">Example Button Link</a></div><!-- /wp:button --></div><!-- /wp:buttons -->', 'post_status' => 'draft')); ?>"
+		}
+	]
+}
