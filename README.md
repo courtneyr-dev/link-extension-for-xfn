@@ -12,6 +12,16 @@ The Link Extension for XFN seamlessly integrates XFN (XHTML Friends Network) rel
 
 XFN is a simple way to represent human relationships using hyperlinks. By adding XFN relationships to your links, you can indicate how you're connected to the people and organizations you link to, creating a more semantic and meaningful web.
 
+## 🎮 Try It Live
+
+**[Launch WordPress Playground Demo](https://wordpress.org/plugins/link-extension-for-xfn/)** - Try the plugin instantly in your browser! Click the "Preview" button to:
+- See XFN in action with pre-configured examples
+- Test buttons, embeds, and inline links with XFN attributes
+- Follow step-by-step testing instructions
+- Inspect XFN relationships in browser DevTools
+
+No installation or setup required - the demo runs entirely in your browser!
+
 ## Features
 
 ### Complete XFN 1.1 Specification Support

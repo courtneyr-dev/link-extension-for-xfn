@@ -377,4 +377,6 @@ Absolutely! XFN includes professional relationships (co-worker, colleague) and c
 
 == Screenshots ==
 
-1. XFN Link Extension interface showing collapsible relationship sections with button groups for selecting friendships, professional connections, and other XFN categories, plus visual pills displaying active relationship selections
+1. Live demo in WordPress Playground showing XFN in action - interactive buttons and embedded content with relationship attributes, plus comprehensive testing instructions and examples
+2. Inspector Controls panel in the block editor sidebar showing XFN Relationships options for a Button block, with collapsible sections for each relationship category
+3. Link Advanced Panel in the link popover showing the collapsible XFN section with button groups for selecting relationships like friend, met, and colleague

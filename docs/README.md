@@ -2,9 +2,17 @@
 
 Welcome to the Link Extension for XFN documentation! This plugin makes it easy to add XFN (XHTML Friends Network) relationship metadata to any link in your WordPress site.
 
-![XFN Link Extension interface showing collapsible relationship sections with button groups for selecting friendships, professional connections, and other XFN categories, plus visual pills displaying active relationship selections](../.wordpress-org/screenshot-1.png)
+![Live demo in WordPress Playground showing XFN in action](images/screenshot-1.png)
 
-*The XFN interface allows you to easily add semantic relationship metadata to any link in WordPress using organized, collapsible sections with visual feedback.*
+*Try the plugin live in WordPress Playground! The demo shows XFN relationships on buttons, embeds, and inline links with comprehensive testing instructions.*
+
+## Try It Live
+
+**[Launch WordPress Playground Demo](https://wordpress.org/plugins/link-extension-for-xfn/)** - Click the "Preview" button to try the plugin instantly in your browser! No installation required. The demo includes:
+- Pre-configured examples with buttons, embeds, and inline links
+- Multiple XFN attributes in action
+- Step-by-step testing instructions
+- Browser DevTools guide to inspect XFN in HTML
 
 ## What is XFN?
 

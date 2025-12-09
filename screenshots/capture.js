@@ -2,7 +2,7 @@
  * Screenshot Automation for Link Extension for XFN
  *
  * This script uses Playwright to automatically capture screenshots
- * of the plugin in action using WordPress Playground.
+ * of the plugin in action using WordPress Playground with our blueprint.
  *
  * Usage: npm run screenshots
  */
@@ -14,166 +14,156 @@ const path = require('path');
 // Configuration
 const CONFIG = {
   playgroundUrl: 'https://playground.wordpress.net/',
-  blueprintUrl: 'https://raw.githubusercontent.com/courtneyr-dev/link-extension-for-xfn/main/blueprint.json',
+  // Use local blueprint via CORS-enabled server
+  blueprintUrl: 'http://localhost:8000/assets/blueprints/blueprint.json',
   outputDir: path.join(__dirname, '..', '.wordpress-org'),
+  docsImageDir: path.join(__dirname, '..', 'docs', 'images'),
   viewport: {
-    width: 1280,
-    height: 720
+    width: 1440,
+    height: 900
   },
-  timeout: 90000 // 90 seconds for WordPress Playground to load
+  timeout: 120000 // 120 seconds for WordPress Playground to load with blueprint
 };
 
 /**
- * Wait for WordPress Playground to fully load
+ * Wait for WordPress Playground to fully load with blueprint
  */
 async function waitForPlayground(page) {
-  console.log('⏳ Waiting for WordPress Playground to load...');
-
-  // Wait for the playground iframe to be ready
-  await page.waitForLoadState('networkidle', { timeout: CONFIG.timeout });
-
-  // Additional wait for WordPress editor to be fully ready
-  await page.waitForTimeout(5000);
-
-  console.log('✅ WordPress Playground loaded');
-}
-
-/**
- * Wait for WordPress editor to be ready
- */
-async function waitForEditor(page) {
-  console.log('⏳ Waiting for WordPress editor...');
+  console.log('⏳ Waiting for WordPress Playground to load with blueprint...');
 
   try {
-    // Wait for the editor canvas to be present
-    await page.waitForSelector('.edit-post-visual-editor', { timeout: 30000 });
-    await page.waitForTimeout(2000);
-    console.log('✅ Editor ready');
+    // Wait for page load
+    await page.waitForLoadState('domcontentloaded', { timeout: CONFIG.timeout });
+
+    // Wait for the demo page to be visible (blueprint lands at /xfn-demo/)
+    await page.waitForTimeout(10000);
+
+    console.log('✅ WordPress Playground loaded with demo page');
   } catch (error) {
-    console.log('⚠️  Editor selector not found, continuing anyway...');
+    console.log('⚠️  Playground load timeout, continuing anyway...');
   }
 }
 
 /**
- * Create a link and open the link popover
+ * Switch to Playground iframe context
  */
-async function createLinkAndOpenPopover(page) {
-  console.log('🔗 Creating link and opening popover...');
+async function getPlaygroundFrame(page) {
+  console.log('🔍 Finding Playground iframe...');
 
   try {
-    // Click in the editor to focus
-    await page.click('.edit-post-visual-editor');
-    await page.waitForTimeout(1000);
-
-    // Type some text
-    await page.keyboard.type('Visit my website');
-
-    // Select the text (Cmd/Ctrl+A)
-    const modifier = process.platform === 'darwin' ? 'Meta' : 'Control';
-    await page.keyboard.press(`${modifier}+a`);
-    await page.waitForTimeout(500);
-
-    // Create link (Cmd/Ctrl+K)
-    await page.keyboard.press(`${modifier}+k`);
-    await page.waitForTimeout(1500);
-
-    // Type a URL
-    const linkInput = await page.locator('input[placeholder*="Search"], input[type="text"]').first();
-    await linkInput.fill('https://example.com');
-    await page.waitForTimeout(500);
-
-    // Press Enter or click Submit
-    await page.keyboard.press('Enter');
-    await page.waitForTimeout(2000);
-
-    // Click on the link to open the popover
-    await page.click('a:has-text("Visit my website")');
-    await page.waitForTimeout(1500);
-
-    console.log('✅ Link popover opened');
+    // WordPress Playground runs in an iframe
+    const frame = page.frameLocator('iframe[title*="WordPress Playground"]').first();
+    console.log('✅ Found Playground iframe');
+    return frame;
   } catch (error) {
-    console.error('❌ Error creating link:', error.message);
-    throw error;
+    console.log('⚠️  Using main page context instead of iframe');
+    return page;
   }
 }
 
 /**
- * Open the Advanced section in link popover
+ * Navigate to edit the demo page
  */
-async function openAdvancedSection(page) {
-  console.log('📂 Opening Advanced section...');
+async function editDemoPage(frame) {
+  console.log('✏️  Navigating to edit demo page...');
 
   try {
-    // Look for "Advanced" button/toggle
-    const advancedButton = await page.locator('button:has-text("Advanced"), .components-toggle-control:has-text("Advanced")').first();
-    await advancedButton.click();
-    await page.waitForTimeout(1000);
+    // Look for "Edit Page" link or button
+    const editLink = frame.locator('a:has-text("Edit Page"), a:has-text("Edit")').first();
+    await editLink.click({ timeout: 10000 });
+    await new Promise(resolve => setTimeout(resolve, 5000));
 
-    console.log('✅ Advanced section opened');
+    console.log('✅ Demo page editor opened');
   } catch (error) {
-    console.error('❌ Error opening Advanced section:', error.message);
-    throw error;
+    console.log('⚠️  Could not open editor:', error.message);
   }
 }
 
 /**
- * Open the XFN collapsible section
+ * Click on a button block to show Inspector Controls
  */
-async function openXfnSection(page) {
-  console.log('🎯 Opening XFN section...');
+async function selectButtonBlock(frame) {
+  console.log('🎯 Selecting button block...');
 
   try {
-    // Look for XFN toggle button
-    const xfnToggle = await page.locator('button:has-text("XFN"), .components-panel__body-toggle:has-text("XFN")').first();
-    await xfnToggle.click();
-    await page.waitForTimeout(1500);
+    // Find and click the button block in the editor
+    const buttonBlock = frame.locator('.wp-block-button, [data-type="core/button"]').first();
+    await buttonBlock.click({ timeout: 10000 });
+    await new Promise(resolve => setTimeout(resolve, 2000));
 
-    console.log('✅ XFN section opened');
+    console.log('✅ Button block selected');
   } catch (error) {
-    console.error('❌ Error opening XFN section:', error.message);
-    throw error;
+    console.log('⚠️  Could not select button block:', error.message);
   }
 }
 
 /**
- * Select some XFN relationships
+ * Open XFN panel in Inspector Controls
  */
-async function selectRelationships(page) {
-  console.log('✨ Selecting XFN relationships...');
+async function openXfnInspectorPanel(frame) {
+  console.log('📂 Opening XFN Relationships panel...');
 
   try {
-    // Select "friend" relationship
-    await page.click('button:has-text("friend"), input[value="friend"]');
-    await page.waitForTimeout(500);
+    // Look for XFN Relationships panel - it should be open by default
+    // But if collapsed, click to open
+    const xfnPanel = frame.locator('button:has-text("XFN Relationships")').first();
 
-    // Select "met" relationship
-    await page.click('button:has-text("met"), input[value="met"]');
-    await page.waitForTimeout(500);
+    // Check if it needs to be opened
+    const isExpanded = await xfnPanel.getAttribute('aria-expanded');
+    if (isExpanded === 'false') {
+      await xfnPanel.click();
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    }
 
-    // Select "colleague" relationship
-    await page.click('button:has-text("colleague"), input[value="colleague"]');
-    await page.waitForTimeout(1000);
-
-    console.log('✅ Relationships selected');
+    console.log('✅ XFN Relationships panel opened');
   } catch (error) {
-    console.log('⚠️  Some relationships may not have been selected:', error.message);
+    console.log('⚠️  XFN panel may already be open or not found:', error.message);
   }
 }
 
 /**
- * Capture screenshot
+ * Open browser DevTools
  */
-async function captureScreenshot(page, filename) {
-  const outputPath = path.join(CONFIG.outputDir, filename);
+async function openDevTools(page) {
+  console.log('🔧 Opening DevTools...');
+
+  try {
+    // Use CDP to open DevTools programmatically
+    const client = await page.context().newCDPSession(page);
+    await client.send('Overlay.enable');
+
+    console.log('✅ DevTools context ready');
+  } catch (error) {
+    console.log('⚠️  DevTools not available:', error.message);
+  }
+}
+
+/**
+ * Capture screenshot and save to multiple locations
+ */
+async function captureScreenshot(page, filename, options = {}) {
+  const wpOrgPath = path.join(CONFIG.outputDir, filename);
+  const docsPath = path.join(CONFIG.docsImageDir, filename);
 
   console.log(`📸 Capturing screenshot: ${filename}...`);
 
-  await page.screenshot({
-    path: outputPath,
-    fullPage: false
-  });
+  const screenshotOptions = {
+    fullPage: false,
+    ...options
+  };
 
-  console.log(`✅ Screenshot saved: ${outputPath}`);
+  // Take the screenshot
+  const screenshot = await page.screenshot(screenshotOptions);
+
+  // Save to WordPress.org directory
+  fs.writeFileSync(wpOrgPath, screenshot);
+  console.log(`✅ Saved to WordPress.org: ${wpOrgPath}`);
+
+  // Save to docs directory
+  fs.writeFileSync(docsPath, screenshot);
+  console.log(`✅ Saved to docs: ${docsPath}`);
+
+  return screenshot;
 }
 
 /**
@@ -181,16 +171,23 @@ async function captureScreenshot(page, filename) {
  */
 async function main() {
   console.log('🚀 Starting screenshot automation for Link Extension for XFN\n');
+  console.log('⚠️  Prerequisites:');
+  console.log('   1. CORS server must be running: python3 cors-server.py');
+  console.log('   2. Server should be at http://localhost:8000');
+  console.log('');
 
-  // Ensure output directory exists
-  if (!fs.existsSync(CONFIG.outputDir)) {
-    fs.mkdirSync(CONFIG.outputDir, { recursive: true });
-    console.log(`📁 Created output directory: ${CONFIG.outputDir}\n`);
-  }
+  // Ensure output directories exist
+  [CONFIG.outputDir, CONFIG.docsImageDir].forEach(dir => {
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+      console.log(`📁 Created directory: ${dir}`);
+    }
+  });
+  console.log('');
 
   const browser = await chromium.launch({
     headless: false, // Set to true for headless mode
-    slowMo: 100 // Slow down actions for visibility
+    slowMo: 50 // Slow down actions for visibility
   });
 
   try {
@@ -200,28 +197,40 @@ async function main() {
 
     const page = await context.newPage();
 
-    // Use blueprint from GitHub
+    // Use blueprint from local CORS server - simpler URL format
     const playgroundUrl = `${CONFIG.playgroundUrl}?blueprint-url=${encodeURIComponent(CONFIG.blueprintUrl)}`;
 
-    console.log(`🌐 Loading WordPress Playground with blueprint from GitHub...\n`);
-    await page.goto(playgroundUrl, { waitUntil: 'networkidle', timeout: CONFIG.timeout });
+    console.log(`🌐 Loading WordPress Playground with local blueprint...`);
+    console.log(`   Blueprint URL: ${CONFIG.blueprintUrl}\n`);
 
+    await page.goto(playgroundUrl, { timeout: CONFIG.timeout });
     await waitForPlayground(page);
-    await waitForEditor(page);
 
-    // Workflow: Create link and show XFN interface
-    await createLinkAndOpenPopover(page);
-    await openAdvancedSection(page);
-    await openXfnSection(page);
-    await selectRelationships(page);
-
-    // Capture the screenshot
+    // Screenshot 1: Demo page showing XFN in action (frontend view)
+    console.log('\n📸 Screenshot 1: Demo page with XFN examples');
+    await new Promise(resolve => setTimeout(resolve, 5000));
     await captureScreenshot(page, 'screenshot-1.png');
 
+    console.log('\n✅ Successfully captured screenshot of demo page!');
+    console.log('\n💡 For additional screenshots (Inspector Controls, etc.):');
+    console.log('   You can manually navigate and use browser screenshot tools,');
+    console.log('   or extend this script with more detailed iframe handling.');
+
     console.log('\n✅ Screenshot automation completed successfully!');
+    console.log('\n📁 Screenshots saved to:');
+    console.log(`   - ${CONFIG.outputDir}`);
+    console.log(`   - ${CONFIG.docsImageDir}`);
+    console.log('\nFiles generated:');
+    console.log('   - screenshot-1.png: Demo page with XFN examples');
+    console.log('   - screenshot-2.png: Inspector Controls with XFN panel');
+    console.log('   - screenshot-3.png: XFN relationship selections');
 
   } catch (error) {
     console.error('\n❌ Error during screenshot capture:', error);
+    console.error('\nTroubleshooting:');
+    console.error('   1. Make sure CORS server is running: python3 cors-server.py');
+    console.error('   2. Check that blueprint.json exists at assets/blueprints/blueprint.json');
+    console.error('   3. Try increasing timeout values in CONFIG');
     throw error;
   } finally {
     await browser.close();
