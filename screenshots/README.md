@@ -2,11 +2,13 @@
 
 This directory contains automated screenshot generation for the Link Extension for XFN plugin.
 
+> **⚠️ Note:** Screenshot automation requires the plugin to be published on WordPress.org. The `blueprint.json` file references the plugin from the WordPress.org directory. Once the plugin is approved, run `npm run screenshots` to generate screenshots automatically.
+
 ## Overview
 
 The `capture.js` script uses Playwright to automate screenshot capture by:
 
-1. Loading WordPress Playground with your plugin pre-installed
+1. Loading WordPress Playground with your plugin pre-installed from WordPress.org
 2. Creating test content and links
 3. Opening the XFN interface
 4. Capturing high-quality screenshots
@@ -62,11 +64,9 @@ Edit `capture.js` to customize:
 
 ### "Plugin not found" error
 
-The script tries to install from WordPress.org. If your plugin isn't published yet:
+The script installs from WordPress.org. **This is expected if your plugin isn't approved yet.**
 
-1. Build a local ZIP: `npm run plugin-zip`
-2. Upload to a temporary location (GitHub releases, your website)
-3. Update the blueprint to use a direct URL instead of WordPress.org
+Wait for WordPress.org approval, then the screenshot automation will work automatically. No code changes needed - the blueprint will work once the plugin is live on WordPress.org.
 
 ### Screenshots look wrong
 
@@ -102,7 +102,7 @@ When you make UI changes to the plugin:
 - Screenshots are automatically excluded from the plugin ZIP via `.distignore`
 - The `.wordpress-org/` directory is tracked in git but excluded from distribution
 - WordPress Playground loads from WordPress.org, so published changes appear immediately
-- For unpublished plugins, you'll need to modify the blueprint to use a direct ZIP URL
+- **Screenshot automation will work automatically once plugin is approved on WordPress.org**
 
 ## Further Customization
 

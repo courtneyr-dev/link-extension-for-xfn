@@ -20,8 +20,8 @@
 		{
 			"step": "installPlugin",
 			"pluginZipFile": {
-				"resource": "url",
-				"url": "https://github.com/courtneyr-dev/link-extension-for-xfn/releases/latest/download/link-extension-for-xfn.zip"
+				"resource": "wordpress.org/plugins",
+				"slug": "link-extension-for-xfn"
 			}
 		},
 		{
