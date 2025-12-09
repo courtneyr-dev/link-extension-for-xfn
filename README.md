@@ -33,7 +33,7 @@ The plugin provides XFN controls in two convenient locations:
 1. **Link Advanced Panel** (Always enabled) - Collapsible XFN section in the link popover for inline paragraph links
 2. **Inspector Controls** (Optional) - Panel in the block sidebar for Button, Image, and Navigation blocks - opens by default when enabled
 
-**Note:** Inspector Controls can be enabled in Settings → XFN Link Extension. The Link Advanced Panel is always available for inline links.
+**Note:** Inspector Controls can be enabled in Settings → Link Extension for XFN. The Link Advanced Panel is always available for inline links.
 
 ### Modern Collapsible Interface
 
@@ -100,7 +100,7 @@ npm run start
 After installation, XFN options are immediately available in the **Link Advanced Panel** for inline links (links within paragraphs, headings, lists, etc.).
 
 To enable XFN for Button, Image, and Navigation blocks:
-1. Go to **Settings → XFN Link Extension**
+1. Go to **Settings → Link Extension for XFN**
 2. Enable **Inspector Controls** (recommended)
 3. Click **Save Changes**
 

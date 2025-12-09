@@ -34,7 +34,7 @@ Use XFN with Navigation blocks, Site Logo, Post Titles, and more.
 1. **Select or create a link** in any block
 2. **Look for the XFN options** in one of two places:
    - **Link Advanced Panel** (inline links) - Always available in the link popover
-   - **Inspector sidebar** (Button/Image/Navigation blocks) - Enable in Settings → XFN Link Extension
+   - **Inspector sidebar** (Button/Image/Navigation blocks) - Enable in Settings → Link Extension for XFN
 3. **Choose your relationships** from the available categories
 4. **Click Apply or Update** to save
 

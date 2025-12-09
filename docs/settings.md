@@ -5,8 +5,8 @@ This guide explains how to configure the Link Extension for XFN plugin settings 
 ## Accessing Plugin Settings
 
 1. **Log in to your WordPress admin dashboard**
-2. **Go to Settings → XFN Link Extension** in the left sidebar
-3. You'll see the **XFN Link Extension Settings** page
+2. **Go to Settings → Link Extension for XFN** in the left sidebar
+3. You'll see the **Link Extension for XFN Settings** page
 
 ## Settings Overview
 
@@ -225,14 +225,14 @@ You'll find the XFN section when you:
 
 ### To Enable an Interface Option
 
-1. **Go to Settings → XFN Link Extension**
+1. **Go to Settings → Link Extension for XFN**
 2. **Check the checkbox** next to the interface option
 3. **Click "Save Changes"** at the bottom
 4. **Refresh any open editor windows** to see the changes
 
 ### To Disable an Interface Option
 
-1. **Go to Settings → XFN Link Extension**
+1. **Go to Settings → Link Extension for XFN**
 2. **Uncheck the checkbox** next to the interface option
 3. **Click "Save Changes"** at the bottom
 4. **Refresh any open editor windows** to remove the interface
@@ -309,7 +309,7 @@ You'll find the XFN section when you:
 
 **Solution:**
 - Settings should persist across plugin updates
-- If they reset, check Settings → XFN Link Extension
+- If they reset, check Settings → Link Extension for XFN
 - Re-enable your preferred options
 - Report this as a bug on [GitHub](https://github.com/courtneyr-dev/link-extension-for-xfn/issues)
 
@@ -404,7 +404,7 @@ $toolbar_enabled = ! empty( $options['enable_floating_toolbar'] );
 ### Reset to Defaults
 
 To reset settings to defaults:
-1. Go to Settings → XFN Link Extension
+1. Go to Settings → Link Extension for XFN
 2. Uncheck all options
 3. Click "Save Changes"
 

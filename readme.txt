@@ -34,7 +34,7 @@ This plugin implements the full XFN 1.1 specification with all relationship cate
 The plugin provides XFN controls in two convenient locations, both featuring a clean collapsible interface:
 
 * **Link Advanced Panel** (Always enabled): Collapsible XFN section in link popovers for inline links - works immediately after installation
-* **Inspector Controls** (Optional): Panel in the block sidebar for Button, Image, and Navigation blocks - enable in Settings → XFN Link Extension
+* **Inspector Controls** (Optional): Panel in the block sidebar for Button, Image, and Navigation blocks - enable in Settings → Link Extension for XFN
 
 ### Seamless Integration with WordPress
 The plugin extends the existing link interfaces without disrupting your workflow:
@@ -64,7 +64,7 @@ The relationship selection interface is designed for optimal usability with mode
 
 After installation, XFN options are immediately available for inline links (links within paragraphs, headings, lists).
 
-To use XFN with Button, Image, and Navigation blocks, go to **Settings → XFN Link Extension** and enable **Inspector Controls**.
+To use XFN with Button, Image, and Navigation blocks, go to **Settings → Link Extension for XFN** and enable **Inspector Controls**.
 
 ### Method 1: Using Link Advanced Panel (Always Available)
 1. Create or edit an inline link in any block (Paragraph, List, etc.)
@@ -75,7 +75,7 @@ To use XFN with Button, Image, and Navigation blocks, go to **Settings → XFN L
 6. Click "Apply" to save your XFN relationships
 
 ### Method 2: Using Inspector Controls (Enable in Settings)
-1. Go to Settings → XFN Link Extension and enable Inspector Controls
+1. Go to Settings → Link Extension for XFN and enable Inspector Controls
 2. Select a Button, Image, or Navigation block
 3. Look in the right sidebar - "XFN Relationships" panel opens by default
 4. Select relationships using radio buttons and checkboxes organized by category
@@ -335,11 +335,11 @@ Absolutely! XFN includes professional relationships (co-worker, colleague) and c
 
 == Installation ==
 
-1. Upload the plugin files to the `/wp-content/plugins/xfn-link-extension` directory, or install the plugin through the WordPress plugins screen directly.
+1. Upload the plugin files to the `/wp-content/plugins/link-extension-for-xfn` directory, or install the plugin through the WordPress plugins screen directly.
 2. Activate the plugin through the 'Plugins' screen in WordPress
 3. No configuration required - XFN options will immediately appear in:
    - **Link Advanced Panel** (Always available): Collapsible XFN section in the Advanced area of link popovers for inline links
-   - **Inspector Controls** (Optional): Panel in the block sidebar for Button, Image, and Navigation blocks - enable in Settings → XFN Link Extension
+   - **Inspector Controls** (Optional): Panel in the block sidebar for Button, Image, and Navigation blocks - enable in Settings → Link Extension for XFN
 4. Start adding relationship context to your links using the intuitive collapsible interface
 
 == Screenshots ==
