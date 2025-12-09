@@ -57,6 +57,7 @@ tmp/
 temp/
 *.xml
 blueprint-local.json
+PLAYGROUND-URL.txt
 
 # Package manager locks (optional - some teams track these)
 # Uncomment if you want to track lock files:
