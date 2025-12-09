@@ -15,10 +15,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Block pattern library with XFN examples
 - Import/export functionality for XFN settings
 
-## [1.0.0] - 2025-12-01
+## [1.0.0] - 2024-12-08
 
 ### Added
 - **Initial release** of Link Extension for XFN
+- **Comprehensive user documentation** in `docs/` directory:
+  - Getting Started guide with XFN overview and quick start
+  - Plugin Settings guide for configuring interface options
+  - Paragraph Links guide for inline text links
+  - Button Links guide for Button block XFN
+  - Image Links guide for clickable images
+  - Other Block Links guide for Navigation, Site Logo, and more
 - **Complete XFN 1.1 specification support** with all relationship categories:
   - Friendship relationships (contact, acquaintance, friend)
   - Physical relationships (met)
@@ -75,6 +82,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Validation of relationship combinations
   - Sanitization of rel attribute values
   - Capability checks for admin functions
+
+### Fixed
+- **Panel synchronization** - Inspector sidebar and floating toolbar now display identical XFN values for block-level links
+- **Block attribute reading** - Button, Image, and other block-level links now correctly read rel attributes from block attributes instead of HTML content
+- **Inspector panel visibility** - XFN Relationships panel now opens by default for Button, Image, and Navigation blocks for improved discoverability
+
+### Changed
+- **Enhanced source code documentation** - Updated readme.txt with explicit documentation about uncompiled source code location, build tools, and GitHub repository
+- **User documentation** - Replaced single USER-GUIDE.md with comprehensive docs/ directory containing separate guides for each link type
 
 ### Technical Implementation
 - **PHP Version**: 7.4+ required
