@@ -365,6 +365,35 @@ Before starting tests, verify:
 
 ---
 
+#### Test Case 2.4: Panel Synchronization (Critical)
+**Priority**: Critical
+
+**Test Blocks**: Button, Image (block-level links)
+
+**Purpose**: Verify that Inspector sidebar and floating toolbar panels display the same XFN values
+
+**Steps**:
+1. Add a Button block
+2. Add URL: "https://example.com"
+3. Open Inspector sidebar → XFN Relationships panel
+4. Select "Friend" and "Met"
+5. Verify values are selected
+6. Click the floating toolbar "XFN" button
+7. Verify the same values ("Friend" and "Met") appear selected
+8. Change to "Colleague" in the floating toolbar
+9. Close and reopen Inspector sidebar
+10. Verify "Colleague" is now selected there
+
+**Expected Result**:
+- Inspector sidebar and floating toolbar show identical XFN values
+- Changes in one panel immediately reflect in the other
+- Both panels read from the same block attribute source
+- No mismatched states between panels
+
+**Pass/Fail**: ___________
+
+---
+
 ### Test Suite 3: Block Compatibility
 
 #### Test Case 3.1: Button Block
@@ -374,13 +403,18 @@ Before starting tests, verify:
 1. Add Button block
 2. Add text: "Click Here"
 3. Add URL: "https://example.com"
-4. Add XFN relationships via toolbar
-5. Save and view frontend
+4. Check Inspector sidebar
+5. Verify "XFN Relationships" panel is open by default
+6. Add XFN relationships (select "Friend")
+7. Save and view frontend
+8. Inspect HTML to verify rel attribute
 
 **Expected Result**:
+- XFN Relationships panel visible and open by default in Inspector sidebar
 - XFN controls accessible via toolbar
-- Relationships save correctly
-- Frontend HTML correct
+- Relationships save automatically as you select them
+- Frontend HTML shows: `<a ... rel="friend">`
+- rel attribute contains selected XFN values
 
 **Pass/Fail**: ___________
 
