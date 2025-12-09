@@ -200,33 +200,10 @@ async function main() {
 
     const page = await context.newPage();
 
-    // Build Playground URL with blueprint
-    const playgroundUrl = `${CONFIG.playgroundUrl}#${encodeURIComponent(JSON.stringify({
-      landingPage: '/wp-admin/post-new.php',
-      preferredVersions: {
-        php: '8.0',
-        wp: 'latest'
-      },
-      features: {
-        networking: true
-      },
-      steps: [
-        {
-          step: 'login',
-          username: 'admin',
-          password: 'password'
-        },
-        {
-          step: 'installPlugin',
-          pluginZipFile: {
-            resource: 'wordpress.org/plugins',
-            slug: 'link-extension-for-xfn'
-          }
-        }
-      ]
-    }))}`;
+    // Use blueprint from GitHub
+    const playgroundUrl = `${CONFIG.playgroundUrl}?blueprint-url=${encodeURIComponent(CONFIG.blueprintUrl)}`;
 
-    console.log(`🌐 Loading WordPress Playground...\n`);
+    console.log(`🌐 Loading WordPress Playground with blueprint from GitHub...\n`);
     await page.goto(playgroundUrl, { waitUntil: 'networkidle', timeout: CONFIG.timeout });
 
     await waitForPlayground(page);
