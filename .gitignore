@@ -38,6 +38,8 @@ playwright-report/
 # Deployment
 *.zip
 test-dist/
+wordpress-org-upload/
+WORDPRESS-ORG-UPLOAD-README.md
 
 # Logs
 *.log
@@ -53,6 +55,8 @@ yarn-error.log*
 # Temporary files
 tmp/
 temp/
+*.xml
+blueprint-local.json
 
 # Package manager locks (optional - some teams track these)
 # Uncomment if you want to track lock files:

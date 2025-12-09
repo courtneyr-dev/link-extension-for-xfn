@@ -26,15 +26,14 @@ This plugin implements the full XFN 1.1 specification with all relationship cate
 - **Romantic**: muse, crush, date, sweetheart
 - **Identity**: me (link to yourself)
 
-### Triple Interface Integration
+### Dual Interface Integration
 
-The plugin provides XFN controls in three convenient locations:
+The plugin provides XFN controls in two convenient locations:
 
 1. **Link Advanced Panel** (Always enabled) - Collapsible XFN section in the link popover for inline paragraph links
 2. **Inspector Controls** (Optional) - Panel in the block sidebar for Button, Image, and Navigation blocks - opens by default when enabled
-3. **Floating Toolbar** (Optional) - "XFN" button in the block toolbar for quick access
 
-**Note:** Inspector Controls and Floating Toolbar can be enabled in Settings → XFN Link Extension. The Link Advanced Panel is always available for inline links.
+**Note:** Inspector Controls can be enabled in Settings → XFN Link Extension. The Link Advanced Panel is always available for inline links.
 
 ### Modern Collapsible Interface
 
@@ -46,9 +45,9 @@ The plugin provides XFN controls in three convenient locations:
 
 ## Screenshot
 
-![Link Extension for XFN interface showing the floating toolbar with collapsible sections, relationship selection buttons organized by category, and visual relationship pills displaying active selections](.wordpress-org/screenshot-1.png)
+![Link Extension for XFN interface showing collapsible sections, relationship selection buttons organized by category, and visual relationship pills displaying active selections](.wordpress-org/screenshot-1.png)
 
-*The XFN interface in action: Floating toolbar with expandable relationship categories, button groups for easy selection, and visual pills showing active relationships at a glance.*
+*The XFN interface in action: Collapsible relationship categories with button groups for easy selection, and visual pills showing active relationships at a glance.*
 
 ## Documentation
 
@@ -102,7 +101,7 @@ After installation, XFN options are immediately available in the **Link Advanced
 
 To enable XFN for Button, Image, and Navigation blocks:
 1. Go to **Settings → XFN Link Extension**
-2. Enable **Inspector Controls** (recommended) and/or **Floating Toolbar**
+2. Enable **Inspector Controls** (recommended)
 3. Click **Save Changes**
 
 ### Adding XFN to Inline Links (Paragraphs, Lists, etc.)
@@ -116,17 +115,11 @@ To enable XFN for Button, Image, and Navigation blocks:
 
 ### Adding XFN to Button/Image/Navigation Blocks
 
-**If Inspector Controls is enabled:**
+With Inspector Controls enabled:
 1. Select the Button/Image/Navigation block
 2. Look in the right sidebar (Inspector)
 3. Find "XFN Relationships" panel (opens by default)
 4. Select relationships - they save automatically
-
-**If Floating Toolbar is enabled:**
-1. Select the block
-2. Click the "XFN" button in the toolbar
-3. Expand the XFN section
-4. Select relationships
 
 ## Development
 
