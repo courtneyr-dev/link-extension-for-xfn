@@ -48,6 +48,17 @@ The plugin provides XFN controls in three convenient locations:
 
 *The XFN interface in action: Floating toolbar with expandable relationship categories, button groups for easy selection, and visual pills showing active relationships at a glance.*
 
+## Documentation
+
+Comprehensive user guides are available in the [`docs/`](docs/) directory:
+
+- **[Getting Started](docs/README.md)** - Quick start guide and XFN overview
+- **[Plugin Settings](docs/settings.md)** - Configure where XFN options appear
+- **[Paragraph Links](docs/paragraph-links.md)** - Add XFN to inline text links
+- **[Button Links](docs/button-links.md)** - Add XFN to Button blocks
+- **[Image Links](docs/image-links.md)** - Add XFN to clickable images
+- **[Other Block Links](docs/other-block-links.md)** - Navigation, Site Logo, and more
+
 ## Requirements
 
 - **WordPress**: 6.4 or higher
