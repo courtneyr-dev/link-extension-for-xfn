@@ -1,0 +1,173 @@
+<!-- wp:heading -->
+<h2 class="wp-block-heading">XFN Relationship Testing Page</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>This page contains various types of links with XFN relationships applied. Use browser DevTools to inspect each link and verify the rel attributes.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">1. Inline Paragraph Links</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Here is a link to <a href="https://example.com/friend" rel="friend met">my friend John</a> who I met at a conference. I also work with <a href="https://example.com/colleague" rel="colleague met">Sarah, my colleague</a>, and here is a link to <a href="https://courtneyr.dev" rel="me">my personal website</a>.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">2. Button Block with XFN</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>This button has friend + met + colleague relationships:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:buttons -->
+<div class="wp-block-buttons"><!-- wp:button {"metadata":{"rel":"friend met colleague"}} -->
+<div class="wp-block-button"><a class="wp-block-button__link wp-element-button" href="https://example.com/coworker">Visit My Coworker</a></div>
+<!-- /wp:button --></div>
+<!-- /wp:buttons -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">3. Image Block with Link and XFN</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Image linked to a friend's portfolio:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {"sizeSlug":"large","linkDestination":"custom","metadata":{"rel":"friend acquaintance"}} -->
+<figure class="wp-block-image size-large"><a href="https://example.com/portfolio"><img src="https://via.placeholder.com/800x400/4A90E2/FFFFFF?text=Portfolio+Image" alt="Portfolio"/></a></figure>
+<!-- /wp:image -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">4. Multiple Buttons with Different XFN Relationships</h3>
+<!-- /wp:heading -->
+
+<!-- wp:buttons -->
+<div class="wp-block-buttons"><!-- wp:button {"metadata":{"rel":"spouse"}} -->
+<div class="wp-block-button"><a class="wp-block-button__link wp-element-button" href="https://example.com/spouse">My Spouse</a></div>
+<!-- /wp:button -->
+
+<!-- wp:button {"metadata":{"rel":"co-worker met"}} -->
+<div class="wp-block-button"><a class="wp-block-button__link wp-element-button" href="https://example.com/team">Team Member</a></div>
+<!-- /wp:button -->
+
+<!-- wp:button {"metadata":{"rel":"me"}} -->
+<div class="wp-block-button"><a class="wp-block-button__link wp-element-button" href="https://courtneyr.dev">My Profile</a></div>
+<!-- /wp:button --></div>
+<!-- /wp:buttons -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">5. Embed Block with XFN</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>YouTube embed from a friend's channel (XFN stored in metadata):</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:embed {"url":"https://www.youtube.com/watch?v=dQw4w9WgXcQ","type":"video","providerNameSlug":"youtube","responsive":true,"className":"wp-embed-aspect-16-9 wp-has-aspect-ratio","metadata":{"rel":"friend colleague"}} -->
+<figure class="wp-block-embed is-type-video is-provider-youtube wp-block-embed-youtube wp-embed-aspect-16-9 wp-has-aspect-ratio"><div class="wp-block-embed__wrapper">
+https://www.youtube.com/watch?v=dQw4w9WgXcQ
+</div></figure>
+<!-- /wp:embed -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">6. List with Inline Links</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list"><!-- wp:list-item -->
+<li><a href="https://example.com/contact1" rel="contact">Contact Person</a> - Basic contact</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><a href="https://example.com/acquaintance" rel="acquaintance met">Acquaintance</a> - Someone I've met</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><a href="https://example.com/family" rel="sibling">My Sibling</a> - Family member</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><a href="https://example.com/romantic" rel="sweetheart met">My Partner</a> - Romantic relationship</li>
+<!-- /wp:list-item --></ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">How to Verify XFN Attributes</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list"><!-- wp:list-item -->
+<li>Right-click any link above and select <strong>Inspect</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Look for the <code>rel</code> attribute in the HTML</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>You should see XFN values like <code>rel="friend met"</code></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Note: Embed blocks store XFN in metadata but may not display in frontend HTML</li>
+<!-- /wp:list-item --></ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Quick Console Test</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Open your browser console (F12) and paste this code to find all XFN links:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>const xfnValues = ['contact', 'acquaintance', 'friend', 'met', 'co-worker', 'colleague', 'co-resident', 'neighbor', 'child', 'parent', 'sibling', 'spouse', 'kin', 'muse', 'crush', 'date', 'sweetheart', 'me'];
+document.querySelectorAll('a[rel]').forEach(link =&gt; {
+  const relValues = link.rel.split(' ');
+  const xfnFound = relValues.filter(val =&gt; xfnValues.includes(val));
+  if (xfnFound.length &gt; 0) {
+    console.log('✓ XFN Link:', link.textContent.trim());
+    console.log('  XFN:', xfnFound.join(', '));
+    console.log('  Full rel:', link.rel);
+    console.log('---');
+  }
+});</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Expected Results</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When you inspect the links on this page, you should see:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list"><!-- wp:list-item -->
+<li><strong>"my friend John"</strong> → <code>rel="friend met"</code></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>"Sarah, my colleague"</strong> → <code>rel="colleague met"</code></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>"my personal website"</strong> → <code>rel="me"</code></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Button "Visit My Coworker"</strong> → <code>rel="friend met colleague"</code></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Button "My Spouse"</strong> → <code>rel="spouse"</code></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>List items</strong> → Various XFN relationships</li>
+<!-- /wp:list-item --></ul>
+<!-- /wp:list -->

@@ -13,7 +13,7 @@ NC='\033[0m' # No Color
 
 # Plugin information
 PLUGIN_SLUG="link-extension-for-xfn"
-PLUGIN_VERSION="1.0.1"
+PLUGIN_VERSION="1.0.2"
 SVN_URL="https://plugins.svn.wordpress.org/${PLUGIN_SLUG}/"
 SVN_DIR="/tmp/${PLUGIN_SLUG}-svn"
 
@@ -80,6 +80,15 @@ if [ -d "$OLDPWD/.wordpress-org" ]; then
     echo -e "${GREEN}✓ Assets copied${NC}"
 else
     echo -e "${YELLOW}⚠️  No .wordpress-org directory found, skipping assets${NC}"
+fi
+
+# Copy blueprint to assets/blueprints for Playground preview
+if [ -f "$OLDPWD/assets/blueprints/blueprint.json" ]; then
+    mkdir -p assets/blueprints
+    cp "$OLDPWD/assets/blueprints/blueprint.json" assets/blueprints/
+    echo -e "${GREEN}✓ Blueprint copied to assets/blueprints${NC}"
+else
+    echo -e "${YELLOW}⚠️  No blueprint.json found, skipping${NC}"
 fi
 echo ""
 

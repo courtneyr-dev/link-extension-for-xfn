@@ -15,6 +15,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Block pattern library with XFN examples
 - Import/export functionality for XFN settings
 
+## [1.0.2] - 2024-12-09
+
+### Added
+- **Embed block support**: XFN relationships now work with all embed blocks (YouTube, Twitter, WordPress, etc.)
+  - Added `core/embed` to supported blocks list in Inspector Controls
+  - Server-side filter injects XFN attributes into frontend HTML
+  - Embeds with links get `rel="..."` attribute
+  - Embeds without links get `data-xfn-rel="..."` on figure element
+- **WordPress Playground blueprint**: Live preview now available on WordPress.org
+  - Comprehensive demo post with inline links, buttons, and embeds
+  - Auto-enables Inspector Controls for immediate testing
+  - Shows multiple XFN attributes on various block types
+  - Includes instructions for inspecting XFN in browser
+- **Documentation updates**: All docs now mention embed block support
+  - Updated readme.txt and README.md
+  - Added embed block section to "Integration with Popular Blocks"
+  - Updated Quick Start guides to include embed blocks
+
+### Fixed
+- Blueprint.json now in correct location (`assets/blueprints/`) for WordPress.org
+- Embed blocks now properly output XFN relationships to frontend HTML
+
+### Technical
+- Added `xfn_render_embed_block()` filter function
+- Hooks into `render_block` to modify embed output
+- Properly sanitizes and combines XFN with existing rel attributes
+- Handles both linked and non-linked embed types
+
 ## [1.0.0] - 2024-12-08
 
 ### Added

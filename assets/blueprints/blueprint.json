@@ -1,0 +1,40 @@
+{
+	"$schema": "https://playground.wordpress.net/blueprint-schema.json",
+	"landingPage": "/wp-admin/post-new.php",
+	"preferredVersions": {
+		"php": "8.0",
+		"wp": "latest"
+	},
+	"phpExtensionBundles": [
+		"kitchen-sink"
+	],
+	"features": {
+		"networking": true
+	},
+	"steps": [
+		{
+			"step": "login",
+			"username": "admin",
+			"password": "password"
+		},
+		{
+			"step": "installPlugin",
+			"pluginZipFile": {
+				"resource": "wordpress.org/plugins",
+				"slug": "link-extension-for-xfn"
+			}
+		},
+		{
+			"step": "activatePlugin",
+			"pluginPath": "link-extension-for-xfn/link-extension-for-xfn.php"
+		},
+		{
+			"step": "runPHP",
+			"code": "<?php require '/wordpress/wp-load.php'; wp_insert_post(array('post_title' => 'XFN Demo Post - Try It Out!', 'post_content' => '<!-- wp:heading --><h2 class=\"wp-block-heading\">Welcome to XFN Link Extension Demo</h2><!-- /wp:heading --><!-- wp:paragraph --><p>This demo showcases how XFN (XHTML Friends Network) relationships work across different block types. Inspect the links below to see the <code>rel</code> attributes in action!</p><!-- /wp:paragraph --><!-- wp:heading {\"level\":3} --><h3 class=\"wp-block-heading\">Inline Paragraph Links with Multiple XFN Attributes</h3><!-- /wp:heading --><!-- wp:paragraph --><p>I work with <a href=\"https://example.com/sarah\" rel=\"colleague met co-worker\">Sarah, my colleague</a> at the office. She is also someone I have met in person. Check out <a href=\"https://example.com/john\" rel=\"friend met\">my friend John'\''s website</a> - we'\''ve been friends for years! You can also visit <a href=\"https://courtneyr.dev\" rel=\"me\">my personal website</a> to learn more about me.</p><!-- /wp:paragraph --><!-- wp:paragraph --><p>My <a href=\"https://example.com/family\" rel=\"sibling met\">brother'\''s blog</a> has great content about technology and design.</p><!-- /wp:paragraph --><!-- wp:heading {\"level\":3} --><h3 class=\"wp-block-heading\">Button Block with XFN</h3><!-- /wp:heading --><!-- wp:paragraph --><p>This button has multiple XFN relationships (friend + met + colleague):</p><!-- /wp:paragraph --><!-- wp:buttons --><div class=\"wp-block-buttons\"><!-- wp:button {\"metadata\":{\"rel\":\"friend met colleague\"}} --><div class=\"wp-block-button\"><a class=\"wp-block-button__link wp-element-button\" href=\"https://example.com/coworker-friend\">Visit My Friend & Colleague</a></div><!-- /wp:button --></div><!-- /wp:buttons --><!-- wp:heading {\"level\":3} --><h3 class=\"wp-block-heading\">Embed Block with XFN</h3><!-- /wp:heading --><!-- wp:paragraph --><p>This YouTube video is from a friend'\''s channel (XFN: friend + met):</p><!-- /wp:paragraph --><!-- wp:embed {\"url\":\"https://www.youtube.com/watch?v=dQw4w9WgXcQ\",\"type\":\"video\",\"providerNameSlug\":\"youtube\",\"metadata\":{\"rel\":\"friend met\"}} --><figure class=\"wp-block-embed is-type-video is-provider-youtube wp-block-embed-youtube wp-embed-aspect-16-9 wp-has-aspect-ratio\"><div class=\"wp-block-embed__wrapper\">https://www.youtube.com/watch?v=dQw4w9WgXcQ</div></figure><!-- /wp:embed --><!-- wp:heading {\"level\":3} --><h3 class=\"wp-block-heading\">How to Inspect XFN Attributes</h3><!-- /wp:heading --><!-- wp:list {\"ordered\":true} --><ol class=\"wp-block-list\"><!-- wp:list-item --><li>Right-click any link above and select <strong>Inspect</strong></li><!-- /wp:list-item --><!-- wp:list-item --><li>Look for the <code>rel</code> attribute in the <code>&lt;a&gt;</code> tag</li><!-- /wp:list-item --><!-- wp:list-item --><li>For inline links: <code>rel=\"colleague met co-worker\"</code></li><!-- /wp:list-item --><!-- wp:list-item --><li>For embeds: <code>data-xfn-rel=\"friend met\"</code> on the figure element</li><!-- /wp:list-item --></ol><!-- /wp:list --><!-- wp:paragraph --><p><strong>Now try adding your own XFN relationships!</strong> Go to <strong>Settings → Link Extension for XFN</strong> and enable Inspector Controls to add XFN to buttons, images, and embeds via the sidebar.</p><!-- /wp:paragraph -->', 'post_status' => 'draft')); ?>"
+		},
+		{
+			"step": "runPHP",
+			"code": "<?php require '/wordpress/wp-load.php'; update_option('xfn_link_extension_options', array('enable_inspector_controls' => true, 'enable_floating_toolbar' => false)); ?>"
+		}
+	]
+}

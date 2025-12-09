@@ -8,7 +8,7 @@ Extends the native WordPress block editor link interface to include XFN (XHTML F
 
 ## Overview
 
-The Link Extension for XFN seamlessly integrates XFN (XHTML Friends Network) relationship options into WordPress's native link interface. This plugin enhances every block that supports links—including Paragraph, Button, Navigation, List, and more—with comprehensive relationship tagging capabilities through an intuitive collapsible interface.
+The Link Extension for XFN seamlessly integrates XFN (XHTML Friends Network) relationship options into WordPress's native link interface. This plugin enhances every block that supports links—including Paragraph, Button, Navigation, List, Embed, and more—with comprehensive relationship tagging capabilities through an intuitive collapsible interface.
 
 XFN is a simple way to represent human relationships using hyperlinks. By adding XFN relationships to your links, you can indicate how you're connected to the people and organizations you link to, creating a more semantic and meaningful web.
 
@@ -31,7 +31,7 @@ This plugin implements the full XFN 1.1 specification with all relationship cate
 The plugin provides XFN controls in two convenient locations:
 
 1. **Link Advanced Panel** (Always enabled) - Collapsible XFN section in the link popover for inline paragraph links
-2. **Inspector Controls** (Optional) - Panel in the block sidebar for Button, Image, and Navigation blocks - opens by default when enabled
+2. **Inspector Controls** (Optional) - Panel in the block sidebar for Button, Image, Navigation, and Embed blocks - opens by default when enabled
 
 **Note:** Inspector Controls can be enabled in Settings → Link Extension for XFN. The Link Advanced Panel is always available for inline links.
 

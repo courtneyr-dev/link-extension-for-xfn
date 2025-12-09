@@ -3,7 +3,7 @@
  * Plugin Name:       Link Extension for XFN
  * Plugin URI:        https://github.com/courtneyr-dev/xfn-link-extension
  * Description:       Extends the native Gutenberg link interface to include XFN (XHTML Friends Network) relationship options across all blocks that support links. Features floating toolbar access, Inspector Controls integration, and Link Advanced panel support.
- * Version:           1.0.1
+ * Version:           1.0.2
  * Requires at least: 6.4
  * Tested up to:      6.9
  * Requires PHP:      7.4
@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Define plugin constants
-define( 'XFN_LINK_EXTENSION_VERSION', '1.0.1' );
+define( 'XFN_LINK_EXTENSION_VERSION', '1.0.2' );
 define( 'XFN_LINK_EXTENSION_PLUGIN_FILE', __FILE__ );
 define( 'XFN_LINK_EXTENSION_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'XFN_LINK_EXTENSION_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
@@ -653,3 +653,79 @@ function xfn_validate_relationships( $relationships ) {
 function xfn_sanitize_rel_attribute( $rel_value ) {
 	return XFN_Link_Extension::sanitize_rel_attribute( $rel_value );
 }
+
+/**
+ * Filter embed block output to add XFN rel attributes
+ *
+ * Modifies the rendered HTML of embed blocks to include XFN relationships
+ * stored in block metadata. Adds rel attributes to any links found in the
+ * embed output, or adds a data-rel attribute to the figure element.
+ *
+ * @since 1.0.2
+ * @param string $block_content The block content about to be rendered
+ * @param array  $block The full block, including name and attributes
+ * @return string Modified block content with XFN attributes
+ */
+function xfn_render_embed_block( $block_content, $block ) {
+	// Only process embed blocks
+	if ( 'core/embed' !== $block['blockName'] ) {
+		return $block_content;
+	}
+
+	// Check if block has XFN metadata
+	if ( empty( $block['attrs']['metadata']['rel'] ) ) {
+		return $block_content;
+	}
+
+	$rel_value = $block['attrs']['metadata']['rel'];
+
+	// Sanitize the rel value
+	$rel_value = XFN_Link_Extension::sanitize_rel_attribute( $rel_value );
+
+	if ( empty( $rel_value ) ) {
+		return $block_content;
+	}
+
+	// Try to find and modify any existing links in the embed output
+	if ( preg_match( '/<a\s+([^>]*?)>/', $block_content ) ) {
+		// Embed contains a link - add rel to it
+		$block_content = preg_replace_callback(
+			'/<a\s+([^>]*?)>/',
+			function( $matches ) use ( $rel_value ) {
+				$attrs = $matches[1];
+
+				// Check if rel already exists
+				if ( preg_match( '/rel=["\']([^"\']*)["\']/', $attrs, $rel_match ) ) {
+					// Combine existing rel with XFN
+					$existing_rel = $rel_match[1];
+					$parsed = XFN_Link_Extension::parse_rel_attribute( $existing_rel );
+					$new_xfn = XFN_Link_Extension::parse_rel_attribute( $rel_value );
+					$combined = XFN_Link_Extension::combine_rel_values( $new_xfn['xfn'], $parsed['other'] );
+
+					// Replace existing rel
+					$attrs = preg_replace(
+						'/rel=["\'][^"\']*["\']/',
+						'rel="' . esc_attr( $combined ) . '"',
+						$attrs
+					);
+				} else {
+					// Add new rel attribute
+					$attrs .= ' rel="' . esc_attr( $rel_value ) . '"';
+				}
+
+				return '<a ' . $attrs . '>';
+			},
+			$block_content
+		);
+	} else {
+		// No link in embed output - add data-xfn-rel to figure element for semantic purposes
+		$block_content = preg_replace(
+			'/<figure\s+([^>]*?)class="([^"]*)"([^>]*)>/',
+			'<figure $1class="$2"$3 data-xfn-rel="' . esc_attr( $rel_value ) . '">',
+			$block_content
+		);
+	}
+
+	return $block_content;
+}
+add_filter( 'render_block', 'xfn_render_embed_block', 10, 2 );

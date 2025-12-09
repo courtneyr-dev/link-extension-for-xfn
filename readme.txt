@@ -3,7 +3,7 @@
 Developers:        courane01
 Tags:              xfn, links, relationships, accessibility, gutenberg
 Tested up to:      6.9
-Stable tag:        1.0.1
+Stable tag:        1.0.2
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 6.4
@@ -34,12 +34,12 @@ This plugin implements the full XFN 1.1 specification with all relationship cate
 The plugin provides XFN controls in two convenient locations, both featuring a clean collapsible interface:
 
 * **Link Advanced Panel** (Always enabled): Collapsible XFN section in link popovers for inline links - works immediately after installation
-* **Inspector Controls** (Optional): Panel in the block sidebar for Button, Image, and Navigation blocks - enable in Settings → Link Extension for XFN
+* **Inspector Controls** (Optional): Panel in the block sidebar for Button, Image, Navigation, and Embed blocks - enable in Settings → Link Extension for XFN
 
 ### Seamless Integration with WordPress
 The plugin extends the existing link interfaces without disrupting your workflow:
 
-* Works with Paragraph, Button, Navigation, List, and all other link-supporting blocks
+* Works with Paragraph, Button, Navigation, List, Embed, and all other link-supporting blocks
 * Compatible with both Post Editor and Site Editor
 * Preserves existing rel attributes (nofollow, noopener, noreferrer)
 * No configuration required - works immediately after activation
@@ -64,7 +64,7 @@ The relationship selection interface is designed for optimal usability with mode
 
 After installation, XFN options are immediately available for inline links (links within paragraphs, headings, lists).
 
-To use XFN with Button, Image, and Navigation blocks, go to **Settings → Link Extension for XFN** and enable **Inspector Controls**.
+To use XFN with Button, Image, Navigation, and Embed blocks, go to **Settings → Link Extension for XFN** and enable **Inspector Controls**.
 
 ### Method 1: Using Link Advanced Panel (Always Available)
 1. Create or edit an inline link in any block (Paragraph, List, etc.)
@@ -76,7 +76,7 @@ To use XFN with Button, Image, and Navigation blocks, go to **Settings → Link 
 
 ### Method 2: Using Inspector Controls (Enable in Settings)
 1. Go to Settings → Link Extension for XFN and enable Inspector Controls
-2. Select a Button, Image, or Navigation block
+2. Select a Button, Image, Navigation, or Embed block
 3. Look in the right sidebar - "XFN Relationships" panel opens by default
 4. Select relationships using radio buttons and checkboxes organized by category
 5. Relationships save automatically as you select them
@@ -125,6 +125,9 @@ Use the Inspector Controls for quick relationship assignment. The XFN Relationsh
 
 ### Navigation Block
 Enhance your site navigation with relationship context using the Inspector Controls. Mark links to your social profiles, partner sites, or affiliated organizations with the organized collapsible interface.
+
+### Embed Block
+Add semantic meaning to embedded content from YouTube, Twitter, and other platforms. Use the Inspector Controls to indicate relationships with embedded content creators, marking videos from colleagues, friends, or your own channels. Perfect for blogrolls, resource pages, and content aggregation.
 
 ### Paragraph Block (Inline Links)
 For inline links within paragraph content, use the collapsible XFN section in the link popover's Advanced area to add relationship context without overwhelming the interface.
@@ -202,7 +205,7 @@ If you're migrating from another XFN plugin:
 
 XFN controls are available in two locations, both featuring collapsible interfaces:
 1. **Link Advanced Panel** (Always available): In the Advanced section of inline link popovers as a collapsible "XFN" section
-2. **Inspector Controls** (Enable in Settings): In the block settings sidebar under "XFN Relationships" panel for Button, Image, and Navigation blocks
+2. **Inspector Controls** (Enable in Settings): In the block settings sidebar under "XFN Relationships" panel for Button, Image, Navigation, and Embed blocks
 
 ### Why use a collapsible interface?
 
@@ -315,6 +318,17 @@ Absolutely! XFN includes professional relationships (co-worker, colleague) and c
 
 ## Changelog
 
+= 1.0.2 =
+* Added: Full embed block support (YouTube, Twitter, WordPress embeds, etc.)
+* Added: Server-side filter to output XFN attributes on frontend for embed blocks
+* Added: WordPress Playground blueprint for live preview on WordPress.org
+* Added: Comprehensive demo post with inline links, buttons, and embeds showing multiple XFN attributes
+* Fixed: Blueprint.json now in correct location for WordPress.org Playground integration
+* Fixed: Embed blocks now properly output XFN relationships to frontend HTML (rel or data-xfn-rel)
+* Updated: Documentation to include embed block support throughout
+* Updated: Inspector Controls now support core/embed block type
+* Technical: Added xfn_render_embed_block() filter hooking into render_block
+
 = 1.0.1 =
 * Fixed: Corrected plugin naming throughout - now consistently uses "Link Extension for XFN"
 * Fixed: Installation directory path in readme (xfn-link-extension → link-extension-for-xfn)
@@ -347,7 +361,7 @@ Absolutely! XFN includes professional relationships (co-worker, colleague) and c
 2. Activate the plugin through the 'Plugins' screen in WordPress
 3. No configuration required - XFN options will immediately appear in:
    - **Link Advanced Panel** (Always available): Collapsible XFN section in the Advanced area of link popovers for inline links
-   - **Inspector Controls** (Optional): Panel in the block sidebar for Button, Image, and Navigation blocks - enable in Settings → Link Extension for XFN
+   - **Inspector Controls** (Optional): Panel in the block sidebar for Button, Image, Navigation, and Embed blocks - enable in Settings → Link Extension for XFN
 4. Start adding relationship context to your links using the intuitive collapsible interface
 
 == Screenshots ==

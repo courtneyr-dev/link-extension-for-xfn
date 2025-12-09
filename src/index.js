@@ -504,6 +504,7 @@ const XFNInspectorControls = ( { attributes, setAttributes, name } ) => {
 		'core/site-logo',
 		'core/post-title',
 		'core/query-title',
+		'core/embed',
 	];
 	const shouldBeOpenByDefault = blockLevelLinks.includes( name );
 
@@ -769,6 +770,7 @@ function injectXFNControls() {
 			'core/site-logo',
 			'core/post-title',
 			'core/query-title',
+			'core/embed',
 		];
 
 		if ( selectedBlock && blockLevelLinks.includes( selectedBlock.name ) ) {
@@ -1213,6 +1215,7 @@ function applyXFNToCreatedLink() {
 		'core/site-logo',
 		'core/post-title',
 		'core/query-title',
+		'core/embed',
 	];
 
 	if ( blockLevelLinks.includes( selectedBlock.name ) ) {
@@ -1450,6 +1453,7 @@ const withXFNControls = createHigherOrderComponent( ( BlockEdit ) => {
 			'core/site-logo',
 			'core/post-title',
 			'core/query-title',
+			'core/embed',
 		];
 
 		// Check if this block type should have XFN controls in inspector
