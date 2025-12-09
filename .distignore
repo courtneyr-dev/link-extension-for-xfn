@@ -8,6 +8,9 @@
 .gitattributes
 .gitignore
 
+# Claude Code
+/.claude
+
 # Development files
 /node_modules
 /vendor
@@ -71,6 +74,10 @@
 /test-dist
 /wordpress-org-upload
 /WORDPRESS-ORG-UPLOAD-README.md
+
+# Deployment files
+/deploy-to-wordpress-org.sh
+/SVN-DEPLOYMENT-GUIDE.md
 
 # Logs
 *.log
