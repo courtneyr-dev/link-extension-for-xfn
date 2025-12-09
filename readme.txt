@@ -338,11 +338,10 @@ Absolutely! XFN includes professional relationships (co-worker, colleague) and c
 1. Upload the plugin files to the `/wp-content/plugins/xfn-link-extension` directory, or install the plugin through the WordPress plugins screen directly.
 2. Activate the plugin through the 'Plugins' screen in WordPress
 3. No configuration required - XFN options will immediately appear in:
-   - The floating toolbar for link blocks (Button, Navigation, etc.) with an expandable XFN section
-   - The Inspector Controls sidebar for supported blocks with organized panels
-   - The Advanced section of link popovers for inline links as a collapsible XFN section
-4. Start adding relationship context to your links using the intuitive collapsible interface across all blocks that support links
+   - **Link Advanced Panel** (Always available): Collapsible XFN section in the Advanced area of link popovers for inline links
+   - **Inspector Controls** (Optional): Panel in the block sidebar for Button, Image, and Navigation blocks - enable in Settings → XFN Link Extension
+4. Start adding relationship context to your links using the intuitive collapsible interface
 
 == Screenshots ==
 
-1. XFN relationship interface showing the floating toolbar with collapsible sections and relationship selection options
+1. XFN Link Extension interface showing collapsible relationship sections with button groups for selecting friendships, professional connections, and other XFN categories, plus visual pills displaying active relationship selections

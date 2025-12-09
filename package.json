@@ -14,10 +14,12 @@
 		"plugin-zip": "wp-scripts plugin-zip",
 		"start": "wp-scripts start --blocks-manifest",
 		"dev": "npm run start",
-		"sync": "./sync-to-local.sh"
+		"sync": "./sync-to-local.sh",
+		"screenshots": "node screenshots/capture.js"
 	},
 	"devDependencies": {
-		"@wordpress/scripts": "^30.15.0"
+		"@wordpress/scripts": "^30.15.0",
+		"playwright": "^1.48.0"
 	},
 	"dependencies": {
 		"@wordpress/icons": "^11.3.0"
