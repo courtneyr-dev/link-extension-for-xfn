@@ -30,12 +30,11 @@ This plugin implements the full XFN 1.1 specification with all relationship cate
 * **Romantic relationships**: muse, crush, date, sweetheart
 * **Identity relationships**: me (link to yourself)
 
-### Triple Interface Integration with Collapsible Design
-The plugin provides XFN controls in three convenient locations, all featuring a clean collapsible interface:
+### Dual Interface Integration with Collapsible Design
+The plugin provides XFN controls in two convenient locations, both featuring a clean collapsible interface:
 
 * **Link Advanced Panel** (Always enabled): Collapsible XFN section in link popovers for inline links - works immediately after installation
 * **Inspector Controls** (Optional): Panel in the block sidebar for Button, Image, and Navigation blocks - enable in Settings → XFN Link Extension
-* **Floating Toolbar** (Optional): "XFN" button in the block toolbar for quick access - enable in Settings → XFN Link Extension
 
 ### Seamless Integration with WordPress
 The plugin extends the existing link interfaces without disrupting your workflow:
@@ -65,7 +64,7 @@ The relationship selection interface is designed for optimal usability with mode
 
 After installation, XFN options are immediately available for inline links (links within paragraphs, headings, lists).
 
-To use XFN with Button, Image, and Navigation blocks, go to **Settings → XFN Link Extension** and enable **Inspector Controls** and/or **Floating Toolbar**.
+To use XFN with Button, Image, and Navigation blocks, go to **Settings → XFN Link Extension** and enable **Inspector Controls**.
 
 ### Method 1: Using Link Advanced Panel (Always Available)
 1. Create or edit an inline link in any block (Paragraph, List, etc.)
@@ -75,22 +74,13 @@ To use XFN with Button, Image, and Navigation blocks, go to **Settings → XFN L
 5. See your active relationships in the summary pills
 6. Click "Apply" to save your XFN relationships
 
-### Method 2: Using Inspector Controls (Optional - Enable in Settings)
-1. Enable in Settings → XFN Link Extension
+### Method 2: Using Inspector Controls (Enable in Settings)
+1. Go to Settings → XFN Link Extension and enable Inspector Controls
 2. Select a Button, Image, or Navigation block
 3. Look in the right sidebar - "XFN Relationships" panel opens by default
 4. Select relationships using radio buttons and checkboxes organized by category
 5. Relationships save automatically as you select them
 6. View active relationships in the summary section with color-coded pills
-
-### Method 3: Using Floating Toolbar (Optional - Enable in Settings)
-1. Enable in Settings → XFN Link Extension
-2. Select a block that contains a link (Button, Navigation Link, Image, etc.)
-3. Look for the "XFN" button in the floating block toolbar
-4. Click the XFN button to open the relationship selector popover
-5. Click the "XFN" toggle to expand the collapsible section
-6. Choose your relationships using the button groups within categories
-7. Active relationships appear as colored pills in the summary
 
 ## Understanding XFN Relationship Categories
 
@@ -131,7 +121,7 @@ These are mutually exclusive - you can only select one friendship level per pers
 ## Integration with Popular Blocks
 
 ### Button Block
-Use the floating toolbar XFN button for quick relationship assignment. The collapsible interface lets you quickly expand the XFN section, select relationships, and see a summary without clutter.
+Use the Inspector Controls for quick relationship assignment. The XFN Relationships panel opens by default, letting you select relationships that save automatically.
 
 ### Navigation Block
 Enhance your site navigation with relationship context using the Inspector Controls. Mark links to your social profiles, partner sites, or affiliated organizations with the organized collapsible interface.
@@ -140,10 +130,10 @@ Enhance your site navigation with relationship context using the Inspector Contr
 For inline links within paragraph content, use the collapsible XFN section in the link popover's Advanced area to add relationship context without overwhelming the interface.
 
 ### List Block
-Build relationship-rich link lists using either the floating toolbar or Inspector Controls. The collapsible sections make it easy to manage multiple relationships across list items.
+Build relationship-rich link lists using the Link Advanced Panel for inline links or Inspector Controls for block-level links. The collapsible sections make it easy to manage multiple relationships across list items.
 
 ### Cover Block and Media & Text Block
-Add relationship context to overlay links and media-associated links using any of the three interface methods, all featuring the clean collapsible design.
+Add relationship context to overlay links and media-associated links using the Link Advanced Panel for inline links or Inspector Controls for block-level elements.
 
 ## Technical Implementation
 
@@ -210,10 +200,9 @@ If you're migrating from another XFN plugin:
 
 ### Where can I access XFN relationship options?
 
-XFN controls are available in three locations, all featuring collapsible interfaces:
-1. **Floating Toolbar**: Click the "XFN" button in the block toolbar, then expand the XFN section
-2. **Inspector Controls**: In the block settings sidebar under "XFN Relationships" panel
-3. **Link Advanced Panel**: In the Advanced section of inline link popovers as a collapsible "XFN" section
+XFN controls are available in two locations, both featuring collapsible interfaces:
+1. **Link Advanced Panel** (Always available): In the Advanced section of inline link popovers as a collapsible "XFN" section
+2. **Inspector Controls** (Enable in Settings): In the block settings sidebar under "XFN Relationships" panel for Button, Image, and Navigation blocks
 
 ### Why use a collapsible interface?
 
