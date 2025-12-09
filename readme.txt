@@ -1,6 +1,6 @@
 === Link Extension for XFN ===
 
-Contributors:      courane01
+Developers:        courane01
 Tags:              xfn, links, relationships, accessibility, gutenberg
 Tested up to:      6.9
 Stable tag:        1.0.0
