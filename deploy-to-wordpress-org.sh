@@ -13,7 +13,7 @@ NC='\033[0m' # No Color
 
 # Plugin information
 PLUGIN_SLUG="link-extension-for-xfn"
-PLUGIN_VERSION="1.0.0"
+PLUGIN_VERSION="1.0.1"
 SVN_URL="https://plugins.svn.wordpress.org/${PLUGIN_SLUG}/"
 SVN_DIR="/tmp/${PLUGIN_SLUG}-svn"
 
@@ -124,10 +124,11 @@ fi
 echo -e "${BLUE}Step 7: Committing to trunk...${NC}"
 svn ci -m "Deploy version ${PLUGIN_VERSION} to trunk
 
-- Initial release with full XFN 1.1 specification support
-- Dual interface integration (Link Advanced Panel + Inspector Controls)
-- Modern collapsible UI with accessibility features
-- Complete documentation and user guides"
+- Fix plugin naming: now consistently uses 'Link Extension for XFN'
+- Fix installation directory path (xfn-link-extension → link-extension-for-xfn)
+- Fix Settings menu name (XFN Link Extension → Link Extension for XFN)
+- Change Contributors to Developers in plugin header
+- Update all documentation and user-facing strings"
 
 echo -e "${GREEN}✓ Committed to trunk${NC}"
 echo ""
