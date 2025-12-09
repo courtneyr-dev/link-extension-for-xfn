@@ -33,9 +33,9 @@ This plugin implements the full XFN 1.1 specification with all relationship cate
 ### Triple Interface Integration with Collapsible Design
 The plugin provides XFN controls in three convenient locations, all featuring a clean collapsible interface:
 
-* **Floating Toolbar**: Click the "XFN" button in the block toolbar for direct access with expandable XFN section
-* **Inspector Controls**: Traditional WordPress panel in the block sidebar with full XFN categorization
-* **Link Advanced Panel**: Collapsible XFN section alongside existing link options in popovers
+* **Link Advanced Panel** (Always enabled): Collapsible XFN section in link popovers for inline links - works immediately after installation
+* **Inspector Controls** (Optional): Panel in the block sidebar for Button, Image, and Navigation blocks - enable in Settings → XFN Link Extension
+* **Floating Toolbar** (Optional): "XFN" button in the block toolbar for quick access - enable in Settings → XFN Link Extension
 
 ### Seamless Integration with WordPress
 The plugin extends the existing link interfaces without disrupting your workflow:
@@ -61,29 +61,36 @@ The relationship selection interface is designed for optimal usability with mode
 
 ## How to Add XFN Relationships to Links
 
-### Method 1: Using the Floating Toolbar (Recommended)
-1. Select a block that contains a link (Button, Navigation Link, etc.)
-2. Look for the "XFN" button in the floating block toolbar
-3. Click the XFN button to open the relationship selector popover
-4. Click the "XFN" toggle to expand the collapsible section
-5. Choose your relationships using the button groups within categories
-6. Active relationships appear as colored pills in the summary
-7. Click outside the popover to save your changes
+### Quick Start
 
-### Method 2: Using Inspector Controls
-1. Select a block that contains a link
-2. Open the block settings panel (sidebar)
-3. Find the "XFN Relationships" panel and expand it
-4. Select relationships using radio buttons and checkboxes organized by category
-5. View active relationships in the summary section with color-coded pills
+After installation, XFN options are immediately available for inline links (links within paragraphs, headings, lists).
 
-### Method 3: Using Link Advanced Panel with Collapsible XFN
+To use XFN with Button, Image, and Navigation blocks, go to **Settings → XFN Link Extension** and enable **Inspector Controls** and/or **Floating Toolbar**.
+
+### Method 1: Using Link Advanced Panel (Always Available)
 1. Create or edit an inline link in any block (Paragraph, List, etc.)
 2. In the link popover, click "Advanced" to expand additional options
 3. Find the "XFN" collapsible section and click to expand
 4. Select relationships using the organized button groups
 5. See your active relationships in the summary pills
-6. Save the link to apply your XFN relationships
+6. Click "Apply" to save your XFN relationships
+
+### Method 2: Using Inspector Controls (Optional - Enable in Settings)
+1. Enable in Settings → XFN Link Extension
+2. Select a Button, Image, or Navigation block
+3. Look in the right sidebar - "XFN Relationships" panel opens by default
+4. Select relationships using radio buttons and checkboxes organized by category
+5. Relationships save automatically as you select them
+6. View active relationships in the summary section with color-coded pills
+
+### Method 3: Using Floating Toolbar (Optional - Enable in Settings)
+1. Enable in Settings → XFN Link Extension
+2. Select a block that contains a link (Button, Navigation Link, Image, etc.)
+3. Look for the "XFN" button in the floating block toolbar
+4. Click the XFN button to open the relationship selector popover
+5. Click the "XFN" toggle to expand the collapsible section
+6. Choose your relationships using the button groups within categories
+7. Active relationships appear as colored pills in the summary
 
 ## Understanding XFN Relationship Categories
 
