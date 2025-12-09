@@ -89,8 +89,8 @@ class XFN_Link_Extension {
 	 */
 	public function add_settings_page() {
 		add_options_page(
-			__( 'XFN Link Extension Settings', 'link-extension-for-xfn' ),
-			__( 'XFN Link Extension', 'link-extension-for-xfn' ),
+			__( 'Link Extension for XFN Settings', 'link-extension-for-xfn' ),
+			__( 'Link Extension for XFN', 'link-extension-for-xfn' ),
 			'manage_options',
 			'xfn-link-extension',
 			array( $this, 'render_settings_page' )
@@ -570,7 +570,7 @@ function xfn_link_extension_activate() {
 	if ( version_compare( get_bloginfo( 'version' ), '6.4', '<' ) ) {
 		deactivate_plugins( plugin_basename( __FILE__ ) );
 		wp_die(
-			esc_html__( 'XFN Link Extension requires WordPress 6.4 or higher.', 'link-extension-for-xfn' ),
+			esc_html__( 'Link Extension for XFN requires WordPress 6.4 or higher.', 'link-extension-for-xfn' ),
 			esc_html__( 'Plugin Activation Error', 'link-extension-for-xfn' ),
 			array( 'back_link' => true )
 		);
@@ -579,7 +579,7 @@ function xfn_link_extension_activate() {
 	if ( version_compare( PHP_VERSION, '7.4', '<' ) ) {
 		deactivate_plugins( plugin_basename( __FILE__ ) );
 		wp_die(
-			esc_html__( 'XFN Link Extension requires PHP 7.4 or higher.', 'link-extension-for-xfn' ),
+			esc_html__( 'Link Extension for XFN requires PHP 7.4 or higher.', 'link-extension-for-xfn' ),
 			esc_html__( 'Plugin Activation Error', 'link-extension-for-xfn' ),
 			array( 'back_link' => true )
 		);

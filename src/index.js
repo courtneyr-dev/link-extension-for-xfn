@@ -1533,13 +1533,13 @@ const settings = window.linkexfoData?.settings || {
 if ( settings.enable_inspector_controls ) {
 	console.log( '[XFN] ✓ Inspector Controls for link blocks (ENABLED)' );
 } else {
-	console.log( '[XFN] ✗ Inspector Controls for link blocks (DISABLED - enable in Settings > XFN Link Extension)' );
+	console.log( '[XFN] ✗ Inspector Controls for link blocks (DISABLED - enable in Settings > Link Extension for XFN)' );
 }
 
 if ( settings.enable_floating_toolbar ) {
 	console.log( '[XFN] ✓ Floating toolbar for link blocks (ENABLED)' );
 } else {
-	console.log( '[XFN] ✗ Floating toolbar for link blocks (DISABLED - enable in Settings > XFN Link Extension)' );
+	console.log( '[XFN] ✗ Floating toolbar for link blocks (DISABLED - enable in Settings > Link Extension for XFN)' );
 }
 
 console.log( '[XFN] ✓ Collapsible XFN section in Link Advanced Panel (ALWAYS ENABLED)' );
