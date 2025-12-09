@@ -1,6 +1,6 @@
 {
 	"name": "link-extension-for-xfn",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "Extends the native Gutenberg link interface to include XFN (XHTML Friends Network) relationship options across all blocks that support links.",
 	"author": "Courtney Robertson",
 	"license": "GPL-2.0-or-later",

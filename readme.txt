@@ -3,7 +3,7 @@
 Developers:        courane01
 Tags:              xfn, links, relationships, accessibility, gutenberg
 Tested up to:      6.9
-Stable tag:        1.0.0
+Stable tag:        1.0.1
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 6.4
@@ -315,9 +315,17 @@ Absolutely! XFN includes professional relationships (co-worker, colleague) and c
 
 ## Changelog
 
+= 1.0.1 =
+* Fixed: Corrected plugin naming throughout - now consistently uses "Link Extension for XFN"
+* Fixed: Installation directory path in readme (xfn-link-extension → link-extension-for-xfn)
+* Fixed: Settings menu now displays as "Settings → Link Extension for XFN"
+* Fixed: Changed Contributors to Developers in plugin header for proper WordPress.org display
+* Updated: All documentation and user-facing strings to use correct plugin name
+* Updated: Error messages and console logs to reference correct settings path
+
 = 1.0.0 =
 * Initial release with full XFN 1.1 specification support
-* Triple interface integration: Floating Toolbar, Inspector Controls, and Link Advanced Panel
+* Dual interface integration: Inspector Controls and Link Advanced Panel
 * Modern collapsible interface design with smooth animations
 * Count badges for quick relationship status overview
 * Seamless integration with WordPress native link interface

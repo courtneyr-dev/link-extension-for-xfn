@@ -3,7 +3,7 @@
  * Plugin Name:       Link Extension for XFN
  * Plugin URI:        https://github.com/courtneyr-dev/xfn-link-extension
  * Description:       Extends the native Gutenberg link interface to include XFN (XHTML Friends Network) relationship options across all blocks that support links. Features floating toolbar access, Inspector Controls integration, and Link Advanced panel support.
- * Version:           1.0.0
+ * Version:           1.0.1
  * Requires at least: 6.4
  * Tested up to:      6.9
  * Requires PHP:      7.4
@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Define plugin constants
-define( 'XFN_LINK_EXTENSION_VERSION', '1.0.0' );
+define( 'XFN_LINK_EXTENSION_VERSION', '1.0.1' );
 define( 'XFN_LINK_EXTENSION_PLUGIN_FILE', __FILE__ );
 define( 'XFN_LINK_EXTENSION_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'XFN_LINK_EXTENSION_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
