@@ -15,6 +15,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Block pattern library with XFN examples
 - Import/export functionality for XFN settings
 
+## [1.0.3] - 2024-12-09
+
+### Fixed
+- **WordPress Playground blueprint now works correctly**
+  - Fixed JSON structure to use `runPHPWithOptions` with environment variables
+  - Disabled WordPress content filters to preserve XFN rel attributes
+  - Changed demo page to published status (was draft)
+  - Set landing page to `/xfn-demo/` for immediate demo access
+  - Added `login: true` for automatic authentication
+  - Button blocks now correctly include rel attribute in rendered HTML (not just metadata)
+
+### Improved
+- **Enhanced demo content**
+  - Added visual indicators (emojis) for better readability
+  - Included comprehensive testing instructions
+  - Added table showing expected XFN results
+  - Improved inline link examples with multiple XFN attributes
+  - Better explanation of how to inspect XFN in browser DevTools
+
+### Technical
+- Blueprint now uses proper WordPress Playground best practices
+- Content preserved exactly as authored without filter modifications
+- CORS-enabled development server for local blueprint testing
+
 ## [1.0.2] - 2024-12-09
 
 ### Added

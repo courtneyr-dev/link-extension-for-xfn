@@ -3,7 +3,7 @@
 Developers:        courane01
 Tags:              xfn, links, relationships, accessibility, gutenberg
 Tested up to:      6.9
-Stable tag:        1.0.2
+Stable tag:        1.0.3
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 6.4
@@ -317,6 +317,17 @@ Absolutely! XFN includes professional relationships (co-worker, colleague) and c
 4. **Update screen reader**: Ensure you're using a current version of your screen reader
 
 ## Changelog
+
+= 1.0.3 =
+* Fixed: WordPress Playground blueprint now works correctly with proper JSON structure
+* Fixed: Demo page now publishes (not draft) and lands at /xfn-demo/ for immediate access
+* Fixed: Button blocks now correctly include rel attribute in rendered HTML
+* Fixed: Content filters disabled to preserve XFN rel attributes in demo
+* Improved: Enhanced demo content with visual indicators, testing instructions, and results table
+* Improved: Better inline link examples showing multiple XFN attributes working together
+* Technical: Blueprint uses runPHPWithOptions with environment variables (Playground best practice)
+* Technical: Added login: true for automatic authentication in Playground demo
+* Technical: CORS-enabled development server for local blueprint testing
 
 = 1.0.2 =
 * Added: Full embed block support (YouTube, Twitter, WordPress embeds, etc.)

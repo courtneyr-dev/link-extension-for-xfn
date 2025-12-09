@@ -1,0 +1,41 @@
+{
+	"$schema": "https://playground.wordpress.net/blueprint-schema.json",
+	"landingPage": "/xfn-demo/",
+	"preferredVersions": {
+		"php": "8.0",
+		"wp": "latest"
+	},
+	"phpExtensionBundles": [
+		"kitchen-sink"
+	],
+	"features": {
+		"networking": true
+	},
+	"login": true,
+	"steps": [
+		{
+			"step": "installPlugin",
+			"pluginZipFile": {
+				"resource": "wordpress.org/plugins",
+				"slug": "link-extension-for-xfn"
+			}
+		},
+		{
+			"step": "activatePlugin",
+			"pluginPath": "link-extension-for-xfn/link-extension-for-xfn.php"
+		},
+		{
+			"step": "runPHP",
+			"code": "<?php require '/wordpress/wp-load.php'; update_option('xfn_link_extension_options', array('enable_inspector_controls' => true, 'enable_floating_toolbar' => false)); ?>"
+		},
+		{
+			"step": "runPHPWithOptions",
+			"options": {
+				"code": "<?php\n\t\t\t\trequire_once '/wordpress/wp-load.php';\n\t\t\t\t$content = getenv('CONTENT');\n\n\t\t\t\t// Insert the post exactly as it is\n\t\t\t\tremove_all_filters('content_save_pre');\n\t\t\t\tremove_all_filters('content_filtered_save_pre');\n\t\t\t\tremove_all_filters('excerpt_save_pre');\n\t\t\t\tremove_all_filters('pre_comment_content');\n\t\t\t\tremove_all_filters('pre_user_description');\n\n\t\t\t\twp_insert_post([\n\t\t\t\t\t'post_title' => 'XFN Demo - Try It Out!',\n\t\t\t\t\t'post_content' => $content,\n\t\t\t\t\t'post_status' => 'publish',\n\t\t\t\t\t'post_type' => 'page',\n\t\t\t\t\t'post_name' => 'xfn-demo',\n\t\t\t\t]);\n\t\t\t\t",
+				"env": {
+					"CONTENT": "<!-- wp:heading -->\n<h2 class=\"wp-block-heading\">Welcome to XFN Link Extension Demo</h2>\n<!-- /wp:heading -->\n\n<!-- wp:paragraph -->\n<p>This demo showcases how XFN (XHTML Friends Network) relationships work across different block types. <strong>Right-click any link below and select \"Inspect\"</strong> to see the <code>rel</code> attributes in action!</p>\n<!-- /wp:paragraph -->\n\n<!-- wp:heading {\"level\":3} -->\n<h3 class=\"wp-block-heading\">📝 Inline Paragraph Links with Multiple XFN Attributes</h3>\n<!-- /wp:heading -->\n\n<!-- wp:paragraph -->\n<p>I work with <a href=\"https://example.com/sarah\" rel=\"colleague met co-worker\">Sarah, my colleague</a> at the office. She is also someone I have met in person. Check out <a href=\"https://example.com/john\" rel=\"friend met\">my friend John's website</a> - we've been friends for years! You can also visit <a href=\"https://courtneyr.dev\" rel=\"me\">my personal website</a> to learn more about me.</p>\n<!-- /wp:paragraph -->\n\n<!-- wp:paragraph -->\n<p>My <a href=\"https://example.com/family\" rel=\"sibling met\">brother's blog</a> has great content about technology and design.</p>\n<!-- /wp:paragraph -->\n\n<!-- wp:heading {\"level\":3} -->\n<h3 class=\"wp-block-heading\">🔘 Button Block with XFN</h3>\n<!-- /wp:heading -->\n\n<!-- wp:paragraph -->\n<p>This button has multiple XFN relationships (friend + met + colleague):</p>\n<!-- /wp:paragraph -->\n\n<!-- wp:buttons -->\n<div class=\"wp-block-buttons\"><!-- wp:button {\"metadata\":{\"rel\":\"friend met colleague\"}} -->\n<div class=\"wp-block-button\"><a class=\"wp-block-button__link wp-element-button\" href=\"https://example.com/coworker-friend\" rel=\"friend met colleague\">Visit My Friend & Colleague</a></div>\n<!-- /wp:button --></div>\n<!-- /wp:buttons -->\n\n<!-- wp:heading {\"level\":3} -->\n<h3 class=\"wp-block-heading\">📺 Embed Block with XFN</h3>\n<!-- /wp:heading -->\n\n<!-- wp:paragraph -->\n<p>This YouTube video is from a friend's channel. <strong>Inspect the <code>&lt;figure&gt;</code> element</strong> to see <code>data-xfn-rel=\"friend met\"</code>:</p>\n<!-- /wp:paragraph -->\n\n<!-- wp:embed {\"url\":\"https://www.youtube.com/watch?v=dQw4w9WgXcQ\",\"type\":\"video\",\"providerNameSlug\":\"youtube\",\"responsive\":true,\"metadata\":{\"rel\":\"friend met\"}} -->\n<figure class=\"wp-block-embed is-type-video is-provider-youtube wp-block-embed-youtube wp-embed-aspect-16-9 wp-has-aspect-ratio\"><div class=\"wp-block-embed__wrapper\">\nhttps://www.youtube.com/watch?v=dQw4w9WgXcQ\n</div></figure>\n<!-- /wp:embed -->\n\n<!-- wp:heading {\"level\":3} -->\n<h3 class=\"wp-block-heading\">🔍 How to Inspect XFN Attributes</h3>\n<!-- /wp:heading -->\n\n<!-- wp:list {\"ordered\":true} -->\n<ol class=\"wp-block-list\"><!-- wp:list-item -->\n<li>Right-click any link above and select <strong>Inspect</strong></li>\n<!-- /wp:list-item -->\n\n<!-- wp:list-item -->\n<li>Look for the <code>rel</code> attribute in the <code>&lt;a&gt;</code> tag</li>\n<!-- /wp:list-item -->\n\n<!-- wp:list-item -->\n<li>For inline links: <code>rel=\"colleague met co-worker\"</code></li>\n<!-- /wp:list-item -->\n\n<!-- wp:list-item -->\n<li>For embeds: <code>data-xfn-rel=\"friend met\"</code> on the <code>&lt;figure&gt;</code> element</li>\n<!-- /wp:list-item --></ol>\n<!-- /wp:list -->\n\n<!-- wp:heading {\"level\":3} -->\n<h3 class=\"wp-block-heading\">✅ Expected Results</h3>\n<!-- /wp:heading -->\n\n<!-- wp:table -->\n<figure class=\"wp-block-table\"><table class=\"has-fixed-layout\"><thead><tr><th>Link Text</th><th>Expected rel Attribute</th></tr></thead><tbody><tr><td>Sarah, my colleague</td><td><code>rel=\"colleague met co-worker\"</code></td></tr><tr><td>my friend John's website</td><td><code>rel=\"friend met\"</code></td></tr><tr><td>my personal website</td><td><code>rel=\"me\"</code></td></tr><tr><td>brother's blog</td><td><code>rel=\"sibling met\"</code></td></tr><tr><td>Visit My Friend & Colleague (button)</td><td><code>rel=\"friend met colleague\"</code></td></tr><tr><td>YouTube embed</td><td><code>data-xfn-rel=\"friend met\"</code> on figure</td></tr></tbody></table></figure>\n<!-- /wp:table -->\n\n<!-- wp:heading {\"level\":3} -->\n<h3 class=\"wp-block-heading\">🎨 Try It Yourself!</h3>\n<!-- /wp:heading -->\n\n<!-- wp:paragraph -->\n<p><strong>Want to add your own XFN relationships?</strong></p>\n<!-- /wp:paragraph -->\n\n<!-- wp:list -->\n<ul class=\"wp-block-list\"><!-- wp:list-item -->\n<li>Go to <strong>Settings → Link Extension for XFN</strong> (Inspector Controls are already enabled)</li>\n<!-- /wp:list-item -->\n\n<!-- wp:list-item -->\n<li>Select any button or embed block</li>\n<!-- /wp:list-item -->\n\n<!-- wp:list-item -->\n<li>Look in the right sidebar for the <strong>XFN Relationships</strong> panel</li>\n<!-- /wp:list-item -->\n\n<!-- wp:list-item -->\n<li>Choose relationships and they'll automatically save</li>\n<!-- /wp:list-item --></ul>\n<!-- /wp:list -->\n\n<!-- wp:paragraph -->\n<p>For inline paragraph links, select text, create a link, click <strong>Advanced</strong>, expand the <strong>XFN</strong> section, and choose your relationships!</p>\n<!-- /wp:paragraph -->"
+				}
+			}
+		}
+	]
+}

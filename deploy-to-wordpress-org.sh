@@ -13,7 +13,7 @@ NC='\033[0m' # No Color
 
 # Plugin information
 PLUGIN_SLUG="link-extension-for-xfn"
-PLUGIN_VERSION="1.0.2"
+PLUGIN_VERSION="1.0.3"
 SVN_URL="https://plugins.svn.wordpress.org/${PLUGIN_SLUG}/"
 SVN_DIR="/tmp/${PLUGIN_SLUG}-svn"
 
