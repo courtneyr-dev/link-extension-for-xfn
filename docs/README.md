@@ -10,6 +10,9 @@ XFN (XHTML Friends Network) is a simple way to represent human relationships usi
 
 This documentation is organized by link type:
 
+### ⚙️ [Plugin Settings](settings.md)
+Configure where XFN options appear in your editor (Inspector sidebar, floating toolbar, etc.)
+
 ### 📝 [Paragraph Links](paragraph-links.md)
 Learn how to add XFN relationships to links within paragraphs, headings, lists, and other text blocks.
 
