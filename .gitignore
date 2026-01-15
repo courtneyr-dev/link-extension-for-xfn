@@ -38,6 +38,7 @@ playwright-report/
 # Deployment
 *.zip
 test-dist/
+dist-test/
 wordpress-org-upload/
 WORDPRESS-ORG-UPLOAD-README.md
 
