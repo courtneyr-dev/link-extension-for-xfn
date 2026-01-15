@@ -506,7 +506,10 @@ const XFNInspectorControls = ( { attributes, setAttributes, name } ) => {
 		'core/query-title',
 		'core/embed',
 	];
-	const shouldBeOpenByDefault = blockLevelLinks.includes( name );
+	// Also open by default for Post Kinds blocks with eventUrl
+	const shouldBeOpenByDefault =
+		blockLevelLinks.includes( name ) ||
+		attributes.hasOwnProperty( 'eventUrl' );
 
 	return (
 		<InspectorControls>
@@ -773,7 +776,13 @@ function injectXFNControls() {
 			'core/embed',
 		];
 
-		if ( selectedBlock && blockLevelLinks.includes( selectedBlock.name ) ) {
+		// Also treat blocks with eventUrl (Post Kinds for IndieWeb) as block-level links
+		const isBlockLevelLink = selectedBlock && (
+			blockLevelLinks.includes( selectedBlock.name ) ||
+			selectedBlock.attributes?.hasOwnProperty( 'eventUrl' )
+		);
+
+		if ( isBlockLevelLink ) {
 			// For block-level links, read directly from block attributes
 			currentRel = getRelFromBlock( selectedBlock.attributes, selectedBlock.name );
 			console.log( '[XFN] Got rel from block-level link attributes:', currentRel );
@@ -1218,7 +1227,12 @@ function applyXFNToCreatedLink() {
 		'core/embed',
 	];
 
-	if ( blockLevelLinks.includes( selectedBlock.name ) ) {
+	// Also treat blocks with eventUrl (Post Kinds for IndieWeb) as block-level links
+	const isBlockLevelLink =
+		blockLevelLinks.includes( selectedBlock.name ) ||
+		selectedBlock.attributes?.hasOwnProperty( 'eventUrl' );
+
+	if ( isBlockLevelLink ) {
 		console.log( '[XFN] This is a block-level link, updating rel attribute directly...' );
 
 		// Get existing rel value
@@ -1457,11 +1471,13 @@ const withXFNControls = createHigherOrderComponent( ( BlockEdit ) => {
 		];
 
 		// Check if this block type should have XFN controls in inspector
+		// Supports core blocks plus Post Kinds for IndieWeb blocks (eventUrl for RSVP cards)
 		const shouldShowXFN =
 			supportedBlocks.includes( name ) ||
 			attributes.hasOwnProperty( 'url' ) ||
 			attributes.hasOwnProperty( 'href' ) ||
-			attributes.hasOwnProperty( 'linkDestination' );
+			attributes.hasOwnProperty( 'linkDestination' ) ||
+			attributes.hasOwnProperty( 'eventUrl' );
 
 		// Only show inspector controls if setting is enabled
 		if ( ! shouldShowXFN || ! settings.enable_inspector_controls ) {
