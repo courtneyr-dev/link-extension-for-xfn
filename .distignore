@@ -7,8 +7,9 @@
 /.github
 .gitattributes
 .gitignore
+.distignore
 
-# Claude Code
+# Claude Code / AI
 /.claude
 
 # Development files
@@ -49,35 +50,27 @@
 /phpcs.xml
 /phpcs.xml.dist
 
-# Documentation (keep readme.txt for WordPress.org)
+# Documentation - exclude all markdown except readme.txt
+/docs
+*.md
 /README.md
 /CHANGELOG.md
 /CONTRIBUTING.md
-/CODE_OF_CONDUCT.md
-/QA-TEST-PLAN.md
-/PLUGIN-DEVELOPMENT-WORKFLOW.md
-/QA-TESTING-GUIDE.md
-/MANUAL-LOCAL-SETUP.md
-/QUERY-MONITOR-TESTING-GUIDE.md
-/PRE-SUBMISSION-CHECKLIST.md
-/MARKDOWN-FILES-REVIEW.md
-/CODING-STANDARDS-REPORT.md
-/SECURITY-AUDIT-REPORT.md
-/TRANSLATION-READINESS-REPORT.md
 
 # WordPress.org assets (go to SVN /assets directory separately)
 /.wordpress-org
 
-# Build artifacts
+# Build artifacts and compressed files
 *.zip
 /dist
 /test-dist
 /wordpress-org-upload
-/WORDPRESS-ORG-UPLOAD-README.md
 
-# Deployment files
-/deploy-to-wordpress-org.sh
-/SVN-DEPLOYMENT-GUIDE.md
+# Shell scripts / application files
+*.sh
+
+# Screenshots automation
+/screenshots
 
 # Logs
 *.log
@@ -96,5 +89,8 @@ Thumbs.db
 .env
 .env.*
 
-# Artifact from Telex
-/artefact.xml
+# Test files
+/test-blueprint.html
+/xfn-checker.js
+/xfn-test-page-content.html
+/cors-server.py
