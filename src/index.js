@@ -506,10 +506,12 @@ const XFNInspectorControls = ( { attributes, setAttributes, name } ) => {
 		'core/query-title',
 		'core/embed',
 	];
-	// Also open by default for Post Kinds blocks with eventUrl
+	// Also open by default for blocks with URL values (so XFN is visible after URL submission)
+	const hasUrlValue = attributes.url || attributes.href || attributes.eventUrl;
 	const shouldBeOpenByDefault =
 		blockLevelLinks.includes( name ) ||
-		attributes.hasOwnProperty( 'eventUrl' );
+		attributes.hasOwnProperty( 'eventUrl' ) ||
+		hasUrlValue;
 
 	return (
 		<InspectorControls>
@@ -776,10 +778,16 @@ function injectXFNControls() {
 			'core/embed',
 		];
 
-		// Also treat blocks with eventUrl (Post Kinds for IndieWeb) as block-level links
+		// Also treat blocks with eventUrl or url values (Post Kinds, Bookmark Card, embeds) as block-level links
+		const hasBlockUrlValue =
+			selectedBlock?.attributes?.url ||
+			selectedBlock?.attributes?.href ||
+			selectedBlock?.attributes?.eventUrl;
+
 		const isBlockLevelLink = selectedBlock && (
 			blockLevelLinks.includes( selectedBlock.name ) ||
-			selectedBlock.attributes?.hasOwnProperty( 'eventUrl' )
+			selectedBlock.attributes?.hasOwnProperty( 'eventUrl' ) ||
+			hasBlockUrlValue
 		);
 
 		if ( isBlockLevelLink ) {
@@ -1227,10 +1235,16 @@ function applyXFNToCreatedLink() {
 		'core/embed',
 	];
 
-	// Also treat blocks with eventUrl (Post Kinds for IndieWeb) as block-level links
+	// Also treat blocks with eventUrl or url values (Post Kinds, Bookmark Card, embeds) as block-level links
+	const hasBlockUrlValue =
+		selectedBlock.attributes?.url ||
+		selectedBlock.attributes?.href ||
+		selectedBlock.attributes?.eventUrl;
+
 	const isBlockLevelLink =
 		blockLevelLinks.includes( selectedBlock.name ) ||
-		selectedBlock.attributes?.hasOwnProperty( 'eventUrl' );
+		selectedBlock.attributes?.hasOwnProperty( 'eventUrl' ) ||
+		hasBlockUrlValue;
 
 	if ( isBlockLevelLink ) {
 		console.log( '[XFN] This is a block-level link, updating rel attribute directly...' );
@@ -1472,12 +1486,23 @@ const withXFNControls = createHigherOrderComponent( ( BlockEdit ) => {
 
 		// Check if this block type should have XFN controls in inspector
 		// Supports core blocks plus Post Kinds for IndieWeb blocks (eventUrl for RSVP cards)
-		const shouldShowXFN =
-			supportedBlocks.includes( name ) ||
+		// Check both attribute existence AND actual URL values for blocks that already have content
+		const hasUrlAttribute =
 			attributes.hasOwnProperty( 'url' ) ||
 			attributes.hasOwnProperty( 'href' ) ||
 			attributes.hasOwnProperty( 'linkDestination' ) ||
 			attributes.hasOwnProperty( 'eventUrl' );
+
+		const hasUrlValue =
+			attributes.url ||
+			attributes.href ||
+			attributes.linkDestination ||
+			attributes.eventUrl;
+
+		const shouldShowXFN =
+			supportedBlocks.includes( name ) ||
+			hasUrlAttribute ||
+			hasUrlValue;
 
 		// Only show inspector controls if setting is enabled
 		if ( ! shouldShowXFN || ! settings.enable_inspector_controls ) {
