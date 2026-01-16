@@ -739,10 +739,7 @@ function injectXFNControls() {
 			const textLikeInputs = settingsPanel.querySelectorAll(
 				'input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"])'
 			);
-			console.log(
-				'[XFN] Try 3 - text-like inputs in settings:',
-				textLikeInputs
-			);
+			xfnLog( 'Try 3 - text-like inputs in settings:', textLikeInputs );
 			// The rel field is usually after "Open in new tab" and "nofollow" checkboxes
 			// So it's likely the last text-like input
 			if ( textLikeInputs.length > 0 ) {
