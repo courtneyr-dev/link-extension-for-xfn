@@ -23,7 +23,6 @@ import { createHigherOrderComponent } from '@wordpress/compose';
 import { useState, useEffect } from '@wordpress/element';
 import { useSelect, dispatch } from '@wordpress/data';
 import { link, linkOff, chevronDown, chevronUp } from '@wordpress/icons';
-import { registerFormatType, applyFormat, removeFormat, getActiveFormat } from '@wordpress/rich-text';
 
 /**
  * Internal dependencies
@@ -31,24 +30,18 @@ import { registerFormatType, applyFormat, removeFormat, getActiveFormat } from '
 import './editor.scss';
 
 /**
- * Register XFN format extension for links
- * This extends the core link format to support rel attributes
+ * Debug flag - set to true to enable verbose console logging
  */
-registerFormatType( 'xfn-link-extension/xfn-rel', {
-	title: __( 'XFN Relationship', 'link-extension-for-xfn' ),
-	tagName: 'a',
-	className: null,
-	attributes: {
-		rel: 'rel',
-		href: 'href',
-	},
-	edit() {
-		// Return null - we'll handle the UI through filters
-		return null;
-	},
-} );
+const XFN_DEBUG = false;
 
-console.log( '[XFN] XFN format type registered' );
+/**
+ * Helper function for debug logging
+ */
+const xfnLog = ( ...args ) => {
+	if ( XFN_DEBUG ) {
+		console.log( '[XFN]', ...args );
+	}
+};
 
 /**
  * XFN Relationship definitions
@@ -682,14 +675,14 @@ function injectXFNControls() {
 		}
 
 		// Try to get the current link value from React internals
-		console.log( '[XFN] Attempting to find link value from React...' );
+		xfnLog( 'Attempting to find link value from React...' );
 		const linkControlElement = linkControls;
 		const reactKey = Object.keys( linkControlElement ).find( ( key ) =>
 			key.startsWith( '__react' )
 		);
 		if ( reactKey ) {
 			const reactInstance = linkControlElement[ reactKey ];
-			console.log( '[XFN] React instance found:', reactInstance );
+			xfnLog( 'React instance found:', reactInstance );
 
 			// Try to traverse to find the link value
 			let current = reactInstance;
@@ -703,10 +696,10 @@ function injectXFNControls() {
 					window.currentLinkValue = currentLinkValue;
 					window.currentLinkOnChange = currentLinkOnChange;
 
-					console.log( '[XFN] Found link value:', currentLinkValue );
-					console.log( '[XFN] Link value keys:', Object.keys( currentLinkValue ) );
-					console.log( '[XFN] Link value rel:', currentLinkValue.rel );
-					console.log( '[XFN] Found onChange:', currentLinkOnChange );
+					xfnLog( 'Found link value:', currentLinkValue );
+					xfnLog( 'Link value keys:', Object.keys( currentLinkValue ) );
+					xfnLog( 'Link value rel:', currentLinkValue.rel );
+					xfnLog( 'Found onChange:', currentLinkOnChange );
 					break;
 				}
 				current = current.return || current._owner;
@@ -716,13 +709,13 @@ function injectXFNControls() {
 
 		// Get current rel value from the link control
 		// Try multiple selectors to find the rel input field
-		console.log( '[XFN] Looking for rel input in link control...' );
+		xfnLog( 'Looking for rel input in link control...' );
 		const allInputs = settingsPanel.querySelectorAll( 'input' );
-		console.log( '[XFN] All inputs in settings panel:', allInputs );
+		xfnLog( 'All inputs in settings panel:', allInputs );
 
 		// Log details about each input
 		allInputs.forEach( ( input, index ) => {
-			console.log( `[XFN] Input ${index}:`, {
+			xfnLog( `Input ${index}:`, {
 				type: input.type,
 				id: input.id,
 				name: input.name,
@@ -735,11 +728,11 @@ function injectXFNControls() {
 		let relInput = linkControls.querySelector(
 			'input[type="text"][placeholder*="rel" i]'
 		);
-		console.log( '[XFN] Try 1 (placeholder*=rel):', relInput );
+		xfnLog( 'Try 1 (placeholder*=rel):', relInput );
 
 		if ( ! relInput ) {
 			relInput = linkControls.querySelector( 'input[id*="rel" i]' );
-			console.log( '[XFN] Try 2 (id*=rel):', relInput );
+			xfnLog( 'Try 2 (id*=rel):', relInput );
 		}
 		if ( ! relInput ) {
 			// Try to find any text-like input (text, search, url, etc.)
@@ -757,10 +750,10 @@ function injectXFNControls() {
 			}
 		}
 
-		console.log( '[XFN] Final rel input found:', !! relInput );
+		xfnLog( 'Final rel input found:', !! relInput );
 		if ( relInput ) {
-			console.log( '[XFN] Rel input element:', relInput );
-			console.log( '[XFN] Rel input current value:', relInput.value );
+			xfnLog( 'Rel input element:', relInput );
+			xfnLog( 'Rel input current value:', relInput.value );
 		}
 
 		// Get current rel value
@@ -793,7 +786,7 @@ function injectXFNControls() {
 		if ( isBlockLevelLink ) {
 			// For block-level links, read directly from block attributes
 			currentRel = getRelFromBlock( selectedBlock.attributes, selectedBlock.name );
-			console.log( '[XFN] Got rel from block-level link attributes:', currentRel );
+			xfnLog( 'Got rel from block-level link attributes:', currentRel );
 		} else if ( currentLinkValue?.url && selectedBlock?.attributes?.content ) {
 			// For inline links (like in paragraphs), parse the content
 			let content = selectedBlock.attributes.content;
@@ -812,7 +805,7 @@ function injectXFNControls() {
 				);
 				if ( link ) {
 					currentRel = link.getAttribute( 'rel' ) || '';
-					console.log( '[XFN] Got rel from existing link in content:', currentRel );
+					xfnLog( 'Got rel from existing link in content:', currentRel );
 				}
 			}
 		}
@@ -820,10 +813,10 @@ function injectXFNControls() {
 		// Fallback to linkValue or input
 		if ( ! currentRel && currentLinkValue && currentLinkValue.rel ) {
 			currentRel = currentLinkValue.rel;
-			console.log( '[XFN] Got rel from link value:', currentRel );
+			xfnLog( 'Got rel from link value:', currentRel );
 		} else if ( ! currentRel && relInput ) {
 			currentRel = relInput.value;
-			console.log( '[XFN] Got rel from input:', currentRel );
+			xfnLog( 'Got rel from input:', currentRel );
 		}
 
 		const { xfn: xfnValues, other: otherValues } =
@@ -832,8 +825,8 @@ function injectXFNControls() {
 		currentXFNValues = [ ...xfnValues ];
 		currentOtherValues = [ ...otherValues ];
 
-		console.log( '[XFN] Initial XFN values:', currentXFNValues );
-		console.log( '[XFN] Initial other values:', currentOtherValues );
+		xfnLog( 'Initial XFN values:', currentXFNValues );
+		xfnLog( 'Initial other values:', currentOtherValues );
 
 		// Create XFN collapsible section
 		const xfnContainer = document.createElement( 'div' );
@@ -847,24 +840,24 @@ function injectXFNControls() {
 		addXFNEventListeners( xfnContainer, relInput );
 
 		// Find and intercept the Apply button
-		console.log( '[XFN] Looking for Apply button...' );
+		xfnLog( 'Looking for Apply button...' );
 		const possibleButtons = linkControls.querySelectorAll( 'button' );
-		console.log( '[XFN] All buttons in link control:', possibleButtons );
+		xfnLog( 'All buttons in link control:', possibleButtons );
 
 		const applyButton = linkControls.querySelector(
 			'.block-editor-link-control__search-submit, button[type="submit"]'
 		);
 
 		if ( applyButton ) {
-			console.log( '[XFN] Found Apply button (will save XFN on click)' );
+			xfnLog( 'Found Apply button (will save XFN on click)' );
 
 			// Add a click listener that runs BEFORE the button's normal handler
 			applyButton.addEventListener(
 				'click',
 				( e ) => {
-					console.log( '[XFN] ===== Apply button clicked! =====' );
-					console.log( '[XFN] Current XFN values:', currentXFNValues );
-					console.log( '[XFN] Current link value:', currentLinkValue );
+					xfnLog( '===== Apply button clicked! =====' );
+					xfnLog( 'Current XFN values:', currentXFNValues );
+					xfnLog( 'Current link value:', currentLinkValue );
 
 					// Store XFN values globally so they can be applied after the link is created
 					if ( currentXFNValues.length > 0 ) {
@@ -873,32 +866,32 @@ function injectXFNControls() {
 							currentOtherValues
 						);
 
-						console.log( '[XFN] Storing XFN rel for post-link-creation:', newRel );
+						xfnLog( 'Storing XFN rel for post-link-creation:', newRel );
 
 						// Store globally
 						window.pendingXFNRel = newRel;
 						window.pendingXFNUrl = currentLinkValue?.url;
 
 						// Try multiple times with increasing delays to catch the link after creation
-						console.log( '[XFN] Scheduling XFN application attempts...' );
+						xfnLog( 'Scheduling XFN application attempts...' );
 						setTimeout( () => {
-							console.log( '[XFN] Attempt 1 (100ms)...' );
+							xfnLog( 'Attempt 1 (100ms)...' );
 							applyXFNToCreatedLink();
 						}, 100 );
 						setTimeout( () => {
-							console.log( '[XFN] Attempt 2 (300ms)...' );
+							xfnLog( 'Attempt 2 (300ms)...' );
 							applyXFNToCreatedLink();
 						}, 300 );
 						setTimeout( () => {
-							console.log( '[XFN] Attempt 3 (500ms)...' );
+							xfnLog( 'Attempt 3 (500ms)...' );
 							applyXFNToCreatedLink();
 						}, 500 );
 						setTimeout( () => {
-							console.log( '[XFN] Attempt 4 (1000ms)...' );
+							xfnLog( 'Attempt 4 (1000ms)...' );
 							applyXFNToCreatedLink();
 						}, 1000 );
 					} else {
-						console.log( '[XFN] No XFN values selected, skipping' );
+						xfnLog( 'No XFN values selected, skipping' );
 					}
 
 					// Auto-collapse Advanced panel after apply
@@ -912,9 +905,9 @@ function injectXFNControls() {
 				true
 			); // Use capture phase to run before other handlers
 
-			console.log( '[XFN] Apply button interceptor attached' );
+			xfnLog( 'Apply button interceptor attached' );
 		} else {
-			console.warn( '[XFN] Apply button not found!' );
+			xfnLog( 'WARN: Apply button not found!' );
 		}
 	}, 100 );
 }
@@ -1023,7 +1016,7 @@ function addXFNEventListeners( container, relInput ) {
 
 	const updateRelAttribute = () => {
 		const newRel = combineRelValues( currentXFNValues, currentOtherValues );
-		console.log( '[XFN] Updating XFN values:', {
+		xfnLog( 'Updating XFN values:', {
 			xfnValues: currentXFNValues,
 			otherValues: currentOtherValues,
 			newRel,
@@ -1032,7 +1025,7 @@ function addXFNEventListeners( container, relInput ) {
 		// Update the rel input field directly if it exists
 		if ( relInput ) {
 			relInput.value = newRel;
-			console.log( '[XFN] Updated rel input field to:', newRel );
+			xfnLog( 'Updated rel input field to:', newRel );
 
 			// Trigger input event so React picks up the change
 			const inputEvent = new Event( 'input', { bubbles: true } );
@@ -1046,8 +1039,8 @@ function addXFNEventListeners( container, relInput ) {
 		window.pendingXFNRel = newRel;
 		window.pendingXFNUrl = currentLinkValue?.url;
 
-		console.log( '[XFN] Stored pending XFN rel:', window.pendingXFNRel );
-		console.log( '[XFN] Stored pending XFN url:', window.pendingXFNUrl );
+		xfnLog( 'Stored pending XFN rel:', window.pendingXFNRel );
+		xfnLog( 'Stored pending XFN url:', window.pendingXFNUrl );
 
 		// Don't call onChange during selection - only store values
 		// Calling onChange triggers WordPress to close the Advanced panel
@@ -1056,7 +1049,7 @@ function addXFNEventListeners( container, relInput ) {
 			...( currentLinkValue || {} ),
 			rel: newRel || '',
 		};
-		console.log( '[XFN] Stored rel value (will apply on Submit):', currentLinkValue );
+		xfnLog( 'Stored rel value (will apply on Submit):', currentLinkValue );
 
 		// Visually enable Apply button when XFN has changed
 		const applyButton = linkControlRoot.querySelector(
@@ -1203,26 +1196,26 @@ function updateCountBadge( toggle ) {
  * Apply XFN rel attribute to a newly created link using WordPress APIs
  */
 function applyXFNToCreatedLink() {
-	console.log( '[XFN] ===== Applying XFN to created link =====' );
-	console.log( '[XFN] Pending XFN rel:', window.pendingXFNRel );
-	console.log( '[XFN] Pending XFN url:', window.pendingXFNUrl );
+	xfnLog( '===== Applying XFN to created link =====' );
+	xfnLog( 'Pending XFN rel:', window.pendingXFNRel );
+	xfnLog( 'Pending XFN url:', window.pendingXFNUrl );
 
 	if ( ! window.pendingXFNRel || ! window.pendingXFNUrl ) {
-		console.log( '[XFN] No pending XFN data to apply' );
+		xfnLog( 'No pending XFN data to apply' );
 		return false;
 	}
 
 	// Find the selected block
 	const selectedBlock = wp.data.select( 'core/block-editor' ).getSelectedBlock();
 	if ( ! selectedBlock ) {
-		console.log( '[XFN] No selected block found' );
+		xfnLog( 'No selected block found' );
 		return false;
 	}
 
-	console.log( '[XFN] Selected block:', selectedBlock.name );
-	console.log( '[XFN] Selected block clientId:', selectedBlock.clientId );
-	console.log( '[XFN] Selected block attributes:', selectedBlock.attributes );
-	console.log( '[XFN] Block innerBlocks:', selectedBlock.innerBlocks );
+	xfnLog( 'Selected block:', selectedBlock.name );
+	xfnLog( 'Selected block clientId:', selectedBlock.clientId );
+	xfnLog( 'Selected block attributes:', selectedBlock.attributes );
+	xfnLog( 'Block innerBlocks:', selectedBlock.innerBlocks );
 
 	// Check if this is a block-level link (like Button, Image, etc.)
 	const blockLevelLinks = [
@@ -1247,21 +1240,21 @@ function applyXFNToCreatedLink() {
 		hasBlockUrlValue;
 
 	if ( isBlockLevelLink ) {
-		console.log( '[XFN] This is a block-level link, updating rel attribute directly...' );
+		xfnLog( 'This is a block-level link, updating rel attribute directly...' );
 
 		// Get existing rel value
 		const existingRel = getRelFromBlock( selectedBlock.attributes, selectedBlock.name );
-		console.log( '[XFN] Existing rel:', existingRel );
+		xfnLog( 'Existing rel:', existingRel );
 
 		// Parse and combine with pending XFN values
 		const { other: existingOther } = parseRelAttribute( existingRel );
-		console.log( '[XFN] Existing other values:', existingOther );
+		xfnLog( 'Existing other values:', existingOther );
 
 		const { xfn: pendingXFN } = parseRelAttribute( window.pendingXFNRel );
-		console.log( '[XFN] Pending XFN values:', pendingXFN );
+		xfnLog( 'Pending XFN values:', pendingXFN );
 
 		const newRel = combineRelValues( pendingXFN, existingOther );
-		console.log( '[XFN] New combined rel:', newRel );
+		xfnLog( 'New combined rel:', newRel );
 
 		// Update the block using setRelForBlock pattern
 		if ( selectedBlock.attributes.hasOwnProperty( 'rel' ) ) {
@@ -1269,7 +1262,7 @@ function applyXFNToCreatedLink() {
 				selectedBlock.clientId,
 				{ rel: newRel || undefined }
 			);
-			console.log( '[XFN] ✓ Updated rel attribute on block' );
+			xfnLog( '✓ Updated rel attribute on block' );
 		} else {
 			const metadata = selectedBlock.attributes.metadata || {};
 			wp.data.dispatch( 'core/block-editor' ).updateBlockAttributes(
@@ -1281,7 +1274,7 @@ function applyXFNToCreatedLink() {
 					},
 				}
 			);
-			console.log( '[XFN] ✓ Updated metadata.rel attribute on block' );
+			xfnLog( '✓ Updated metadata.rel attribute on block' );
 		}
 
 		// Also try to update via onChange if available
@@ -1292,9 +1285,9 @@ function applyXFNToCreatedLink() {
 					rel: newRel || '',
 				};
 				window.currentLinkOnChange( updatedValue );
-				console.log( '[XFN] ✓ Also called onChange with updated rel' );
+				xfnLog( '✓ Also called onChange with updated rel' );
 			} catch ( error ) {
-				console.warn( '[XFN] Could not call onChange:', error );
+				xfnLog( 'WARN: Could not call onChange:', error );
 			}
 		}
 
@@ -1302,41 +1295,41 @@ function applyXFNToCreatedLink() {
 		window.pendingXFNRel = null;
 		window.pendingXFNUrl = null;
 
-		console.log( '[XFN] ✓✓✓ Block-level link updated successfully! ✓✓✓' );
+		xfnLog( '✓✓✓ Block-level link updated successfully! ✓✓✓' );
 		return true;
 	}
 
 	// Get the block's content (for RichText blocks like paragraph)
 	let blockContent = selectedBlock.attributes.content;
-	console.log( '[XFN] Block content:', blockContent );
-	console.log( '[XFN] Block content type:', typeof blockContent );
+	xfnLog( 'Block content:', blockContent );
+	xfnLog( 'Block content type:', typeof blockContent );
 
 	// WordPress RichText can be either a string or RichTextData object
 	// If it's a RichTextData object, convert it to HTML string
 	if ( blockContent && typeof blockContent === 'object' && blockContent.toHTMLString ) {
-		console.log( '[XFN] Converting RichTextData to HTML string...' );
+		xfnLog( 'Converting RichTextData to HTML string...' );
 		blockContent = blockContent.toHTMLString();
-		console.log( '[XFN] Converted content:', blockContent );
+		xfnLog( 'Converted content:', blockContent );
 	}
 
 	// Check if content exists and is now a string
 	if ( ! blockContent || typeof blockContent !== 'string' ) {
-		console.warn( '[XFN] Block has no string content or unable to convert to string' );
+		xfnLog( 'WARN: Block has no string content or unable to convert to string' );
 		return false;
 	}
 
 	// Check if URL is in the content
 	const urlInContent = blockContent.includes( window.pendingXFNUrl );
-	console.log( '[XFN] URL in content?', urlInContent );
+	xfnLog( 'URL in content?', urlInContent );
 
 	if ( ! urlInContent ) {
-		console.warn( '[XFN] Pending URL not found in block content' );
-		console.log( '[XFN] Looking for:', window.pendingXFNUrl );
-		console.log( '[XFN] In content:', blockContent );
+		xfnLog( 'WARN: Pending URL not found in block content' );
+		xfnLog( 'Looking for:', window.pendingXFNUrl );
+		xfnLog( 'In content:', blockContent );
 		return false;
 	}
 
-	console.log( '[XFN] Found URL in block content, attempting to update using proper WordPress approach...' );
+	xfnLog( 'Found URL in block content, attempting to update using proper WordPress approach...' );
 
 	// Use a more reliable approach: inject via LinkControl value directly
 	// This ensures WordPress core link system properly handles the rel attribute
@@ -1357,7 +1350,7 @@ function applyXFNToCreatedLink() {
 				const { other: existingOther } = parseRelAttribute( existingRel );
 				const newRel = combineRelValues( pendingXFN, existingOther.length ? existingOther : pendingOther );
 
-				console.log( '[XFN] Setting rel attribute:', newRel );
+				xfnLog( 'Setting rel attribute:', newRel );
 				link.setAttribute( 'rel', newRel );
 				linkUpdated = true;
 			}
@@ -1365,7 +1358,7 @@ function applyXFNToCreatedLink() {
 
 		if ( linkUpdated ) {
 			const newContent = doc.body.innerHTML;
-			console.log( '[XFN] Updating block with new content...' );
+			xfnLog( 'Updating block with new content...' );
 
 			// Use updateBlockAttributes to set the content
 			wp.data.dispatch( 'core/block-editor' ).updateBlockAttributes(
@@ -1373,7 +1366,7 @@ function applyXFNToCreatedLink() {
 				{ content: newContent }
 			);
 
-			console.log( '[XFN] ✓ Block content updated' );
+			xfnLog( '✓ Block content updated' );
 
 			// Clear pending data
 			window.pendingXFNRel = null;
@@ -1382,16 +1375,16 @@ function applyXFNToCreatedLink() {
 			// Force a re-render to ensure the change persists
 			setTimeout( () => {
 				const currentBlock = wp.data.select( 'core/block-editor' ).getBlock( selectedBlock.clientId );
-				console.log( '[XFN] Verification - Current content:', currentBlock?.attributes?.content );
+				xfnLog( 'Verification - Current content:', currentBlock?.attributes?.content );
 			}, 100 );
 
 			return true;
 		}
 	} catch ( error ) {
-		console.error( '[XFN] Error updating link:', error );
+		xfnLog( 'ERROR: Error updating link:', error );
 	}
 
-	console.warn( '[XFN] Could not update link' );
+	xfnLog( 'WARN: Could not update link' );
 	return false;
 }
 
@@ -1531,7 +1524,7 @@ if ( window.linkexfoData?.settings?.enable_inspector_controls ) {
 		'xfn-link-extension/with-xfn-controls',
 		withXFNControls
 	);
-	console.log( '[XFN] Inspector Controls enabled' );
+	xfnLog( 'Inspector Controls enabled' );
 }
 
 /**
@@ -1542,12 +1535,12 @@ addFilter(
 	'blocks.getSaveContent.extraProps',
 	'xfn-link-extension/add-rel-to-links',
 	( props, blockType, attributes ) => {
-		console.log( '[XFN] getSaveContent filter called for:', blockType.name );
+		xfnLog( 'getSaveContent filter called for:', blockType.name );
 
 		// This filter runs when blocks are being saved
 		// We need to inject XFN values that were stored globally
 		if ( currentXFNValues.length > 0 ) {
-			console.log( '[XFN] Injecting XFN values into saved content:', currentXFNValues );
+			xfnLog( 'Injecting XFN values into saved content:', currentXFNValues );
 		}
 
 		return props;
@@ -1557,18 +1550,14 @@ addFilter(
 // Start monitoring for inline links
 if ( typeof document !== 'undefined' ) {
 	// Wait for editor to be ready
-	console.log( '[XFN] Starting XFN monitoring in 1 second...' );
+	xfnLog( 'Starting XFN monitoring in 1 second...' );
 	setTimeout( () => {
-		console.log( '[XFN] XFN monitoring started!' );
+		xfnLog( 'XFN monitoring started!' );
 		startXFNMonitoring();
 	}, 1000 );
 }
 
-console.log(
-	'%c[XFN] Link Extension loaded successfully!',
-	'color: #00a32a; font-weight: bold; font-size: 14px;'
-);
-console.log( '[XFN] Controls will appear in:' );
+xfnLog( 'Link Extension loaded successfully!' );
 
 const settings = window.linkexfoData?.settings || {
 	enable_inspector_controls: false,
@@ -1576,15 +1565,15 @@ const settings = window.linkexfoData?.settings || {
 };
 
 if ( settings.enable_inspector_controls ) {
-	console.log( '[XFN] ✓ Inspector Controls for link blocks (ENABLED)' );
+	xfnLog( '✓ Inspector Controls for link blocks (ENABLED)' );
 } else {
-	console.log( '[XFN] ✗ Inspector Controls for link blocks (DISABLED - enable in Settings > Link Extension for XFN)' );
+	xfnLog( '✗ Inspector Controls for link blocks (DISABLED - enable in Settings > Link Extension for XFN)' );
 }
 
 if ( settings.enable_floating_toolbar ) {
-	console.log( '[XFN] ✓ Floating toolbar for link blocks (ENABLED)' );
+	xfnLog( '✓ Floating toolbar for link blocks (ENABLED)' );
 } else {
-	console.log( '[XFN] ✗ Floating toolbar for link blocks (DISABLED - enable in Settings > Link Extension for XFN)' );
+	xfnLog( '✗ Floating toolbar for link blocks (DISABLED - enable in Settings > Link Extension for XFN)' );
 }
 
-console.log( '[XFN] ✓ Collapsible XFN section in Link Advanced Panel (ALWAYS ENABLED)' );
+xfnLog( '✓ Collapsible XFN section in Link Advanced Panel (ALWAYS ENABLED)' );
