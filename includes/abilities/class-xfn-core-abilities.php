@@ -279,6 +279,10 @@ class XFN_Core_Abilities {
 			return array( 'relationships' => array(), 'error' => 'Post not found.' );
 		}
 
+		if ( ! current_user_can( 'read_post', $post_id ) ) {
+			return array( 'relationships' => array(), 'error' => 'Insufficient permissions for this post.' );
+		}
+
 		$relationships = XFN_Meta_Mirror::get_relationships( $post_id );
 
 		return array(

@@ -96,4 +96,23 @@ class XFNAbilitiesTest extends WP_UnitTestCase {
 		$this->assertFalse( $result['valid'] );
 		$this->assertNotEmpty( $result['warnings'] );
 	}
+
+	public function test_execute_set_relationships_nonexistent_post(): void {
+		$result = $this->abilities->execute_set_relationships( array(
+			'post_id'       => 999999,
+			'relationships' => array(
+				array( 'url' => 'https://alice.example.com', 'rels' => array( 'friend' ) ),
+			),
+		) );
+		$this->assertFalse( $result['success'] );
+		$this->assertArrayHasKey( 'error', $result );
+	}
+
+	public function test_execute_get_relationships_nonexistent_post(): void {
+		$result = $this->abilities->execute_get_relationships( array(
+			'post_id' => 999999,
+		) );
+		$this->assertEmpty( $result['relationships'] );
+		$this->assertArrayHasKey( 'error', $result );
+	}
 }
