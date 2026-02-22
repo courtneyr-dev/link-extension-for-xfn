@@ -67,6 +67,22 @@ class XFN_Link_Extension {
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ) );
 		add_action( 'admin_menu', array( $this, 'add_settings_page' ) );
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
+
+		// Load new classes.
+		require_once XFN_LINK_EXTENSION_PLUGIN_PATH . 'includes/class-xfn-feature-flags.php';
+		require_once XFN_LINK_EXTENSION_PLUGIN_PATH . 'includes/class-xfn-meta-mirror.php';
+		require_once XFN_LINK_EXTENSION_PLUGIN_PATH . 'includes/class-xfn-abilities-manager.php';
+		require_once XFN_LINK_EXTENSION_PLUGIN_PATH . 'includes/abilities/class-xfn-core-abilities.php';
+
+		// Initialize meta mirror.
+		if ( XFN_Feature_Flags::has_meta_mirror() ) {
+			XFN_Meta_Mirror::init();
+		}
+
+		// Initialize abilities.
+		if ( XFN_Feature_Flags::has_abilities_api() ) {
+			XFN_Abilities_Manager::instance();
+		}
 	}
 
 	/**
