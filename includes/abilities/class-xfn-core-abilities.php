@@ -69,7 +69,8 @@ class XFN_Core_Abilities {
 					return current_user_can( 'edit_posts' );
 				},
 				'meta'                => array(
-					'version' => '1.0.0',
+					'show_in_rest' => true,
+					'version'      => '1.0.0',
 				),
 			)
 		);
@@ -115,7 +116,8 @@ class XFN_Core_Abilities {
 					return current_user_can( 'read' );
 				},
 				'meta'                => array(
-					'version' => '1.0.0',
+					'show_in_rest' => true,
+					'version'      => '1.0.0',
 				),
 			)
 		);
@@ -159,7 +161,8 @@ class XFN_Core_Abilities {
 					return current_user_can( 'edit_posts' );
 				},
 				'meta'                => array(
-					'version' => '1.0.0',
+					'show_in_rest' => true,
+					'version'      => '1.0.0',
 				),
 			)
 		);
@@ -198,7 +201,8 @@ class XFN_Core_Abilities {
 					return current_user_can( 'edit_posts' );
 				},
 				'meta'                => array(
-					'version' => '1.0.0',
+					'show_in_rest' => true,
+					'version'      => '1.0.0',
 				),
 			)
 		);
@@ -237,7 +241,8 @@ class XFN_Core_Abilities {
 					return current_user_can( 'read' );
 				},
 				'meta'                => array(
-					'version' => '1.0.0',
+					'show_in_rest' => true,
+					'version'      => '1.0.0',
 				),
 			)
 		);
@@ -246,6 +251,15 @@ class XFN_Core_Abilities {
 	public function execute_set_relationships( array $input ): array {
 		$post_id       = (int) $input['post_id'];
 		$relationships = (array) $input['relationships'];
+
+		$post = get_post( $post_id );
+		if ( ! $post ) {
+			return array( 'success' => false, 'error' => 'Post not found.' );
+		}
+
+		if ( ! current_user_can( 'edit_post', $post_id ) ) {
+			return array( 'success' => false, 'error' => 'Insufficient permissions for this post.' );
+		}
 
 		XFN_Meta_Mirror::set_relationships( $post_id, $relationships );
 
@@ -258,7 +272,13 @@ class XFN_Core_Abilities {
 	}
 
 	public function execute_get_relationships( array $input ): array {
-		$post_id       = (int) $input['post_id'];
+		$post_id = (int) $input['post_id'];
+
+		$post = get_post( $post_id );
+		if ( ! $post ) {
+			return array( 'relationships' => array(), 'error' => 'Post not found.' );
+		}
+
 		$relationships = XFN_Meta_Mirror::get_relationships( $post_id );
 
 		return array(
@@ -271,6 +291,15 @@ class XFN_Core_Abilities {
 		$url     = (string) $input['url'];
 		$rels    = (array) $input['rels'];
 
+		$post = get_post( $post_id );
+		if ( ! $post ) {
+			return array( 'success' => false, 'error' => 'Post not found.' );
+		}
+
+		if ( ! current_user_can( 'edit_post', $post_id ) ) {
+			return array( 'success' => false, 'error' => 'Insufficient permissions for this post.' );
+		}
+
 		XFN_Meta_Mirror::add_relationship( $post_id, $url, $rels );
 
 		return array(
@@ -281,6 +310,15 @@ class XFN_Core_Abilities {
 	public function execute_remove_relationship( array $input ): array {
 		$post_id = (int) $input['post_id'];
 		$url     = (string) $input['url'];
+
+		$post = get_post( $post_id );
+		if ( ! $post ) {
+			return array( 'success' => false, 'error' => 'Post not found.' );
+		}
+
+		if ( ! current_user_can( 'edit_post', $post_id ) ) {
+			return array( 'success' => false, 'error' => 'Insufficient permissions for this post.' );
+		}
 
 		XFN_Meta_Mirror::remove_relationship( $post_id, $url );
 
