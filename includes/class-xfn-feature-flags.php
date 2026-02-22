@@ -1,6 +1,9 @@
 <?php
 /**
  * Feature flags for XFN Link Extension.
+ *
+ * @package LinkExtensionForXFN
+ * @since   1.0.0
  */
 final class XFN_Feature_Flags {
 

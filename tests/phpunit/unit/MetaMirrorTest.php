@@ -57,6 +57,17 @@ class MetaMirrorTest extends WP_UnitTestCase {
 		$this->assertStringContainsString( 'friend', $result );
 	}
 
+	public function test_apply_to_content_handles_href_whitespace(): void {
+		$content = '<p><a href = "https://alice.example.com" rel="nofollow friend">Alice</a></p>';
+		$rels    = array(
+			array( 'url' => 'https://alice.example.com', 'rels' => array( 'colleague', 'met' ) ),
+		);
+		$result = XFN_Meta_Mirror::apply_to_content( $content, $rels );
+		$this->assertStringContainsString( 'nofollow', $result );
+		$this->assertStringContainsString( 'colleague', $result );
+		$this->assertStringContainsString( 'met', $result );
+	}
+
 	public function test_apply_to_content_skips_unmatched_urls(): void {
 		$content = '<p><a href="https://bob.example.com">Bob</a></p>';
 		$rels    = array(

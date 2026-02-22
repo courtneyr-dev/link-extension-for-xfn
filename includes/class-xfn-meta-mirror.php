@@ -1,6 +1,9 @@
 <?php
 /**
- * Stores XFN relationships in post meta and syncs to block HTML on save.
+ * XFN Meta Mirror — stores XFN relationships in post meta and syncs to block HTML on save.
+ *
+ * @package LinkExtensionForXFN
+ * @since   1.0.0
  */
 final class XFN_Meta_Mirror {
 
@@ -130,7 +133,7 @@ final class XFN_Meta_Mirror {
 			$xfn_rels = $entry['rels'];
 
 			$content = preg_replace_callback(
-				'/<a\s+([^>]*?)href=["\']' . $url . '["\']([^>]*?)>/i',
+				'/<a\s+([^>]*?)href\s*=\s*["\']' . $url . '["\']([^>]*?)>/i',
 				function ( $matches ) use ( $xfn_rels ) {
 					$before = $matches[1];
 					$after  = $matches[2];
