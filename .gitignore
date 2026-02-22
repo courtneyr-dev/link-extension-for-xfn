@@ -57,6 +57,7 @@ yarn-error.log*
 tmp/
 temp/
 *.xml
+!phpunit.xml.dist
 blueprint-local.json
 PLAYGROUND-URL.txt
 

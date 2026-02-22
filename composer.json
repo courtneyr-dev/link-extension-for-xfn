@@ -1,0 +1,30 @@
+{
+    "name": "courtneyr-dev/link-extension-for-xfn",
+    "description": "XFN relationship support for WordPress block editor links.",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "php": ">=7.4"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.6",
+        "yoast/phpunit-polyfills": "^4.0"
+    },
+    "autoload": {
+        "classmap": [
+            "includes/"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "LinkExtensionForXFN\\Tests\\": "tests/phpunit/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "test:unit": "phpunit --testsuite=unit"
+    },
+    "config": {
+        "sort-packages": true
+    }
+}
