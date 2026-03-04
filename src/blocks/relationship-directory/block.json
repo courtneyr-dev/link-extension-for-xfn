@@ -1,0 +1,33 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "xfn/relationship-directory",
+  "version": "1.0.0",
+  "title": "Relationship Directory",
+  "category": "widgets",
+  "icon": "groups",
+  "description": "Interactive directory of all XFN relationships across your site.",
+  "textdomain": "link-extension-for-xfn",
+  "supports": {
+    "html": false,
+    "align": ["wide", "full"]
+  },
+  "attributes": {
+    "showSearch": {
+      "type": "boolean",
+      "default": true
+    },
+    "showFilters": {
+      "type": "boolean",
+      "default": true
+    },
+    "limit": {
+      "type": "number",
+      "default": 50
+    }
+  },
+  "viewScriptModule": "file:./view.js",
+  "render": "file:./render.php",
+  "editorScript": "file:./index.js",
+  "style": "file:./style-index.css"
+}

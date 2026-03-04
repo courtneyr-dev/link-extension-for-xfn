@@ -1,0 +1,42 @@
+/**
+ * XFN tooltip styles.
+ *
+ * Positioned above the link with a downward-pointing arrow.
+ * Pill styles inherited from the shared partial.
+ */
+
+@import "../styles/pills";
+
+.xfn-tooltip-wrap {
+  position: relative;
+  display: inline;
+}
+
+.xfn-tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100000;
+  padding: 8px 12px;
+  background: #1e1e1e;
+  border-radius: 4px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.xfn-tooltip__arrow {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border: 6px solid transparent;
+  border-top-color: #1e1e1e;
+}
+
+/* Override pill borders for dark tooltip background. */
+.xfn-tooltip__content .xfn-pill {
+  border-color: rgba(255, 255, 255, 0.2);
+}

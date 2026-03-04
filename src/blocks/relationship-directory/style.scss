@@ -1,0 +1,94 @@
+/**
+ * Relationship Directory block styles.
+ */
+
+@import "../../styles/pills";
+
+.xfn-directory {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
+
+.xfn-directory__search {
+  margin-bottom: 16px;
+}
+
+.xfn-directory__search-input {
+  width: 100%;
+  max-width: 400px;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.xfn-directory__search-input:focus {
+  border-color: #007cba;
+  outline: 2px solid transparent;
+  box-shadow: 0 0 0 1px #007cba;
+}
+
+.xfn-directory__filters {
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.xfn-directory__filter-btn {
+  cursor: pointer;
+  border: 1px solid #ddd;
+  background: #f0f0f0;
+  transition: background-color 0.15s ease;
+}
+
+.xfn-directory__filter-btn:hover {
+  background: #e0e0e0;
+}
+
+.xfn-pill--active {
+  background: #1e1e1e;
+  color: #fff;
+  border-color: #1e1e1e;
+}
+
+.xfn-directory__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.xfn-directory__item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px;
+  padding: 10px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.xfn-directory__item:last-child {
+  border-bottom: none;
+}
+
+.xfn-directory__link {
+  font-weight: 500;
+  word-break: break-all;
+}
+
+.xfn-directory__meta {
+  font-size: 13px;
+  color: #757575;
+}
+
+.xfn-directory__empty {
+  color: #757575;
+  font-style: italic;
+}
+
+/* Editor placeholder. */
+.xfn-directory__placeholder {
+  padding: 32px;
+  border: 2px dashed #ddd;
+  border-radius: 4px;
+  text-align: center;
+  color: #757575;
+}

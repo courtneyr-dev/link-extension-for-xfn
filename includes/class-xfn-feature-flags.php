@@ -10,6 +10,8 @@ final class XFN_Feature_Flags {
 	private static array $defaults = array(
 		'abilities_api'   => true,
 		'meta_mirror'     => true,
+		'interactivity'   => true,
+		'blocks'          => true,
 	);
 
 	public static function is_enabled( string $flag ): bool {
@@ -36,5 +38,14 @@ final class XFN_Feature_Flags {
 
 	public static function has_meta_mirror(): bool {
 		return self::is_enabled( 'meta_mirror' );
+	}
+
+	public static function has_interactivity(): bool {
+		return self::is_enabled( 'interactivity' )
+			&& version_compare( get_bloginfo( 'version' ), '7.0', '>=' );
+	}
+
+	public static function has_blocks(): bool {
+		return self::is_enabled( 'blocks' );
 	}
 }

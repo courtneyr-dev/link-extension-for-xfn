@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Planned Features
+
 - User preferences for default collapsible states
 - Customizable animation speeds
 - Additional relationship validation rules
@@ -18,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.3] - 2024-12-09
 
 ### Fixed
+
 - **WordPress Playground blueprint now works correctly**
   - Fixed JSON structure to use `runPHPWithOptions` with environment variables
   - Disabled WordPress content filters to preserve XFN rel attributes
@@ -27,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Button blocks now correctly include rel attribute in rendered HTML (not just metadata)
 
 ### Improved
+
 - **Enhanced demo content**
   - Added visual indicators (emojis) for better readability
   - Included comprehensive testing instructions
@@ -35,6 +38,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Better explanation of how to inspect XFN in browser DevTools
 
 ### Technical
+
 - Blueprint now uses proper WordPress Playground best practices
 - Content preserved exactly as authored without filter modifications
 - CORS-enabled development server for local blueprint testing
@@ -42,6 +46,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.2] - 2024-12-09
 
 ### Added
+
 - **Embed block support**: XFN relationships now work with all embed blocks (YouTube, Twitter, WordPress, etc.)
   - Added `core/embed` to supported blocks list in Inspector Controls
   - Server-side filter injects XFN attributes into frontend HTML
@@ -58,10 +63,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Updated Quick Start guides to include embed blocks
 
 ### Fixed
+
 - Blueprint.json now in correct location (`assets/blueprints/`) for WordPress.org
 - Embed blocks now properly output XFN relationships to frontend HTML
 
 ### Technical
+
 - Added `xfn_render_embed_block()` filter function
 - Hooks into `render_block` to modify embed output
 - Properly sanitizes and combines XFN with existing rel attributes
@@ -70,6 +77,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.0] - 2024-12-08
 
 ### Added
+
 - **Initial release** of Link Extension for XFN
 - **Comprehensive user documentation** in `docs/` directory:
   - Getting Started guide with XFN overview and quick start
@@ -126,7 +134,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Clean, well-documented code following WordPress standards
 - **Internationalization**:
   - Translation-ready with all strings wrapped in translation functions
-  - Text domain: `xfn-link-extension`
+  - Text domain: `link-extension-for-xfn`
   - Support for WordPress translation system
 - **Security features**:
   - Proper escaping of all output
@@ -136,15 +144,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Capability checks for admin functions
 
 ### Fixed
+
 - **Panel synchronization** - Inspector sidebar and floating toolbar now display identical XFN values for block-level links
 - **Block attribute reading** - Button, Image, and other block-level links now correctly read rel attributes from block attributes instead of HTML content
 - **Inspector panel visibility** - XFN Relationships panel now opens by default for Button, Image, and Navigation blocks for improved discoverability
 
 ### Changed
+
 - **Enhanced source code documentation** - Updated readme.txt with explicit documentation about uncompiled source code location, build tools, and GitHub repository
 - **User documentation** - Replaced single USER-GUIDE.md with comprehensive docs/ directory containing separate guides for each link type
 
 ### Technical Implementation
+
 - **PHP Version**: 7.4+ required
 - **WordPress Version**: 6.4+ required
 - **Build System**: @wordpress/scripts v30.15.0
@@ -153,6 +164,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Architecture**: Singleton pattern with clean separation of concerns
 
 ### Browser Support
+
 - Chrome 90+
 - Firefox 88+
 - Safari 14+
@@ -160,7 +172,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Modern browsers with ES6 support
 
 ### Block Compatibility
+
 Tested and confirmed working with:
+
 - Paragraph block (inline links)
 - Button block
 - Navigation block
@@ -192,8 +206,8 @@ This project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html):
 
 If you discover any bugs or have feature requests, please report them on:
 
-- [GitHub Issues](https://github.com/courtneyr-dev/xfn-link-extension/issues)
-- [WordPress.org Support Forum](https://wordpress.org/support/plugin/xfn-link-extension/)
+- [GitHub Issues](https://github.com/courtneyr-dev/link-extension-for-xfn/issues)
+- [WordPress.org Support Forum](https://wordpress.org/support/plugin/link-extension-for-xfn/)
 
 ## Contributing
 
@@ -201,5 +215,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to contribute to th
 
 ---
 
-[Unreleased]: https://github.com/courtneyr-dev/xfn-link-extension/compare/v1.0.0...HEAD
-[1.0.0]: https://github.com/courtneyr-dev/xfn-link-extension/releases/tag/v1.0.0
+[Unreleased]: https://github.com/courtneyr-dev/link-extension-for-xfn/compare/v1.0.3...HEAD
+[1.0.3]: https://github.com/courtneyr-dev/link-extension-for-xfn/compare/v1.0.2...v1.0.3
+[1.0.2]: https://github.com/courtneyr-dev/link-extension-for-xfn/compare/v1.0.0...v1.0.2
+[1.0.0]: https://github.com/courtneyr-dev/link-extension-for-xfn/releases/tag/v1.0.0

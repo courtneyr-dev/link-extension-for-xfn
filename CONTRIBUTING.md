@@ -57,8 +57,8 @@ Use the [Documentation template](.github/ISSUE_TEMPLATE/documentation.md).
 
 ```bash
 # Fork and clone the repository
-git clone https://github.com/YOUR_USERNAME/xfn-link-extension.git
-cd xfn-link-extension
+git clone https://github.com/YOUR_USERNAME/link-extension-for-xfn.git
+cd link-extension-for-xfn
 
 # Install dependencies
 npm install
@@ -73,22 +73,26 @@ npm run start
 ### Development Workflow
 
 1. **Create a branch**:
+
    ```bash
    git checkout -b feature/your-feature-name
    ```
 
 2. **Make changes** in the `src/` directory
+
    - JavaScript: `src/index.js`
    - Styles: `src/editor.scss`, `src/style.scss`
-   - PHP: `xfn-link-extension.php`
+   - PHP: `link-extension-for-xfn.php`
 
 3. **Build and test**:
+
    ```bash
    npm run build
    # Test in WordPress block editor
    ```
 
 4. **Run code quality checks**:
+
    ```bash
    # Format code
    npm run format
@@ -104,6 +108,7 @@ npm run start
    ```
 
 5. **Test thoroughly**:
+
    - Test in block editor with various blocks
    - Test all three interfaces (toolbar, inspector, link popover)
    - Test with Query Monitor active
@@ -112,12 +117,14 @@ npm run start
    - Test in multiple browsers
 
 6. **Commit your changes**:
+
    ```bash
    git add .
    git commit -m "feat: add your feature description"
    ```
 
    Follow [Conventional Commits](https://www.conventionalcommits.org/):
+
    - `feat:` - New features
    - `fix:` - Bug fixes
    - `docs:` - Documentation changes
@@ -183,6 +190,7 @@ This plugin implements the [XFN 1.1 specification](http://gmpg.org/xfn/11). All 
 - Maintain semantic HTML output
 
 Do not:
+
 - Add non-XFN relationships
 - Modify XFN specification behavior
 - Change relationship validation rules
@@ -235,7 +243,7 @@ npm run test:e2e
 
 Maintainers only:
 
-1. Update version in `package.json`, `xfn-link-extension.php`, `readme.txt`
+1. Update version in `package.json`, `link-extension-for-xfn.php`, `readme.txt`
 2. Update `CHANGELOG.md` with release date
 3. Build production assets: `npm run build`
 4. Create git tag: `git tag -a v1.x.x -m "Version 1.x.x"`
@@ -256,6 +264,7 @@ By contributing, you agree that your contributions will be licensed under the GP
 ## Recognition
 
 All contributors will be recognized in:
+
 - GitHub Contributors page
 - CHANGELOG.md for their contributions
 - Plugin credits (for significant contributions)

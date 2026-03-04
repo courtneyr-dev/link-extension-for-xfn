@@ -7,7 +7,7 @@ Stable tag:        1.0.3
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 6.4
-Requires PHP:      7.4
+Requires PHP:      8.2
 
 Add XFN (XHTML Friends Network) relationship metadata to WordPress links. Semantic social connections for the block editor.
 
@@ -162,12 +162,12 @@ All uncompiled, human-readable source code is included in the plugin's `src/` di
 * Development mode: `npm start` (watches for file changes)
 
 **How to rebuild from source:**
-1. Clone or download from GitHub: https://github.com/courtneyr-dev/xfn-link-extension
+1. Clone or download from GitHub: https://github.com/courtneyr-dev/link-extension-for-xfn
 2. Install dependencies: `npm install`
 3. Build production files: `npm run build`
 4. Output will be in the `build/` directory
 
-**GitHub repository (complete source):** https://github.com/courtneyr-dev/xfn-link-extension
+**GitHub repository (complete source):** https://github.com/courtneyr-dev/link-extension-for-xfn
 
 ### Rel Attribute Management
 The plugin intelligently manages the HTML rel attribute:

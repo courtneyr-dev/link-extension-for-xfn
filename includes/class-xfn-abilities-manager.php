@@ -59,6 +59,9 @@ final class XFN_Abilities_Manager {
 	public function register_abilities(): void {
 		$abilities = new XFN_Core_Abilities();
 		$abilities->register();
+
+		$content_abilities = new XFN_Content_Abilities();
+		$content_abilities->register();
 	}
 
 	/**
@@ -69,12 +72,15 @@ final class XFN_Abilities_Manager {
 	 * @return string[] Ability name strings.
 	 */
 	public static function get_ability_names(): array {
-		return array(
-			'xfn/set_relationships',
-			'xfn/get_relationships',
-			'xfn/add_relationship',
-			'xfn/remove_relationship',
-			'xfn/validate_relationships',
+		return array_merge(
+			array(
+				'xfn/set_relationships',
+				'xfn/get_relationships',
+				'xfn/add_relationship',
+				'xfn/remove_relationship',
+				'xfn/validate_relationships',
+			),
+			XFN_Content_Abilities::get_ability_names()
 		);
 	}
 

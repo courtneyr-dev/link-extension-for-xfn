@@ -3,7 +3,7 @@
 Extends the native WordPress block editor link interface to include XFN (XHTML Friends Network) relationship options across all blocks that support links.
 
 [![WordPress](https://img.shields.io/badge/WordPress-6.4%2B-blue.svg)](https://wordpress.org/)
-[![PHP](https://img.shields.io/badge/PHP-7.4%2B-purple.svg)](https://php.net/)
+[![PHP](https://img.shields.io/badge/PHP-8.2%2B-purple.svg)](https://php.net/)
 [![License](https://img.shields.io/badge/license-GPL--2.0%2B-red.svg)](https://www.gnu.org/licenses/gpl-2.0.html)
 
 ## Overview
@@ -15,6 +15,7 @@ XFN is a simple way to represent human relationships using hyperlinks. By adding
 ## 🎮 Try It Live
 
 **[Launch WordPress Playground Demo](https://wordpress.org/plugins/link-extension-for-xfn/)** - Try the plugin instantly in your browser! Click the "Preview" button to:
+
 - See XFN in action with pre-configured examples
 - Test buttons, embeds, and inline links with XFN attributes
 - Follow step-by-step testing instructions
@@ -57,7 +58,7 @@ The plugin provides XFN controls in two convenient locations:
 
 ![Link Extension for XFN interface showing collapsible sections, relationship selection buttons organized by category, and visual relationship pills displaying active selections](.wordpress-org/screenshot-1.png)
 
-*The XFN interface in action: Collapsible relationship categories with button groups for easy selection, and visual pills showing active relationships at a glance.*
+_The XFN interface in action: Collapsible relationship categories with button groups for easy selection, and visual pills showing active relationships at a glance._
 
 ## Documentation
 
@@ -73,7 +74,7 @@ Comprehensive user guides are available in the [`docs/`](docs/) directory:
 ## Requirements
 
 - **WordPress**: 6.4 or higher
-- **PHP**: 7.4 or higher
+- **PHP**: 8.2 or higher
 - **Modern browser** with ES6 support
 
 ## Installation
@@ -90,8 +91,8 @@ Comprehensive user guides are available in the [`docs/`](docs/) directory:
 
 ```bash
 # Clone the repository
-git clone https://github.com/courtneyr-dev/xfn-link-extension.git
-cd xfn-link-extension
+git clone https://github.com/courtneyr-dev/link-extension-for-xfn.git
+cd link-extension-for-xfn
 
 # Install dependencies
 npm install
@@ -110,6 +111,7 @@ npm run start
 After installation, XFN options are immediately available in the **Link Advanced Panel** for inline links (links within paragraphs, headings, lists, etc.).
 
 To enable XFN for Button, Image, and Navigation blocks:
+
 1. Go to **Settings → Link Extension for XFN**
 2. Enable **Inspector Controls** (recommended)
 3. Click **Save Changes**
@@ -126,6 +128,7 @@ To enable XFN for Button, Image, and Navigation blocks:
 ### Adding XFN to Button/Image/Navigation Blocks
 
 With Inspector Controls enabled:
+
 1. Select the Button/Image/Navigation block
 2. Look in the right sidebar (Inspector)
 3. Find "XFN Relationships" panel (opens by default)
@@ -136,8 +139,8 @@ With Inspector Controls enabled:
 ### Project Structure
 
 ```
-xfn-link-extension/
-├── xfn-link-extension.php  # Main plugin file
+link-extension-for-xfn/
+├── link-extension-for-xfn.php  # Main plugin file
 ├── readme.txt               # WordPress.org documentation
 ├── README.md                # GitHub documentation (this file)
 ├── CHANGELOG.md             # Version history
@@ -238,20 +241,21 @@ This plugin provides hooks for extensibility:
 
 ### Filters
 
-Currently, the plugin uses WordPress core filters. Custom filters may be added in future versions for:
+#### `xfn_feature_flag_{$flag}`
 
-- Customizing relationship definitions
-- Modifying available interfaces
-- Controlling default states
-- Customizing UI elements
+Override a feature flag value programmatically. Return a boolean to force-enable or force-disable a feature, or `null` to fall back to the saved option / default.
 
-### Actions
+**Available flags:** `abilities_api`, `meta_mirror`, `interactivity`, `blocks`
 
-Currently, the plugin uses WordPress core actions. Custom actions may be added in future versions for:
+```php
+// Force-disable the Interactivity API features.
+add_filter( 'xfn_feature_flag_interactivity', '__return_false' );
 
-- Relationship selection events
-- Validation events
-- Interface state changes
+// Force-enable the Abilities API regardless of saved settings.
+add_filter( 'xfn_feature_flag_abilities_api', '__return_true' );
+```
+
+**Priority order:** filter return > saved option (`xfn_feature_flags`) > built-in default (`true`).
 
 ## Technical Details
 
@@ -305,6 +309,7 @@ The plugin intelligently manages the HTML `rel` attribute:
 ### Compatibility Testing
 
 Test with popular plugins:
+
 - Yoast SEO
 - Rank Math
 - Jetpack
@@ -312,6 +317,7 @@ Test with popular plugins:
 - Contact Form 7
 
 Test with popular themes:
+
 - Twenty Twenty-Four (default block theme)
 - Blocksy
 - Kadence
@@ -341,14 +347,14 @@ See [CHANGELOG.md](CHANGELOG.md) for version history.
 ## Support
 
 - **WordPress.org Support Forum**: [Plugin Support](https://wordpress.org/support/plugin/link-extension-for-xfn/)
-- **GitHub Issues**: [Report bugs or request features](https://github.com/courtneyr-dev/xfn-link-extension/issues)
+- **GitHub Issues**: [Report bugs or request features](https://github.com/courtneyr-dev/link-extension-for-xfn/issues)
 - **Documentation**: [WordPress.org Plugin Page](https://wordpress.org/plugins/link-extension-for-xfn/)
 
 ## License
 
 This plugin is licensed under GPL v2 or later.
 
-Copyright (c) 2024 Courtney Robertson
+Copyright (c) 2024-2026 Courtney Robertson
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
 
@@ -358,7 +364,7 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 
 - **Author**: Courtney Robertson
 - **WordPress.org**: courane01
-- **Contributors**: [List contributors here]
+- **Contributors**: Courtney Robertson ([@courtneyr-dev](https://github.com/courtneyr-dev))
 - **XFN Specification**: [GMPG XFN](http://gmpg.org/xfn/)
 - **Built with**: [@wordpress/scripts](https://www.npmjs.com/package/@wordpress/scripts)
 

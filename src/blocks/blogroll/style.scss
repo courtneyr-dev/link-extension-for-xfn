@@ -1,0 +1,55 @@
+/**
+ * Blogroll block styles.
+ */
+
+@import "../../styles/pills";
+
+.xfn-blogroll__list {
+  margin: 0;
+  padding: 0;
+}
+
+.xfn-blogroll__group-title {
+  font-weight: 600;
+  font-size: 15px;
+  margin: 16px 0 4px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #ddd;
+}
+
+.xfn-blogroll__group-title:first-child {
+  margin-top: 0;
+}
+
+.xfn-blogroll__count {
+  font-weight: 400;
+  color: #757575;
+  font-size: 13px;
+}
+
+.xfn-blogroll__entry {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0 0 0 16px;
+  padding: 6px 0;
+}
+
+.xfn-blogroll__link {
+  word-break: break-all;
+}
+
+.xfn-blogroll__empty {
+  color: #757575;
+  font-style: italic;
+}
+
+/* Editor placeholder. */
+.xfn-blogroll__placeholder {
+  padding: 32px;
+  border: 2px dashed #ddd;
+  border-radius: 4px;
+  text-align: center;
+  color: #757575;
+}

@@ -1,0 +1,33 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "xfn/blogroll",
+  "version": "1.0.0",
+  "title": "XFN Blogroll",
+  "category": "widgets",
+  "icon": "list-view",
+  "description": "Displays XFN-linked sites grouped by relationship type or domain.",
+  "textdomain": "link-extension-for-xfn",
+  "supports": {
+    "html": false,
+    "align": ["wide"]
+  },
+  "attributes": {
+    "groupBy": {
+      "type": "string",
+      "default": "relationship",
+      "enum": ["relationship", "domain"]
+    },
+    "limit": {
+      "type": "number",
+      "default": 50
+    },
+    "showRelationships": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "render": "file:./render.php",
+  "editorScript": "file:./index.js",
+  "style": "file:./style-index.css"
+}

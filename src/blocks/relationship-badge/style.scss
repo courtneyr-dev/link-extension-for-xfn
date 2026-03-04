@@ -1,0 +1,30 @@
+/**
+ * Relationship Badge block styles.
+ */
+
+@import "../../styles/pills";
+
+.xfn-relationship-badge {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.xfn-relationship-badge__link {
+  word-break: break-all;
+}
+
+.xfn-relationship-badge__empty {
+  color: #757575;
+  font-style: italic;
+}
+
+/* Editor placeholder. */
+.xfn-relationship-badge__placeholder {
+  padding: 32px;
+  border: 2px dashed #ddd;
+  border-radius: 4px;
+  text-align: center;
+  color: #757575;
+}

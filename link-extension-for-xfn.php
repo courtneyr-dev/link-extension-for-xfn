@@ -1,12 +1,12 @@
 <?php
 /**
  * Plugin Name:       Link Extension for XFN
- * Plugin URI:        https://github.com/courtneyr-dev/xfn-link-extension
+ * Plugin URI:        https://github.com/courtneyr-dev/link-extension-for-xfn
  * Description:       Extends the native Gutenberg link interface to include XFN (XHTML Friends Network) relationship options across all blocks that support links. Features floating toolbar access, Inspector Controls integration, and Link Advanced panel support.
  * Version:           1.0.3
  * Requires at least: 6.4
  * Tested up to:      6.9
- * Requires PHP:      7.4
+ * Requires PHP:      8.2
  * Author:            Courtney Robertson
  * License:           GPLv2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
@@ -73,6 +73,10 @@ class XFN_Link_Extension {
 		require_once XFN_LINK_EXTENSION_PLUGIN_PATH . 'includes/class-xfn-meta-mirror.php';
 		require_once XFN_LINK_EXTENSION_PLUGIN_PATH . 'includes/class-xfn-abilities-manager.php';
 		require_once XFN_LINK_EXTENSION_PLUGIN_PATH . 'includes/abilities/class-xfn-core-abilities.php';
+		require_once XFN_LINK_EXTENSION_PLUGIN_PATH . 'includes/class-xfn-content-scanner.php';
+		require_once XFN_LINK_EXTENSION_PLUGIN_PATH . 'includes/class-abilities-xfn.php';
+		require_once XFN_LINK_EXTENSION_PLUGIN_PATH . 'includes/class-xfn-interactivity.php';
+		require_once XFN_LINK_EXTENSION_PLUGIN_PATH . 'includes/class-xfn-block-registrar.php';
 
 		// Initialize meta mirror.
 		if ( XFN_Feature_Flags::has_meta_mirror() ) {
@@ -82,6 +86,16 @@ class XFN_Link_Extension {
 		// Initialize abilities.
 		if ( XFN_Feature_Flags::has_abilities_api() ) {
 			XFN_Abilities_Manager::instance();
+		}
+
+		// Initialize frontend tooltips.
+		if ( XFN_Feature_Flags::has_interactivity() ) {
+			( new XFN_Interactivity() )->init();
+		}
+
+		// Register blocks.
+		if ( XFN_Feature_Flags::has_blocks() ) {
+			( new XFN_Block_Registrar() )->init();
 		}
 	}
 
