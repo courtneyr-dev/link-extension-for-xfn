@@ -15,12 +15,12 @@
  * @package LinkExtensionForXFN
  */
 
-// Prevent direct access
+// Prevent direct access.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// Define plugin constants
+// Define plugin constants.
 define( 'XFN_LINK_EXTENSION_VERSION', '1.0.3' );
 define( 'XFN_LINK_EXTENSION_PLUGIN_FILE', __FILE__ );
 define( 'XFN_LINK_EXTENSION_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -111,7 +111,7 @@ class XFN_Link_Extension {
 	 */
 	public function init() {
 		// Add REST API endpoint for XFN validation (if needed in future)
-		// This would be used for server-side validation of relationship combinations
+		// This would be used for server-side validation of relationship combinations.
 	}
 
 	/**
@@ -191,7 +191,7 @@ class XFN_Link_Extension {
 	 * Sanitize settings
 	 *
 	 * @since 1.0.2
-	 * @param array $input Raw input from settings form
+	 * @param array $input Raw input from settings form.
 	 * @return array Sanitized settings
 	 */
 	public function sanitize_settings( $input ) {
@@ -327,10 +327,10 @@ class XFN_Link_Extension {
 			'%s-%s-%s',
 			XFN_LINK_EXTENSION_VERSION,
 			substr( $style_hash, 0, 8 ),
-			time() // Add timestamp for aggressive cache busting during development
+			time() // Add timestamp for aggressive cache busting during development.
 		);
 
-		// Enqueue main JavaScript file
+		// Enqueue main JavaScript file.
 		wp_enqueue_script(
 			'link-extension-for-xfn',
 			XFN_LINK_EXTENSION_PLUGIN_URL . 'build/index.js',
@@ -339,7 +339,7 @@ class XFN_Link_Extension {
 			true
 		);
 
-		// Enqueue editor-specific styles
+		// Enqueue editor-specific styles.
 		wp_enqueue_style(
 			'xfn-link-extension-editor',
 			XFN_LINK_EXTENSION_PLUGIN_URL . 'build/index.css',
@@ -347,7 +347,7 @@ class XFN_Link_Extension {
 			$style_version
 		);
 
-		// Localize script with XFN relationship data and translations
+		// Localize script with XFN relationship data and translations.
 		wp_localize_script(
 			'link-extension-for-xfn',
 			'linkexfoData',
@@ -364,7 +364,7 @@ class XFN_Link_Extension {
 			]
 		);
 
-		// Set script translations for JavaScript
+		// Set script translations for JavaScript.
 		wp_set_script_translations(
 			'link-extension-for-xfn',
 			'link-extension-for-xfn',
@@ -463,7 +463,7 @@ class XFN_Link_Extension {
 	 * other rel values like nofollow, noopener, etc.
 	 *
 	 * @since 1.0.0
-	 * @param string $rel_string The rel attribute value to parse
+	 * @param string $rel_string The rel attribute value to parse.
 	 * @return array Array with 'xfn' and 'other' keys containing respective values
 	 */
 	public static function parse_rel_attribute( $rel_string ) {
@@ -474,7 +474,7 @@ class XFN_Link_Extension {
 			];
 		}
 
-		// All possible XFN relationship values
+		// All possible XFN relationship values.
 		$xfn_values = [
 			'contact',
 			'acquaintance',
@@ -521,8 +521,8 @@ class XFN_Link_Extension {
 	 * into a properly formatted rel attribute string.
 	 *
 	 * @since 1.0.0
-	 * @param array $xfn_values Array of XFN relationship values
-	 * @param array $other_values Array of non-XFN rel values
+	 * @param array $xfn_values Array of XFN relationship values.
+	 * @param array $other_values Array of non-XFN rel values.
 	 * @return string Combined rel attribute value
 	 */
 	public static function combine_rel_values( $xfn_values, $other_values ) {
@@ -531,7 +531,7 @@ class XFN_Link_Extension {
 			array_filter( (array) $xfn_values )
 		);
 
-		// Remove duplicates and empty values
+		// Remove duplicates and empty values.
 		$all_values = array_unique( array_filter( $all_values ) );
 
 		return implode( ' ', $all_values );
@@ -544,7 +544,7 @@ class XFN_Link_Extension {
 	 * the XFN specification. Checks for mutually exclusive relationships.
 	 *
 	 * @since 1.0.0
-	 * @param array $relationships Array of selected XFN relationships
+	 * @param array $relationships Array of selected XFN relationships.
 	 * @return bool Whether the relationship combination is valid
 	 */
 	public static function validate_xfn_relationships( $relationships ) {
@@ -552,14 +552,14 @@ class XFN_Link_Extension {
 			return true;
 		}
 
-		// Define mutually exclusive groups
+		// Define mutually exclusive groups.
 		$exclusive_groups = [
 			[ 'contact', 'acquaintance', 'friend' ],
 			[ 'co-resident', 'neighbor' ],
 			[ 'child', 'parent', 'sibling', 'spouse', 'kin' ],
 		];
 
-		// Check each exclusive group
+		// Check each exclusive group.
 		foreach ( $exclusive_groups as $group ) {
 			$selected_in_group = array_intersect( $relationships, $group );
 			if ( count( $selected_in_group ) > 1 ) {
@@ -577,7 +577,7 @@ class XFN_Link_Extension {
 	 * only valid XFN and standard rel values.
 	 *
 	 * @since 1.0.0
-	 * @param string $rel_value The rel attribute value to sanitize
+	 * @param string $rel_value The rel attribute value to sanitize.
 	 * @return string Sanitized rel attribute value
 	 */
 	public static function sanitize_rel_attribute( $rel_value ) {
@@ -585,16 +585,16 @@ class XFN_Link_Extension {
 			return '';
 		}
 
-		// Parse the rel attribute
+		// Parse the rel attribute.
 		$parsed = self::parse_rel_attribute( $rel_value );
 
-		// Validate XFN relationships
+		// Validate XFN relationships.
 		if ( ! self::validate_xfn_relationships( $parsed['xfn'] ) ) {
-			// If invalid, remove all XFN values and keep only other values
+			// If invalid, remove all XFN values and keep only other values.
 			$parsed['xfn'] = [];
 		}
 
-		// Combine and return
+		// Combine and return.
 		return self::combine_rel_values( $parsed['xfn'], $parsed['other'] );
 	}
 }
@@ -615,7 +615,7 @@ add_action( 'plugins_loaded', 'xfn_link_extension_init' );
  * @since 1.0.0
  */
 function xfn_link_extension_activate() {
-	// Check minimum requirements
+	// Check minimum requirements.
 	if ( version_compare( get_bloginfo( 'version' ), '6.4', '<' ) ) {
 		deactivate_plugins( plugin_basename( __FILE__ ) );
 		wp_die(
@@ -656,7 +656,7 @@ function xfn_get_relationships() {
  * Provides a public interface for parsing rel attribute strings.
  *
  * @since 1.0.0
- * @param string $rel_string The rel attribute value to parse
+ * @param string $rel_string The rel attribute value to parse.
  * @return array Array with 'xfn' and 'other' keys
  */
 function xfn_parse_rel_attribute( $rel_string ) {
@@ -669,8 +669,8 @@ function xfn_parse_rel_attribute( $rel_string ) {
  * Provides a public interface for combining XFN and other rel values.
  *
  * @since 1.0.0
- * @param array $xfn_values Array of XFN relationship values
- * @param array $other_values Array of non-XFN rel values
+ * @param array $xfn_values Array of XFN relationship values.
+ * @param array $other_values Array of non-XFN rel values.
  * @return string Combined rel attribute value
  */
 function xfn_combine_rel_values( $xfn_values, $other_values ) {
@@ -683,7 +683,7 @@ function xfn_combine_rel_values( $xfn_values, $other_values ) {
  * Provides a public interface for validating XFN relationship combinations.
  *
  * @since 1.0.0
- * @param array $relationships Array of selected XFN relationships
+ * @param array $relationships Array of selected XFN relationships.
  * @return bool Whether the relationship combination is valid
  */
 function xfn_validate_relationships( $relationships ) {
@@ -696,7 +696,7 @@ function xfn_validate_relationships( $relationships ) {
  * Provides a public interface for sanitizing rel attribute values.
  *
  * @since 1.0.0
- * @param string $rel_value The rel attribute value to sanitize
+ * @param string $rel_value The rel attribute value to sanitize.
  * @return string Sanitized rel attribute value
  */
 function xfn_sanitize_rel_attribute( $rel_value ) {
@@ -711,54 +711,54 @@ function xfn_sanitize_rel_attribute( $rel_value ) {
  * embed output, or adds a data-rel attribute to the figure element.
  *
  * @since 1.0.2
- * @param string $block_content The block content about to be rendered
- * @param array  $block The full block, including name and attributes
+ * @param string $block_content The block content about to be rendered.
+ * @param array  $block The full block, including name and attributes.
  * @return string Modified block content with XFN attributes
  */
 function xfn_render_embed_block( $block_content, $block ) {
-	// Only process embed blocks
+	// Only process embed blocks.
 	if ( 'core/embed' !== $block['blockName'] ) {
 		return $block_content;
 	}
 
-	// Check if block has XFN metadata
+	// Check if block has XFN metadata.
 	if ( empty( $block['attrs']['metadata']['rel'] ) ) {
 		return $block_content;
 	}
 
 	$rel_value = $block['attrs']['metadata']['rel'];
 
-	// Sanitize the rel value
+	// Sanitize the rel value.
 	$rel_value = XFN_Link_Extension::sanitize_rel_attribute( $rel_value );
 
 	if ( empty( $rel_value ) ) {
 		return $block_content;
 	}
 
-	// Try to find and modify any existing links in the embed output
+	// Try to find and modify any existing links in the embed output.
 	if ( preg_match( '/<a\s+([^>]*?)>/', $block_content ) ) {
-		// Embed contains a link - add rel to it
+		// Embed contains a link - add rel to it.
 		$block_content = preg_replace_callback(
 			'/<a\s+([^>]*?)>/',
 			function ( $matches ) use ( $rel_value ) {
 				$attrs = $matches[1];
 
-				// Check if rel already exists
+				// Check if rel already exists.
 				if ( preg_match( '/rel=["\']([^"\']*)["\']/', $attrs, $rel_match ) ) {
-					// Combine existing rel with XFN
+					// Combine existing rel with XFN.
 					$existing_rel = $rel_match[1];
 					$parsed       = XFN_Link_Extension::parse_rel_attribute( $existing_rel );
 					$new_xfn      = XFN_Link_Extension::parse_rel_attribute( $rel_value );
 					$combined     = XFN_Link_Extension::combine_rel_values( $new_xfn['xfn'], $parsed['other'] );
 
-					// Replace existing rel
+					// Replace existing rel.
 					$attrs = preg_replace(
 						'/rel=["\'][^"\']*["\']/',
 						'rel="' . esc_attr( $combined ) . '"',
 						$attrs
 					);
 				} else {
-					// Add new rel attribute
+					// Add new rel attribute.
 					$attrs .= ' rel="' . esc_attr( $rel_value ) . '"';
 				}
 
@@ -767,7 +767,7 @@ function xfn_render_embed_block( $block_content, $block ) {
 			$block_content
 		);
 	} else {
-		// No link in embed output - add data-xfn-rel to figure element for semantic purposes
+		// No link in embed output - add data-xfn-rel to figure element for semantic purposes.
 		$block_content = preg_replace(
 			'/<figure\s+([^>]*?)class="([^"]*)"([^>]*)>/',
 			'<figure $1class="$2"$3 data-xfn-rel="' . esc_attr( $rel_value ) . '">',

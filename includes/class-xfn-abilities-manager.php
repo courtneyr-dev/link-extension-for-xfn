@@ -5,13 +5,22 @@
  * @package LinkExtensionForXFN
  * @since   1.0.0
  */
-
 final class XFN_Abilities_Manager {
 
 	public const CATEGORY_SLUG = 'xfn-relationships';
 
+	/**
+	 * Singleton instance.
+	 *
+	 * @var self|null
+	 */
 	private static ?self $instance = null;
 
+	/**
+	 * Get the singleton instance.
+	 *
+	 * @return self
+	 */
 	public static function instance(): self {
 		if ( null === self::$instance ) {
 			self::$instance = new self();
@@ -19,6 +28,9 @@ final class XFN_Abilities_Manager {
 		return self::$instance;
 	}
 
+	/**
+	 * Hook ability registration if the Abilities API is available.
+	 */
 	private function __construct() {
 		if ( ! XFN_Feature_Flags::has_abilities_api() ) {
 			return;
@@ -32,16 +44,28 @@ final class XFN_Abilities_Manager {
 		}
 	}
 
+	/**
+	 * Prevent cloning the singleton.
+	 */
 	private function __clone() {}
 
+	/**
+	 * Prevent unserializing the singleton.
+	 */
 	public function __wakeup() {
 		throw new \RuntimeException( 'Cannot unserialize singleton' );
 	}
 
+	/**
+	 * Reset the singleton (used by tests).
+	 */
 	public static function reset(): void {
 		self::$instance = null;
 	}
 
+	/**
+	 * Register the XFN ability category.
+	 */
 	public function register_category(): void {
 		if ( ! function_exists( 'wp_register_ability_category' ) ) {
 			return;
@@ -56,6 +80,9 @@ final class XFN_Abilities_Manager {
 		);
 	}
 
+	/**
+	 * Register core and content abilities.
+	 */
 	public function register_abilities(): void {
 		$abilities = new XFN_Core_Abilities();
 		$abilities->register();
