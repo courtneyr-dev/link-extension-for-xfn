@@ -1,0 +1,134 @@
+<?xml version="1.0"?>
+<ruleset name="Link Extension for XFN Coding Standards">
+	<description>Coding standards for the Link Extension for XFN plugin.</description>
+
+	<!-- What to scan -->
+	<file>.</file>
+	<exclude-pattern>/vendor/</exclude-pattern>
+	<exclude-pattern>/node_modules/</exclude-pattern>
+	<exclude-pattern>/build/</exclude-pattern>
+	<exclude-pattern>/tests/</exclude-pattern>
+	<exclude-pattern>/assets/</exclude-pattern>
+	<exclude-pattern>\.js</exclude-pattern>
+	<exclude-pattern>\.css</exclude-pattern>
+
+	<!-- How to scan -->
+	<arg value="sp"/>
+	<arg name="basepath" value="."/>
+	<arg name="colors"/>
+	<arg name="extensions" value="php"/>
+	<arg name="parallel" value="8"/>
+	<!-- Warnings stay visible in CI logs but don't fail the build.
+		 Errors still gate the build; this only affects exit code on
+		 warning-only runs. -->
+	<config name="ignore_warnings_on_exit" value="1"/>
+
+	<!-- Rules: Check PHP version compatibility -->
+	<config name="testVersion" value="8.2-"/>
+	<rule ref="PHPCompatibilityWP"/>
+
+	<!-- Rules: WordPress Coding Standards -->
+	<config name="minimum_wp_version" value="6.4"/>
+	<rule ref="WordPress">
+		<!-- Allow short array syntax -->
+		<exclude name="Generic.Arrays.DisallowShortArraySyntax"/>
+		<exclude name="Universal.Arrays.DisallowShortArraySyntax"/>
+		<!-- Allow filename exceptions for plugin main file -->
+		<exclude name="WordPress.Files.FileName.InvalidClassFileName"/>
+	</rule>
+
+	<!-- Allow short array syntax -->
+	<rule ref="Generic.Arrays.DisallowLongArraySyntax"/>
+
+	<!-- ===== Security Sniffs ===== -->
+
+	<rule ref="WordPress.Security.EscapeOutput">
+		<type>error</type>
+	</rule>
+
+	<rule ref="WordPress.Security.NonceVerification">
+		<type>error</type>
+	</rule>
+
+	<rule ref="WordPress.Security.ValidatedSanitizedInput">
+		<type>error</type>
+	</rule>
+
+	<rule ref="WordPress.DB.PreparedSQL">
+		<type>error</type>
+	</rule>
+
+	<rule ref="WordPress.DB.DirectDatabaseQuery">
+		<type>warning</type>
+	</rule>
+
+	<!-- ===== Internationalization ===== -->
+
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array">
+				<element value="link-extension-for-xfn"/>
+			</property>
+		</properties>
+	</rule>
+
+	<!-- ===== Style preferences relaxed to warning =====
+		 These sniffs flag style choices that are common and well-understood
+		 in modern PHP 8.2 code. They surface as warnings (visible signal,
+		 no CI gate). Move back to error when a real bug is rooted in one. -->
+
+	<rule ref="Universal.Operators.DisallowShortTernary">
+		<type>warning</type>
+	</rule>
+
+	<rule ref="Generic.CodeAnalysis.UnusedFunctionParameter">
+		<type>warning</type>
+	</rule>
+
+	<rule ref="Squiz.Commenting.FunctionCommentThrowTag.Missing">
+		<type>warning</type>
+	</rule>
+
+	<!-- ===== Best Practices ===== -->
+
+	<rule ref="WordPress.WP.EnqueuedResources"/>
+	<rule ref="WordPress.WP.DeprecatedFunctions"/>
+	<rule ref="WordPress.WP.DeprecatedParameters"/>
+
+	<rule ref="Squiz.PHP.Eval">
+		<type>error</type>
+	</rule>
+
+	<!-- Allow underscores and dashes in hook names for our namespace -->
+	<rule ref="WordPress.NamingConventions.ValidHookName">
+		<properties>
+			<property name="additionalWordDelimiters" value="-/"/>
+		</properties>
+	</rule>
+
+	<!-- Register allowed prefixes for globals, hooks, and options.
+		 - "lexfn" is the canonical short prefix (see CLAUDE.md).
+		 - "xfn" / "XFN" match the established class naming
+		   (XFN_Link_Extension, XFN_Abilities_Manager, …) and the
+		   XFN_LINK_EXTENSION_* runtime constants. Renaming those would be
+		   a breaking change for existing integrations. -->
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<properties>
+			<property name="prefixes" type="array">
+				<element value="lexfn"/>
+				<element value="LEXFN"/>
+				<element value="xfn"/>
+				<element value="XFN"/>
+				<element value="link_extension_for_xfn"/>
+				<element value="LINK_EXTENSION_FOR_XFN"/>
+				<element value="LinkExtensionForXFN"/>
+			</property>
+		</properties>
+	</rule>
+
+	<!-- ===== Documentation ===== -->
+
+	<rule ref="Squiz.Commenting.FileComment">
+		<exclude name="Squiz.Commenting.FileComment.Missing"/>
+	</rule>
+</ruleset>
