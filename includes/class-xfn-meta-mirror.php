@@ -10,6 +10,11 @@ final class XFN_Meta_Mirror {
 	public const META_KEY   = '_xfn_relationships';
 	public const SOURCE_KEY = '_xfn_meta_source';
 
+	/**
+	 * Valid XFN 1.1 relationship values.
+	 *
+	 * @var string[]
+	 */
 	private static array $valid_xfn = [
 		'contact',
 		'acquaintance',
@@ -31,11 +36,17 @@ final class XFN_Meta_Mirror {
 		'me',
 	];
 
+	/**
+	 * Hook meta registration and the save-time content sync.
+	 */
 	public static function init(): void {
 		add_action( 'init', [ __CLASS__, 'register_meta' ] );
 		add_action( 'save_post', [ __CLASS__, 'sync_meta_to_content' ], 20, 2 );
 	}
 
+	/**
+	 * Register the relationships post meta for all post types.
+	 */
 	public static function register_meta(): void {
 		register_post_meta(
 			'',
@@ -70,6 +81,12 @@ final class XFN_Meta_Mirror {
 		);
 	}
 
+	/**
+	 * Sanitize a relationships array: valid http(s) URL plus XFN rels only.
+	 *
+	 * @param mixed $input Raw meta value.
+	 * @return array Sanitized list of { url, rels } entries.
+	 */
 	public static function sanitize_relationships( $input ): array {
 		if ( ! is_array( $input ) ) {
 			return [];
@@ -113,17 +130,36 @@ final class XFN_Meta_Mirror {
 		return $clean;
 	}
 
+	/**
+	 * Get the stored relationships for a post.
+	 *
+	 * @param int $post_id Post ID.
+	 * @return array List of { url, rels } entries.
+	 */
 	public static function get_relationships( int $post_id ): array {
 		$meta = get_post_meta( $post_id, self::META_KEY, true );
 		return is_array( $meta ) ? $meta : [];
 	}
 
+	/**
+	 * Replace the stored relationships for a post.
+	 *
+	 * @param int   $post_id       Post ID.
+	 * @param array $relationships List of { url, rels } entries.
+	 */
 	public static function set_relationships( int $post_id, array $relationships ): void {
 		$clean = self::sanitize_relationships( $relationships );
 		update_post_meta( $post_id, self::META_KEY, $clean );
 		update_post_meta( $post_id, self::SOURCE_KEY, 'meta' );
 	}
 
+	/**
+	 * Add or merge a relationship for a URL on a post.
+	 *
+	 * @param int      $post_id Post ID.
+	 * @param string   $url     Target URL.
+	 * @param string[] $rels    XFN rel values to add.
+	 */
 	public static function add_relationship( int $post_id, string $url, array $rels ): void {
 		$existing = self::get_relationships( $post_id );
 
@@ -148,6 +184,12 @@ final class XFN_Meta_Mirror {
 		self::set_relationships( $post_id, $existing );
 	}
 
+	/**
+	 * Remove the relationship entry for a URL on a post.
+	 *
+	 * @param int    $post_id Post ID.
+	 * @param string $url     Target URL.
+	 */
 	public static function remove_relationship( int $post_id, string $url ): void {
 		$existing = self::get_relationships( $post_id );
 		$filtered = array_values(
@@ -162,6 +204,13 @@ final class XFN_Meta_Mirror {
 		self::set_relationships( $post_id, $filtered );
 	}
 
+	/**
+	 * Inject rel attributes for stored relationships into post content.
+	 *
+	 * @param string $content       Post content HTML.
+	 * @param array  $relationships List of { url, rels } entries.
+	 * @return string Updated content.
+	 */
 	public static function apply_to_content( string $content, array $relationships ): string {
 		foreach ( $relationships as $entry ) {
 			$url      = preg_quote( $entry['url'], '/' );
@@ -198,6 +247,12 @@ final class XFN_Meta_Mirror {
 		return $content;
 	}
 
+	/**
+	 * On save, write meta-sourced relationships back into post content.
+	 *
+	 * @param int      $post_id Post ID.
+	 * @param \WP_Post $post    Post object.
+	 */
 	public static function sync_meta_to_content( int $post_id, \WP_Post $post ): void {
 		// Only sync if meta was the last writer.
 		$source = get_post_meta( $post_id, self::SOURCE_KEY, true );

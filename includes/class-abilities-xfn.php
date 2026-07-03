@@ -13,6 +13,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Registers abilities that read and write XFN rels in post content.
+ */
 class XFN_Content_Abilities {
 
 	/**
@@ -49,6 +52,9 @@ class XFN_Content_Abilities {
 		];
 	}
 
+	/**
+	 * Register the xfn/add-relationship ability.
+	 */
 	private function register_add_relationship(): void {
 		wp_register_ability(
 			'xfn/add-relationship',
@@ -96,6 +102,9 @@ class XFN_Content_Abilities {
 		);
 	}
 
+	/**
+	 * Register the xfn/remove-relationship ability.
+	 */
 	private function register_remove_relationship(): void {
 		wp_register_ability(
 			'xfn/remove-relationship',
@@ -143,6 +152,9 @@ class XFN_Content_Abilities {
 		);
 	}
 
+	/**
+	 * Register the xfn/get-relationships ability.
+	 */
 	private function register_get_relationships(): void {
 		wp_register_ability(
 			'xfn/get-relationships',
@@ -191,6 +203,9 @@ class XFN_Content_Abilities {
 		);
 	}
 
+	/**
+	 * Register the xfn/validate-relationships ability.
+	 */
 	private function register_validate_relationships(): void {
 		wp_register_ability(
 			'xfn/validate-relationships',
@@ -232,6 +247,9 @@ class XFN_Content_Abilities {
 		);
 	}
 
+	/**
+	 * Register the xfn/suggest-relationship ability.
+	 */
 	private function register_suggest_relationship(): void {
 		wp_register_ability(
 			'xfn/suggest-relationship',
@@ -543,13 +561,11 @@ class XFN_Content_Abilities {
 
 				if ( 'add' === $action ) {
 					$current_xfn = array_values( array_unique( array_merge( $current_xfn, $rels ) ) );
+				} elseif ( empty( $rels ) ) {
+					// Remove with no specific rels: remove all XFN values.
+					$current_xfn = [];
 				} else {
-					// Remove: if $rels is empty, remove all XFN values.
-					if ( empty( $rels ) ) {
-						$current_xfn = [];
-					} else {
-						$current_xfn = array_values( array_diff( $current_xfn, $rels ) );
-					}
+					$current_xfn = array_values( array_diff( $current_xfn, $rels ) );
 				}
 
 				$new_rel = XFN_Link_Extension::combine_rel_values( $current_xfn, $other_rels );
@@ -599,7 +615,8 @@ class XFN_Content_Abilities {
 				}
 			}
 		} catch ( \Exception $e ) {
-			// Fall through to heuristics.
+			// AI unavailable or errored; caller falls back to heuristics.
+			return [];
 		}
 
 		return [];

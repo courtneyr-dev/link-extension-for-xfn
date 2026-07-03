@@ -12,6 +12,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Registers the plugin's blocks from the build directory.
+ */
 class XFN_Block_Registrar {
 
 	/**

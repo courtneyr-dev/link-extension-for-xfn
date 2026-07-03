@@ -13,6 +13,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Scans post content for XFN link relationships.
+ */
 final class XFN_Content_Scanner {
 
 	/**

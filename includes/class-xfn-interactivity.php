@@ -13,6 +13,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Registers frontend tooltip behavior for XFN-annotated links.
+ */
 class XFN_Interactivity {
 
 	/**

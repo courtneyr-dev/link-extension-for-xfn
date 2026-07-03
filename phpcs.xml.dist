@@ -107,23 +107,35 @@
 	</rule>
 
 	<!-- Register allowed prefixes for globals, hooks, and options.
-		 - "lexfn" is the canonical short prefix (see CLAUDE.md).
-		 - "xfn" / "XFN" match the established class naming
-		   (XFN_Link_Extension, XFN_Abilities_Manager, …) and the
-		   XFN_LINK_EXTENSION_* runtime constants. Renaming those would be
-		   a breaking change for existing integrations. -->
+		 - "lexfn" is the canonical prefix for new code (see CLAUDE.md).
+		 - "XFN_LINK_EXTENSION" matches the runtime constants.
+		 Class names (XFN_Link_Extension, XFN_Abilities_Manager, …),
+		 hook names (xfn_feature_flag_*), and public API functions
+		 (xfn_get_relationships(), …) predate this ruleset; "xfn" is
+		 below the WPCS minimum prefix length and renaming them would be
+		 a breaking change for tests and third-party callers, so those
+		 checks are excluded. Variables and constants stay gated. -->
 	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<exclude name="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound"/>
+		<exclude name="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound"/>
+		<exclude name="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound"/>
 		<properties>
 			<property name="prefixes" type="array">
 				<element value="lexfn"/>
 				<element value="LEXFN"/>
-				<element value="xfn"/>
-				<element value="XFN"/>
+				<element value="XFN_LINK_EXTENSION"/>
 				<element value="link_extension_for_xfn"/>
 				<element value="LINK_EXTENSION_FOR_XFN"/>
 				<element value="LinkExtensionForXFN"/>
 			</property>
 		</properties>
+	</rule>
+
+	<!-- The main plugin file intentionally holds both the bootstrap
+		 class and the public template/API functions — the standard
+		 single-file plugin entry-point layout. -->
+	<rule ref="Universal.Files.SeparateFunctionsFromOO.Mixed">
+		<exclude-pattern>link-extension-for-xfn\.php</exclude-pattern>
 	</rule>
 
 	<!-- ===== Documentation ===== -->

@@ -6,6 +6,9 @@
  * @since   1.0.0
  */
 
+/**
+ * Registers abilities that manage XFN relationships through post meta.
+ */
 class XFN_Core_Abilities {
 
 	private const EXCLUSIVITY_GROUPS = [
@@ -14,6 +17,9 @@ class XFN_Core_Abilities {
 		'family'       => [ 'child', 'parent', 'sibling', 'spouse', 'kin' ],
 	];
 
+	/**
+	 * Register all meta-based XFN abilities.
+	 */
 	public function register(): void {
 		if ( ! function_exists( 'wp_register_ability' ) ) {
 			return;
@@ -26,6 +32,9 @@ class XFN_Core_Abilities {
 		$this->register_validate_relationships();
 	}
 
+	/**
+	 * Register the xfn/set_relationships ability.
+	 */
 	private function register_set_relationships(): void {
 		wp_register_ability(
 			'xfn/set_relationships',
@@ -79,6 +88,9 @@ class XFN_Core_Abilities {
 		);
 	}
 
+	/**
+	 * Register the xfn/get_relationships ability.
+	 */
 	private function register_get_relationships(): void {
 		wp_register_ability(
 			'xfn/get_relationships',
@@ -126,6 +138,9 @@ class XFN_Core_Abilities {
 		);
 	}
 
+	/**
+	 * Register the xfn/add_relationship ability.
+	 */
 	private function register_add_relationship(): void {
 		wp_register_ability(
 			'xfn/add_relationship',
@@ -171,6 +186,9 @@ class XFN_Core_Abilities {
 		);
 	}
 
+	/**
+	 * Register the xfn/remove_relationship ability.
+	 */
 	private function register_remove_relationship(): void {
 		wp_register_ability(
 			'xfn/remove_relationship',
@@ -211,6 +229,9 @@ class XFN_Core_Abilities {
 		);
 	}
 
+	/**
+	 * Register the xfn/validate_relationships ability.
+	 */
 	private function register_validate_relationships(): void {
 		wp_register_ability(
 			'xfn/validate_relationships',
@@ -251,6 +272,12 @@ class XFN_Core_Abilities {
 		);
 	}
 
+	/**
+	 * Execute the xfn/set_relationships ability.
+	 *
+	 * @param array $input Validated ability input.
+	 * @return array Ability result.
+	 */
 	public function execute_set_relationships( array $input ): array {
 		$post_id       = (int) $input['post_id'];
 		$relationships = (array) $input['relationships'];
@@ -280,6 +307,12 @@ class XFN_Core_Abilities {
 		];
 	}
 
+	/**
+	 * Execute the xfn/get_relationships ability.
+	 *
+	 * @param array $input Validated ability input.
+	 * @return array Ability result.
+	 */
 	public function execute_get_relationships( array $input ): array {
 		$post_id = (int) $input['post_id'];
 
@@ -305,6 +338,12 @@ class XFN_Core_Abilities {
 		];
 	}
 
+	/**
+	 * Execute the xfn/add_relationship ability.
+	 *
+	 * @param array $input Validated ability input.
+	 * @return array Ability result.
+	 */
 	public function execute_add_relationship( array $input ): array {
 		$post_id = (int) $input['post_id'];
 		$url     = (string) $input['url'];
@@ -332,6 +371,12 @@ class XFN_Core_Abilities {
 		];
 	}
 
+	/**
+	 * Execute the xfn/remove_relationship ability.
+	 *
+	 * @param array $input Validated ability input.
+	 * @return array Ability result.
+	 */
 	public function execute_remove_relationship( array $input ): array {
 		$post_id = (int) $input['post_id'];
 		$url     = (string) $input['url'];
@@ -358,6 +403,12 @@ class XFN_Core_Abilities {
 		];
 	}
 
+	/**
+	 * Execute the xfn/validate_relationships ability.
+	 *
+	 * @param array $input Validated ability input.
+	 * @return array Ability result.
+	 */
 	public function execute_validate_relationships( array $input ): array {
 		$rels     = (array) $input['rels'];
 		$warnings = [];
