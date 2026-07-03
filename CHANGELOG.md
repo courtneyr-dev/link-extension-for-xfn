@@ -16,6 +16,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Block pattern library with XFN examples
 - Import/export functionality for XFN settings
 
+## [1.1.0] - 2026-07-03
+
+### Added
+
+- **Outpost mp-xfn bridge adapter** — consumes the `_outpost_xfn` post meta written by Outpost's Micropub endpoint, mirrors relationships into XFN metadata, and syncs `rel` attributes into post content immediately on save (completes the XFN wire-through)
+
+### Fixed
+
+- **Tooltips restored** — the Interactivity view module (`build/interactivity/tooltip.js`) was never built or committed, leaving tooltips inert on every 1.0.3 install; the built module now ships with the plugin
+- Anchors nested inside multiple block levels were wrapped with duplicate tooltip markup, once per enclosing block
+- `wp_http_validate_url()` misuse in the meta mirror dropped relationships for unresolvable hosts and offline saves
+
+### Technical
+
+- Canonical WordPress coding-standards ruleset adopted repo-wide, with a real PHPStan gate in CI
+
 ## [1.0.3] - 2024-12-09
 
 ### Fixed

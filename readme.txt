@@ -3,7 +3,7 @@
 Developers:        courane01
 Tags:              xfn, links, relationships, accessibility, gutenberg
 Tested up to:      6.9
-Stable tag:        1.0.3
+Stable tag:        1.1.0
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 6.4
@@ -317,6 +317,13 @@ Absolutely! XFN includes professional relationships (co-worker, colleague) and c
 4. **Update screen reader**: Ensure you're using a current version of your screen reader
 
 ## Changelog
+
+= 1.1.0 =
+* Added: Outpost integration — relationships written by Outpost's Micropub mp-xfn bridge are now consumed automatically and mirrored into XFN metadata and rel attributes
+* Fixed: Tooltips work again — the Interactivity view module was missing from 1.0.3 builds, leaving tooltips inert on every install
+* Fixed: Links nested inside multiple block levels are no longer wrapped with duplicate tooltip markup
+* Fixed: Relationship metadata is no longer dropped when saving posts offline or with unresolvable link hosts
+* Technical: Repo-wide adoption of the canonical WordPress coding-standards ruleset with a real PHPStan gate in CI
 
 = 1.0.3 =
 * Fixed: WordPress Playground blueprint now works correctly with proper JSON structure
