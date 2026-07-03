@@ -78,6 +78,13 @@ class XFN_Interactivity {
 				continue;
 			}
 
+			// render_block fires for every enclosing block (paragraph, then
+			// post-content, group, template). Skip anchors an inner block
+			// already processed or the wrap nests once per ancestor level.
+			if ( true === $processor->has_class( 'xfn-tooltip-anchor' ) ) {
+				continue;
+			}
+
 			$parsed = XFN_Link_Extension::parse_rel_attribute( $rel );
 			if ( empty( $parsed['xfn'] ) ) {
 				continue;
