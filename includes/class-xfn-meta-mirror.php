@@ -60,8 +60,17 @@ final class XFN_Meta_Mirror {
 				continue;
 			}
 
-			$url = esc_url_raw( $entry['url'] );
-			if ( empty( $url ) || ! wp_http_validate_url( $url ) ) {
+			// Scheme + host validation only: this stores a link, it never
+			// fetches it, so DNS/SSRF checks (wp_http_validate_url) don't
+			// apply — they drop unresolvable hosts and offline saves.
+			$parsed = wp_parse_url( (string) $entry['url'] );
+			if ( empty( $parsed['scheme'] ) || empty( $parsed['host'] )
+				|| ! in_array( strtolower( $parsed['scheme'] ), array( 'http', 'https' ), true ) ) {
+				continue;
+			}
+
+			$url = esc_url_raw( $entry['url'], array( 'http', 'https' ) );
+			if ( empty( $url ) ) {
 				continue;
 			}
 
