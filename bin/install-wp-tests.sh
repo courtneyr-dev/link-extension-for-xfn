@@ -74,9 +74,15 @@ install_wp() {
 	fi
 
 	download "$archive_url" /tmp/wordpress.zip
-	unzip -q /tmp/wordpress.zip -d /tmp
-	cp -a /tmp/wordpress/* "$WP_CORE_DIR"
-	rm -f /tmp/wordpress.zip
+
+	# Extract to a staging dir: unzipping straight to /tmp collides with
+	# WP_CORE_DIR when TMPDIR is unset (Linux CI), making cp copy the
+	# tree onto itself and fail.
+	local staging
+	staging=$(mktemp -d)
+	unzip -q /tmp/wordpress.zip -d "$staging"
+	cp -a "$staging/wordpress/." "$WP_CORE_DIR"
+	rm -rf "$staging" /tmp/wordpress.zip
 }
 
 install_test_suite() {
