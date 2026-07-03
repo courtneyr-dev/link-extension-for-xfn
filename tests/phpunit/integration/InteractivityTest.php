@@ -46,6 +46,23 @@ class InteractivityTest extends WP_UnitTestCase {
 		$this->assertStringContainsString( 'xfn-pill-colleague', $result );
 	}
 
+	/**
+	 * render_block fires once per enclosing block level; a second pass over
+	 * already-processed output must not wrap the anchor again.
+	 */
+	public function test_process_block_does_not_rewrap_processed_output(): void {
+		$content = '<p><a href="https://alice.example.com" rel="friend met">Alice</a></p>';
+
+		$once  = $this->interactivity->process_block( $content, array() );
+		$twice = $this->interactivity->process_block( $once, array() );
+
+		$this->assertSame( 1, substr_count( $twice, 'xfn-tooltip-wrap' ) );
+		$this->assertStringNotContainsString(
+			'xfn-tooltip-wrap" data-wp-interactive="xfn-links" data-wp-context=\'{"isOpen":false}\'><span class="xfn-tooltip-wrap',
+			$twice
+		);
+	}
+
 	public function test_process_block_skips_non_xfn_links(): void {
 		$content = '<p><a href="https://example.com" rel="nofollow noopener">Link</a></p>';
 
