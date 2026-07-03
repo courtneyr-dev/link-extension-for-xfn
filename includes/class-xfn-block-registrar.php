@@ -18,7 +18,7 @@ class XFN_Block_Registrar {
 	 * Register hooks.
 	 */
 	public function init(): void {
-		add_action( 'init', array( $this, 'register_blocks' ) );
+		add_action( 'init', [ $this, 'register_blocks' ] );
 	}
 
 	/**

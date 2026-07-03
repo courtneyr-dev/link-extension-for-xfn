@@ -24,8 +24,8 @@ final class XFN_Abilities_Manager {
 			return;
 		}
 
-		add_action( 'wp_abilities_api_categories_init', array( $this, 'register_category' ) );
-		add_action( 'wp_abilities_api_init', array( $this, 'register_abilities' ) );
+		add_action( 'wp_abilities_api_categories_init', [ $this, 'register_category' ] );
+		add_action( 'wp_abilities_api_init', [ $this, 'register_abilities' ] );
 
 		if ( class_exists( 'WP_Pinch\\Abilities' ) ) {
 			self::register_mcp_hooks();
@@ -49,10 +49,10 @@ final class XFN_Abilities_Manager {
 
 		wp_register_ability_category(
 			self::CATEGORY_SLUG,
-			array(
+			[
 				'label'       => __( 'XFN Relationships', 'link-extension-for-xfn' ),
 				'description' => __( 'Manage XFN (XHTML Friends Network) link relationships.', 'link-extension-for-xfn' ),
-			)
+			]
 		);
 	}
 
@@ -73,13 +73,13 @@ final class XFN_Abilities_Manager {
 	 */
 	public static function get_ability_names(): array {
 		return array_merge(
-			array(
+			[
 				'xfn/set_relationships',
 				'xfn/get_relationships',
 				'xfn/add_relationship',
 				'xfn/remove_relationship',
 				'xfn/validate_relationships',
-			),
+			],
 			XFN_Content_Abilities::get_ability_names()
 		);
 	}
@@ -90,8 +90,8 @@ final class XFN_Abilities_Manager {
 	 * @since 1.0.0
 	 */
 	public static function register_mcp_hooks(): void {
-		add_filter( 'wp_pinch_mcp_server_abilities', array( self::class, 'filter_mcp_server_abilities' ) );
-		add_filter( 'wp_register_ability_args', array( self::class, 'filter_ability_args' ), 10, 2 );
+		add_filter( 'wp_pinch_mcp_server_abilities', [ self::class, 'filter_mcp_server_abilities' ] );
+		add_filter( 'wp_register_ability_args', [ self::class, 'filter_ability_args' ], 10, 2 );
 	}
 
 	/**
@@ -121,10 +121,10 @@ final class XFN_Abilities_Manager {
 		}
 
 		if ( ! isset( $args['meta'] ) ) {
-			$args['meta'] = array();
+			$args['meta'] = [];
 		}
 		if ( ! isset( $args['meta']['mcp'] ) ) {
-			$args['meta']['mcp'] = array();
+			$args['meta']['mcp'] = [];
 		}
 		$args['meta']['mcp']['public'] = true;
 
