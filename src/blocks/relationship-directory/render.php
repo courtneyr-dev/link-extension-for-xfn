@@ -25,7 +25,7 @@ if ( count( $lexfn_links ) > $limit ) {
 }
 
 // Collect unique relationship types for filter buttons.
-$all_rels = array();
+$all_rels = [];
 foreach ( $lexfn_links as $lexfn_link ) {
 	foreach ( $lexfn_link['rels'] as $rel ) {
 		$all_rels[ $rel ] = true;
@@ -35,37 +35,37 @@ ksort( $all_rels );
 $all_rels = array_keys( $all_rels );
 
 // Build link data for client-side filtering.
-$link_data = array();
+$link_data = [];
 foreach ( $lexfn_links as $i => $lexfn_link ) {
 	$post_title  = get_the_title( $lexfn_link['post_id'] );
-	$link_data[] = array(
+	$link_data[] = [
 		'id'        => $i,
 		'url'       => $lexfn_link['url'],
 		'rels'      => $lexfn_link['rels'],
 		'postId'    => $lexfn_link['post_id'],
 		'postTitle' => $post_title,
-	);
+	];
 }
 
 $context = wp_json_encode(
-	array(
+	[
 		'searchTerm'   => '',
 		'activeFilter' => '',
-	)
+	]
 );
 
 wp_interactivity_state(
 	'xfn-directory',
-	array(
+	[
 		'links'   => $link_data,
 		'allRels' => $all_rels,
-	)
+	]
 );
 
 $wrapper_attrs = get_block_wrapper_attributes(
-	array(
+	[
 		'class' => 'xfn-directory',
-	)
+	]
 );
 ?>
 <div

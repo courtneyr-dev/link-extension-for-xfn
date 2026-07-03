@@ -24,11 +24,11 @@ if ( count( $links ) > $limit ) {
 }
 
 // Group links.
-$groups = array();
+$groups = [];
 foreach ( $links as $link ) {
 	if ( 'domain' === $group_by ) {
-		$host = wp_parse_url( $link['url'], PHP_URL_HOST );
-		$key  = $host ? $host : __( 'Other', 'link-extension-for-xfn' );
+		$host             = wp_parse_url( $link['url'], PHP_URL_HOST );
+		$key              = $host ? $host : __( 'Other', 'link-extension-for-xfn' );
 		$groups[ $key ][] = $link;
 	} else {
 		foreach ( $link['rels'] as $rel ) {
@@ -38,9 +38,11 @@ foreach ( $links as $link ) {
 }
 ksort( $groups );
 
-$wrapper_attrs = get_block_wrapper_attributes( array(
-	'class' => 'xfn-blogroll',
-) );
+$wrapper_attrs = get_block_wrapper_attributes(
+	[
+		'class' => 'xfn-blogroll',
+	]
+);
 
 if ( empty( $groups ) ) :
 	?>

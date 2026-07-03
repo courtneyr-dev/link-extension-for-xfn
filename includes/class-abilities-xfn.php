@@ -40,247 +40,247 @@ class XFN_Content_Abilities {
 	 * @return string[]
 	 */
 	public static function get_ability_names(): array {
-		return array(
+		return [
 			'xfn/add-relationship',
 			'xfn/remove-relationship',
 			'xfn/get-relationships',
 			'xfn/validate-relationships',
 			'xfn/suggest-relationship',
-		);
+		];
 	}
 
 	private function register_add_relationship(): void {
 		wp_register_ability(
 			'xfn/add-relationship',
-			array(
+			[
 				'label'               => __( 'Add XFN Relationship (Content)', 'link-extension-for-xfn' ),
 				'description'         => __( 'Parse post_content, find a matching link by URL, and add XFN rel values.', 'link-extension-for-xfn' ),
 				'category'            => XFN_Abilities_Manager::CATEGORY_SLUG,
 				'type'                => 'tool',
-				'input_schema'        => array(
+				'input_schema'        => [
 					'type'       => 'object',
-					'properties' => array(
-						'post_id' => array(
+					'properties' => [
+						'post_id' => [
 							'type'        => 'integer',
 							'description' => 'The post ID containing the link.',
-						),
-						'url'     => array(
+						],
+						'url'     => [
 							'type'        => 'string',
 							'format'      => 'uri',
 							'description' => 'The href URL to match in post_content.',
-						),
-						'rels'    => array(
+						],
+						'rels'    => [
 							'type'        => 'array',
-							'items'       => array( 'type' => 'string' ),
+							'items'       => [ 'type' => 'string' ],
 							'description' => 'XFN relationship values to add.',
-						),
-					),
-					'required'   => array( 'post_id', 'url', 'rels' ),
-				),
-				'output_schema'       => array(
+						],
+					],
+					'required'   => [ 'post_id', 'url', 'rels' ],
+				],
+				'output_schema'       => [
 					'type'       => 'object',
-					'properties' => array(
-						'success' => array( 'type' => 'boolean' ),
-						'error'   => array( 'type' => 'string' ),
-					),
-				),
-				'execute_callback'    => array( $this, 'execute_add_relationship' ),
+					'properties' => [
+						'success' => [ 'type' => 'boolean' ],
+						'error'   => [ 'type' => 'string' ],
+					],
+				],
+				'execute_callback'    => [ $this, 'execute_add_relationship' ],
 				'permission_callback' => function () {
 					return current_user_can( 'edit_posts' );
 				},
-				'meta'                => array(
+				'meta'                => [
 					'show_in_rest' => true,
 					'version'      => '1.0.0',
-				),
-			)
+				],
+			]
 		);
 	}
 
 	private function register_remove_relationship(): void {
 		wp_register_ability(
 			'xfn/remove-relationship',
-			array(
+			[
 				'label'               => __( 'Remove XFN Relationship (Content)', 'link-extension-for-xfn' ),
 				'description'         => __( 'Parse post_content, find a matching link by URL, and remove specified XFN rel values.', 'link-extension-for-xfn' ),
 				'category'            => XFN_Abilities_Manager::CATEGORY_SLUG,
 				'type'                => 'tool',
-				'input_schema'        => array(
+				'input_schema'        => [
 					'type'       => 'object',
-					'properties' => array(
-						'post_id' => array(
+					'properties' => [
+						'post_id' => [
 							'type'        => 'integer',
 							'description' => 'The post ID containing the link.',
-						),
-						'url'     => array(
+						],
+						'url'     => [
 							'type'        => 'string',
 							'format'      => 'uri',
 							'description' => 'The href URL to match in post_content.',
-						),
-						'rels'    => array(
+						],
+						'rels'    => [
 							'type'        => 'array',
-							'items'       => array( 'type' => 'string' ),
+							'items'       => [ 'type' => 'string' ],
 							'description' => 'XFN relationship values to remove. If empty, removes all XFN rels from the link.',
-						),
-					),
-					'required'   => array( 'post_id', 'url' ),
-				),
-				'output_schema'       => array(
+						],
+					],
+					'required'   => [ 'post_id', 'url' ],
+				],
+				'output_schema'       => [
 					'type'       => 'object',
-					'properties' => array(
-						'success' => array( 'type' => 'boolean' ),
-						'error'   => array( 'type' => 'string' ),
-					),
-				),
-				'execute_callback'    => array( $this, 'execute_remove_relationship' ),
+					'properties' => [
+						'success' => [ 'type' => 'boolean' ],
+						'error'   => [ 'type' => 'string' ],
+					],
+				],
+				'execute_callback'    => [ $this, 'execute_remove_relationship' ],
 				'permission_callback' => function () {
 					return current_user_can( 'edit_posts' );
 				},
-				'meta'                => array(
+				'meta'                => [
 					'show_in_rest' => true,
 					'version'      => '1.0.0',
-				),
-			)
+				],
+			]
 		);
 	}
 
 	private function register_get_relationships(): void {
 		wp_register_ability(
 			'xfn/get-relationships',
-			array(
+			[
 				'label'               => __( 'Get XFN Relationships (Content)', 'link-extension-for-xfn' ),
 				'description'         => __( 'Scan post_content for links with XFN rel attributes. Optionally filter by post.', 'link-extension-for-xfn' ),
 				'category'            => XFN_Abilities_Manager::CATEGORY_SLUG,
 				'type'                => 'resource',
-				'input_schema'        => array(
+				'input_schema'        => [
 					'type'       => 'object',
-					'properties' => array(
-						'post_id' => array(
+					'properties' => [
+						'post_id' => [
 							'type'        => 'integer',
 							'description' => 'Optional post ID. If omitted, scans all published posts.',
-						),
-					),
-				),
-				'output_schema'       => array(
+						],
+					],
+				],
+				'output_schema'       => [
 					'type'       => 'object',
-					'properties' => array(
-						'relationships' => array(
+					'properties' => [
+						'relationships' => [
 							'type'  => 'array',
-							'items' => array(
+							'items' => [
 								'type'       => 'object',
-								'properties' => array(
-									'post_id' => array( 'type' => 'integer' ),
-									'url'     => array( 'type' => 'string' ),
-									'rels'    => array(
+								'properties' => [
+									'post_id' => [ 'type' => 'integer' ],
+									'url'     => [ 'type' => 'string' ],
+									'rels'    => [
 										'type'  => 'array',
-										'items' => array( 'type' => 'string' ),
-									),
-								),
-							),
-						),
-					),
-				),
-				'execute_callback'    => array( $this, 'execute_get_relationships' ),
+										'items' => [ 'type' => 'string' ],
+									],
+								],
+							],
+						],
+					],
+				],
+				'execute_callback'    => [ $this, 'execute_get_relationships' ],
 				'permission_callback' => function () {
 					return current_user_can( 'read' );
 				},
-				'meta'                => array(
+				'meta'                => [
 					'show_in_rest' => true,
 					'version'      => '1.0.0',
-				),
-			)
+				],
+			]
 		);
 	}
 
 	private function register_validate_relationships(): void {
 		wp_register_ability(
 			'xfn/validate-relationships',
-			array(
+			[
 				'label'               => __( 'Validate XFN Relationships (Content)', 'link-extension-for-xfn' ),
 				'description'         => __( 'Check if a set of XFN rel values respects XFN 1.1 exclusivity rules.', 'link-extension-for-xfn' ),
 				'category'            => XFN_Abilities_Manager::CATEGORY_SLUG,
 				'type'                => 'resource',
-				'input_schema'        => array(
+				'input_schema'        => [
 					'type'       => 'object',
-					'properties' => array(
-						'rels' => array(
+					'properties' => [
+						'rels' => [
 							'type'        => 'array',
-							'items'       => array( 'type' => 'string' ),
+							'items'       => [ 'type' => 'string' ],
 							'description' => 'Array of XFN relationship values to validate.',
-						),
-					),
-					'required'   => array( 'rels' ),
-				),
-				'output_schema'       => array(
+						],
+					],
+					'required'   => [ 'rels' ],
+				],
+				'output_schema'       => [
 					'type'       => 'object',
-					'properties' => array(
-						'valid'  => array( 'type' => 'boolean' ),
-						'errors' => array(
+					'properties' => [
+						'valid'  => [ 'type' => 'boolean' ],
+						'errors' => [
 							'type'  => 'array',
-							'items' => array( 'type' => 'string' ),
-						),
-					),
-				),
-				'execute_callback'    => array( $this, 'execute_validate_relationships' ),
+							'items' => [ 'type' => 'string' ],
+						],
+					],
+				],
+				'execute_callback'    => [ $this, 'execute_validate_relationships' ],
 				'permission_callback' => function () {
 					return current_user_can( 'read' );
 				},
-				'meta'                => array(
+				'meta'                => [
 					'show_in_rest' => true,
 					'version'      => '1.0.0',
-				),
-			)
+				],
+			]
 		);
 	}
 
 	private function register_suggest_relationship(): void {
 		wp_register_ability(
 			'xfn/suggest-relationship',
-			array(
+			[
 				'label'               => __( 'Suggest XFN Relationship', 'link-extension-for-xfn' ),
 				'description'         => __( 'Suggest appropriate XFN rel values for a URL using AI or heuristics.', 'link-extension-for-xfn' ),
 				'category'            => XFN_Abilities_Manager::CATEGORY_SLUG,
 				'type'                => 'resource',
-				'input_schema'        => array(
+				'input_schema'        => [
 					'type'       => 'object',
-					'properties' => array(
-						'url'     => array(
+					'properties' => [
+						'url'     => [
 							'type'        => 'string',
 							'format'      => 'uri',
 							'description' => 'The URL to analyze for relationship suggestions.',
-						),
-						'context' => array(
+						],
+						'context' => [
 							'type'        => 'string',
 							'description' => 'Optional surrounding text or context for better suggestions.',
-						),
-					),
-					'required'   => array( 'url' ),
-				),
-				'output_schema'       => array(
+						],
+					],
+					'required'   => [ 'url' ],
+				],
+				'output_schema'       => [
 					'type'       => 'object',
-					'properties' => array(
-						'suggestions' => array(
+					'properties' => [
+						'suggestions' => [
 							'type'  => 'array',
-							'items' => array(
+							'items' => [
 								'type'       => 'object',
-								'properties' => array(
-									'rel'        => array( 'type' => 'string' ),
-									'confidence' => array( 'type' => 'number' ),
-									'reason'     => array( 'type' => 'string' ),
-								),
-							),
-						),
-						'source' => array( 'type' => 'string' ),
-					),
-				),
-				'execute_callback'    => array( $this, 'execute_suggest_relationship' ),
+								'properties' => [
+									'rel'        => [ 'type' => 'string' ],
+									'confidence' => [ 'type' => 'number' ],
+									'reason'     => [ 'type' => 'string' ],
+								],
+							],
+						],
+						'source'      => [ 'type' => 'string' ],
+					],
+				],
+				'execute_callback'    => [ $this, 'execute_suggest_relationship' ],
 				'permission_callback' => function () {
 					return current_user_can( 'read' );
 				},
-				'meta'                => array(
+				'meta'                => [
 					'show_in_rest' => true,
 					'version'      => '1.0.0',
-				),
-			)
+				],
+			]
 		);
 	}
 
@@ -297,37 +297,54 @@ class XFN_Content_Abilities {
 	public function execute_add_relationship( array $input ): array {
 		$post_id = (int) $input['post_id'];
 		$url     = (string) $input['url'];
-		$rels    = array_filter( (array) $input['rels'], function ( $r ) {
-			return in_array( $r, XFN_Content_Scanner::VALID_XFN, true );
-		} );
+		$rels    = array_filter(
+			(array) $input['rels'],
+			function ( $r ) {
+				return in_array( $r, XFN_Content_Scanner::VALID_XFN, true );
+			}
+		);
 
 		$post = get_post( $post_id );
 		if ( ! $post ) {
-			return array( 'success' => false, 'error' => 'Post not found.' );
+			return [
+				'success' => false,
+				'error'   => 'Post not found.',
+			];
 		}
 
 		if ( ! current_user_can( 'edit_post', $post_id ) ) {
-			return array( 'success' => false, 'error' => 'Insufficient permissions for this post.' );
+			return [
+				'success' => false,
+				'error'   => 'Insufficient permissions for this post.',
+			];
 		}
 
 		if ( empty( $rels ) ) {
-			return array( 'success' => false, 'error' => 'No valid XFN rel values provided.' );
+			return [
+				'success' => false,
+				'error'   => 'No valid XFN rel values provided.',
+			];
 		}
 
 		$updated = $this->modify_link_rel( $post->post_content, $url, $rels, 'add' );
 
 		if ( $updated === $post->post_content ) {
-			return array( 'success' => false, 'error' => 'Link not found in post content.' );
+			return [
+				'success' => false,
+				'error'   => 'Link not found in post content.',
+			];
 		}
 
-		wp_update_post( array(
-			'ID'           => $post_id,
-			'post_content' => $updated,
-		) );
+		wp_update_post(
+			[
+				'ID'           => $post_id,
+				'post_content' => $updated,
+			]
+		);
 
 		XFN_Content_Scanner::invalidate_cache();
 
-		return array( 'success' => true );
+		return [ 'success' => true ];
 	}
 
 	/**
@@ -341,31 +358,42 @@ class XFN_Content_Abilities {
 	public function execute_remove_relationship( array $input ): array {
 		$post_id = (int) $input['post_id'];
 		$url     = (string) $input['url'];
-		$rels    = isset( $input['rels'] ) ? (array) $input['rels'] : array();
+		$rels    = isset( $input['rels'] ) ? (array) $input['rels'] : [];
 
 		$post = get_post( $post_id );
 		if ( ! $post ) {
-			return array( 'success' => false, 'error' => 'Post not found.' );
+			return [
+				'success' => false,
+				'error'   => 'Post not found.',
+			];
 		}
 
 		if ( ! current_user_can( 'edit_post', $post_id ) ) {
-			return array( 'success' => false, 'error' => 'Insufficient permissions for this post.' );
+			return [
+				'success' => false,
+				'error'   => 'Insufficient permissions for this post.',
+			];
 		}
 
 		$updated = $this->modify_link_rel( $post->post_content, $url, $rels, 'remove' );
 
 		if ( $updated === $post->post_content ) {
-			return array( 'success' => false, 'error' => 'Link not found in post content.' );
+			return [
+				'success' => false,
+				'error'   => 'Link not found in post content.',
+			];
 		}
 
-		wp_update_post( array(
-			'ID'           => $post_id,
-			'post_content' => $updated,
-		) );
+		wp_update_post(
+			[
+				'ID'           => $post_id,
+				'post_content' => $updated,
+			]
+		);
 
 		XFN_Content_Scanner::invalidate_cache();
 
-		return array( 'success' => true );
+		return [ 'success' => true ];
 	}
 
 	/**
@@ -382,22 +410,28 @@ class XFN_Content_Abilities {
 			$post    = get_post( $post_id );
 
 			if ( ! $post ) {
-				return array( 'relationships' => array(), 'error' => 'Post not found.' );
+				return [
+					'relationships' => [],
+					'error'         => 'Post not found.',
+				];
 			}
 
 			if ( ! current_user_can( 'read_post', $post_id ) ) {
-				return array( 'relationships' => array(), 'error' => 'Insufficient permissions for this post.' );
+				return [
+					'relationships' => [],
+					'error'         => 'Insufficient permissions for this post.',
+				];
 			}
 
-			return array(
+			return [
 				'relationships' => XFN_Content_Scanner::extract_xfn_links_from_post( $post ),
-			);
+			];
 		}
 
 		// Scan all published posts with transient caching.
-		return array(
+		return [
 			'relationships' => XFN_Content_Scanner::scan_all_posts_for_xfn(),
-		);
+		];
 	}
 
 	/**
@@ -410,7 +444,7 @@ class XFN_Content_Abilities {
 	 */
 	public function execute_validate_relationships( array $input ): array {
 		$rels   = (array) $input['rels'];
-		$errors = array();
+		$errors = [];
 
 		// Check for invalid values.
 		$invalid = array_diff( $rels, XFN_Content_Scanner::VALID_XFN );
@@ -435,10 +469,10 @@ class XFN_Content_Abilities {
 			}
 		}
 
-		return array(
+		return [
 			'valid'  => empty( $errors ),
 			'errors' => $errors,
-		);
+		];
 	}
 
 	/**
@@ -459,18 +493,18 @@ class XFN_Content_Abilities {
 		if ( function_exists( 'wp_ai_client' ) ) {
 			$ai_result = $this->suggest_with_ai( $url, $context );
 			if ( ! empty( $ai_result ) ) {
-				return array(
+				return [
 					'suggestions' => $ai_result,
 					'source'      => 'ai',
-				);
+				];
 			}
 		}
 
 		// Fall back to heuristics.
-		return array(
+		return [
 			'suggestions' => $this->suggest_with_heuristics( $url, $context ),
 			'source'      => 'heuristics',
-		);
+		];
 	}
 
 	// ── Helpers ──────────────────────────────────────────────────────────
@@ -500,10 +534,10 @@ class XFN_Content_Abilities {
 				$existing_rel = '';
 				if ( preg_match( '/rel=["\']([^"\']*)["\']/', $before . $after, $rel_match ) ) {
 					$existing_rel = $rel_match[1];
-					$tag = str_replace( $rel_match[0], '', $tag );
+					$tag          = str_replace( $rel_match[0], '', $tag );
 				}
 
-				$parsed     = XFN_Link_Extension::parse_rel_attribute( $existing_rel );
+				$parsed      = XFN_Link_Extension::parse_rel_attribute( $existing_rel );
 				$current_xfn = $parsed['xfn'];
 				$other_rels  = $parsed['other'];
 
@@ -512,7 +546,7 @@ class XFN_Content_Abilities {
 				} else {
 					// Remove: if $rels is empty, remove all XFN values.
 					if ( empty( $rels ) ) {
-						$current_xfn = array();
+						$current_xfn = [];
 					} else {
 						$current_xfn = array_values( array_diff( $current_xfn, $rels ) );
 					}
@@ -556,16 +590,19 @@ class XFN_Content_Abilities {
 			if ( ! empty( $response ) ) {
 				$decoded = json_decode( $response, true );
 				if ( is_array( $decoded ) ) {
-					return array_filter( $decoded, function ( $item ) {
-						return isset( $item['rel'] ) && in_array( $item['rel'], XFN_Content_Scanner::VALID_XFN, true );
-					} );
+					return array_filter(
+						$decoded,
+						function ( $item ) {
+							return isset( $item['rel'] ) && in_array( $item['rel'], XFN_Content_Scanner::VALID_XFN, true );
+						}
+					);
 				}
 			}
 		} catch ( \Exception $e ) {
 			// Fall through to heuristics.
 		}
 
-		return array();
+		return [];
 	}
 
 	/**
@@ -578,7 +615,7 @@ class XFN_Content_Abilities {
 	 * @return array Suggestions array.
 	 */
 	private function suggest_with_heuristics( string $url, string $context ): array {
-		$suggestions = array();
+		$suggestions = [];
 		$parsed_url  = wp_parse_url( $url );
 		$host        = isset( $parsed_url['host'] ) ? strtolower( $parsed_url['host'] ) : '';
 		$path        = isset( $parsed_url['path'] ) ? strtolower( $parsed_url['path'] ) : '';
@@ -586,21 +623,26 @@ class XFN_Content_Abilities {
 		// Same domain as site = likely "me".
 		$site_host = strtolower( wp_parse_url( home_url(), PHP_URL_HOST ) );
 		if ( $host === $site_host ) {
-			$suggestions[] = array(
+			$suggestions[] = [
 				'rel'        => 'me',
 				'confidence' => 0.8,
 				'reason'     => __( 'URL is on the same domain as this site.', 'link-extension-for-xfn' ),
-			);
+			];
 		}
 
 		// Social profile patterns.
-		$social_domains = array(
-			'twitter.com', 'x.com', 'facebook.com', 'linkedin.com',
-			'instagram.com', 'github.com', 'mastodon.social',
-		);
+		$social_domains = [
+			'twitter.com',
+			'x.com',
+			'facebook.com',
+			'linkedin.com',
+			'instagram.com',
+			'github.com',
+			'mastodon.social',
+		];
 		foreach ( $social_domains as $social ) {
 			if ( str_contains( $host, $social ) ) {
-				$suggestions[] = array(
+				$suggestions[] = [
 					'rel'        => 'me',
 					'confidence' => 0.6,
 					'reason'     => sprintf(
@@ -608,22 +650,34 @@ class XFN_Content_Abilities {
 						__( 'Social profile on %s often indicates identity.', 'link-extension-for-xfn' ),
 						$social
 					),
-				);
+				];
 				break;
 			}
 		}
 
 		// Path-based hints.
-		$path_hints = array(
-			'/about'   => array( 'rel' => 'acquaintance', 'confidence' => 0.3 ),
-			'/team'    => array( 'rel' => 'co-worker',    'confidence' => 0.4 ),
-			'/staff'   => array( 'rel' => 'co-worker',    'confidence' => 0.4 ),
-			'/contact' => array( 'rel' => 'contact',      'confidence' => 0.4 ),
-		);
+		$path_hints = [
+			'/about'   => [
+				'rel'        => 'acquaintance',
+				'confidence' => 0.3,
+			],
+			'/team'    => [
+				'rel'        => 'co-worker',
+				'confidence' => 0.4,
+			],
+			'/staff'   => [
+				'rel'        => 'co-worker',
+				'confidence' => 0.4,
+			],
+			'/contact' => [
+				'rel'        => 'contact',
+				'confidence' => 0.4,
+			],
+		];
 
 		foreach ( $path_hints as $segment => $hint ) {
 			if ( str_starts_with( $path, $segment ) ) {
-				$suggestions[] = array(
+				$suggestions[] = [
 					'rel'        => $hint['rel'],
 					'confidence' => $hint['confidence'],
 					'reason'     => sprintf(
@@ -631,26 +685,47 @@ class XFN_Content_Abilities {
 						__( 'URL path "%s" suggests this relationship.', 'link-extension-for-xfn' ),
 						$segment
 					),
-				);
+				];
 			}
 		}
 
 		// Context-based hints.
 		if ( ! empty( $context ) ) {
 			$context_lower = strtolower( $context );
-			$context_hints = array(
-				'friend'    => array( 'rel' => 'friend',      'confidence' => 0.5 ),
-				'colleague' => array( 'rel' => 'colleague',   'confidence' => 0.5 ),
-				'neighbor'  => array( 'rel' => 'neighbor',    'confidence' => 0.5 ),
-				'spouse'    => array( 'rel' => 'spouse',      'confidence' => 0.6 ),
-				'sibling'   => array( 'rel' => 'sibling',     'confidence' => 0.6 ),
-				'parent'    => array( 'rel' => 'parent',      'confidence' => 0.5 ),
-				'child'     => array( 'rel' => 'child',       'confidence' => 0.5 ),
-			);
+			$context_hints = [
+				'friend'    => [
+					'rel'        => 'friend',
+					'confidence' => 0.5,
+				],
+				'colleague' => [
+					'rel'        => 'colleague',
+					'confidence' => 0.5,
+				],
+				'neighbor'  => [
+					'rel'        => 'neighbor',
+					'confidence' => 0.5,
+				],
+				'spouse'    => [
+					'rel'        => 'spouse',
+					'confidence' => 0.6,
+				],
+				'sibling'   => [
+					'rel'        => 'sibling',
+					'confidence' => 0.6,
+				],
+				'parent'    => [
+					'rel'        => 'parent',
+					'confidence' => 0.5,
+				],
+				'child'     => [
+					'rel'        => 'child',
+					'confidence' => 0.5,
+				],
+			];
 
 			foreach ( $context_hints as $keyword => $hint ) {
 				if ( str_contains( $context_lower, $keyword ) ) {
-					$suggestions[] = array(
+					$suggestions[] = [
 						'rel'        => $hint['rel'],
 						'confidence' => $hint['confidence'],
 						'reason'     => sprintf(
@@ -658,7 +733,7 @@ class XFN_Content_Abilities {
 							__( 'Context contains keyword "%s".', 'link-extension-for-xfn' ),
 							$keyword
 						),
-					);
+					];
 				}
 			}
 		}

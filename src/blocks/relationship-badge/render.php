@@ -18,9 +18,9 @@ $url      = $attributes['url'] ?? '';
 $show_url = (bool) ( $attributes['showUrl'] ?? true );
 
 $wrapper_attrs = get_block_wrapper_attributes(
-	array(
+	[
 		'class' => 'xfn-relationship-badge',
-	)
+	]
 );
 
 if ( empty( $url ) ) :
@@ -36,7 +36,7 @@ endif;
 
 // Find relationships for the given URL across all posts.
 $lexfn_links = XFN_Content_Scanner::scan_all_posts_for_xfn();
-$rels        = array();
+$rels        = [];
 
 foreach ( $lexfn_links as $lexfn_link ) {
 	if ( $lexfn_link['url'] === $url ) {

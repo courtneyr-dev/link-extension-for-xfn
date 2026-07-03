@@ -7,12 +7,12 @@
  */
 final class XFN_Feature_Flags {
 
-	private static array $defaults = array(
-		'abilities_api'   => true,
-		'meta_mirror'     => true,
-		'interactivity'   => true,
-		'blocks'          => true,
-	);
+	private static array $defaults = [
+		'abilities_api' => true,
+		'meta_mirror'   => true,
+		'interactivity' => true,
+		'blocks'        => true,
+	];
 
 	public static function is_enabled( string $flag ): bool {
 		if ( ! isset( self::$defaults[ $flag ] ) ) {
@@ -24,7 +24,7 @@ final class XFN_Feature_Flags {
 			return (bool) $filtered;
 		}
 
-		$options = get_option( 'xfn_feature_flags', array() );
+		$options = get_option( 'xfn_feature_flags', [] );
 		if ( isset( $options[ $flag ] ) ) {
 			return (bool) $options[ $flag ];
 		}
