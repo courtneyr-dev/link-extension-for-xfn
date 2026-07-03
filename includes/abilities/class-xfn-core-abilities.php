@@ -6,14 +6,20 @@
  * @since   1.0.0
  */
 
+/**
+ * Registers abilities that manage XFN relationships through post meta.
+ */
 class XFN_Core_Abilities {
 
-	private const EXCLUSIVITY_GROUPS = array(
-		'friendship'   => array( 'contact', 'acquaintance', 'friend' ),
-		'geographical' => array( 'co-resident', 'neighbor' ),
-		'family'       => array( 'child', 'parent', 'sibling', 'spouse', 'kin' ),
-	);
+	private const EXCLUSIVITY_GROUPS = [
+		'friendship'   => [ 'contact', 'acquaintance', 'friend' ],
+		'geographical' => [ 'co-resident', 'neighbor' ],
+		'family'       => [ 'child', 'parent', 'sibling', 'spouse', 'kin' ],
+	];
 
+	/**
+	 * Register all meta-based XFN abilities.
+	 */
 	public function register(): void {
 		if ( ! function_exists( 'wp_register_ability' ) ) {
 			return;
@@ -26,270 +32,318 @@ class XFN_Core_Abilities {
 		$this->register_validate_relationships();
 	}
 
+	/**
+	 * Register the xfn/set_relationships ability.
+	 */
 	private function register_set_relationships(): void {
 		wp_register_ability(
 			'xfn/set_relationships',
-			array(
+			[
 				'label'               => __( 'Set XFN Relationships', 'link-extension-for-xfn' ),
 				'description'         => __( 'Set all XFN relationships for a post, replacing any existing ones.', 'link-extension-for-xfn' ),
 				'category'            => XFN_Abilities_Manager::CATEGORY_SLUG,
-				'input_schema'        => array(
+				'input_schema'        => [
 					'type'       => 'object',
-					'properties' => array(
-						'post_id'       => array(
+					'properties' => [
+						'post_id'       => [
 							'type'        => 'integer',
 							'description' => 'The post ID.',
-						),
-						'relationships' => array(
+						],
+						'relationships' => [
 							'type'        => 'array',
 							'description' => 'Array of relationship objects with url and rels.',
-							'items'       => array(
+							'items'       => [
 								'type'       => 'object',
-								'properties' => array(
-									'url'  => array( 'type' => 'string', 'format' => 'uri' ),
-									'rels' => array(
+								'properties' => [
+									'url'  => [
+										'type'   => 'string',
+										'format' => 'uri',
+									],
+									'rels' => [
 										'type'  => 'array',
-										'items' => array( 'type' => 'string' ),
-									),
-								),
-							),
-						),
-					),
-					'required'   => array( 'post_id', 'relationships' ),
-				),
-				'output_schema'       => array(
+										'items' => [ 'type' => 'string' ],
+									],
+								],
+							],
+						],
+					],
+					'required'   => [ 'post_id', 'relationships' ],
+				],
+				'output_schema'       => [
 					'type'       => 'object',
-					'properties' => array(
-						'success' => array( 'type' => 'boolean' ),
-						'applied' => array( 'type' => 'integer' ),
-					),
-				),
-				'execute_callback'    => array( $this, 'execute_set_relationships' ),
+					'properties' => [
+						'success' => [ 'type' => 'boolean' ],
+						'applied' => [ 'type' => 'integer' ],
+					],
+				],
+				'execute_callback'    => [ $this, 'execute_set_relationships' ],
 				'permission_callback' => function () {
 					return current_user_can( 'edit_posts' );
 				},
-				'meta'                => array(
+				'meta'                => [
 					'show_in_rest' => true,
 					'version'      => '1.0.0',
-				),
-			)
+				],
+			]
 		);
 	}
 
+	/**
+	 * Register the xfn/get_relationships ability.
+	 */
 	private function register_get_relationships(): void {
 		wp_register_ability(
 			'xfn/get_relationships',
-			array(
+			[
 				'label'               => __( 'Get XFN Relationships', 'link-extension-for-xfn' ),
 				'description'         => __( 'Retrieve all XFN relationships for a post.', 'link-extension-for-xfn' ),
 				'category'            => XFN_Abilities_Manager::CATEGORY_SLUG,
-				'input_schema'        => array(
+				'input_schema'        => [
 					'type'       => 'object',
-					'properties' => array(
-						'post_id' => array(
+					'properties' => [
+						'post_id' => [
 							'type'        => 'integer',
 							'description' => 'The post ID.',
-						),
-					),
-					'required'   => array( 'post_id' ),
-				),
-				'output_schema'       => array(
+						],
+					],
+					'required'   => [ 'post_id' ],
+				],
+				'output_schema'       => [
 					'type'       => 'object',
-					'properties' => array(
-						'relationships' => array(
+					'properties' => [
+						'relationships' => [
 							'type'  => 'array',
-							'items' => array(
+							'items' => [
 								'type'       => 'object',
-								'properties' => array(
-									'url'  => array( 'type' => 'string' ),
-									'rels' => array(
+								'properties' => [
+									'url'  => [ 'type' => 'string' ],
+									'rels' => [
 										'type'  => 'array',
-										'items' => array( 'type' => 'string' ),
-									),
-								),
-							),
-						),
-					),
-				),
-				'execute_callback'    => array( $this, 'execute_get_relationships' ),
+										'items' => [ 'type' => 'string' ],
+									],
+								],
+							],
+						],
+					],
+				],
+				'execute_callback'    => [ $this, 'execute_get_relationships' ],
 				'permission_callback' => function () {
 					return current_user_can( 'read' );
 				},
-				'meta'                => array(
+				'meta'                => [
 					'show_in_rest' => true,
 					'version'      => '1.0.0',
-				),
-			)
+				],
+			]
 		);
 	}
 
+	/**
+	 * Register the xfn/add_relationship ability.
+	 */
 	private function register_add_relationship(): void {
 		wp_register_ability(
 			'xfn/add_relationship',
-			array(
+			[
 				'label'               => __( 'Add XFN Relationship', 'link-extension-for-xfn' ),
 				'description'         => __( 'Add an XFN relationship to a post.', 'link-extension-for-xfn' ),
 				'category'            => XFN_Abilities_Manager::CATEGORY_SLUG,
-				'input_schema'        => array(
+				'input_schema'        => [
 					'type'       => 'object',
-					'properties' => array(
-						'post_id' => array(
+					'properties' => [
+						'post_id' => [
 							'type'        => 'integer',
 							'description' => 'The post ID.',
-						),
-						'url'     => array(
+						],
+						'url'     => [
 							'type'        => 'string',
 							'format'      => 'uri',
 							'description' => 'The URL to associate relationships with.',
-						),
-						'rels'    => array(
+						],
+						'rels'    => [
 							'type'        => 'array',
-							'items'       => array( 'type' => 'string' ),
+							'items'       => [ 'type' => 'string' ],
 							'description' => 'Array of XFN relationship values.',
-						),
-					),
-					'required'   => array( 'post_id', 'url', 'rels' ),
-				),
-				'output_schema'       => array(
+						],
+					],
+					'required'   => [ 'post_id', 'url', 'rels' ],
+				],
+				'output_schema'       => [
 					'type'       => 'object',
-					'properties' => array(
-						'success' => array( 'type' => 'boolean' ),
-					),
-				),
-				'execute_callback'    => array( $this, 'execute_add_relationship' ),
+					'properties' => [
+						'success' => [ 'type' => 'boolean' ],
+					],
+				],
+				'execute_callback'    => [ $this, 'execute_add_relationship' ],
 				'permission_callback' => function () {
 					return current_user_can( 'edit_posts' );
 				},
-				'meta'                => array(
+				'meta'                => [
 					'show_in_rest' => true,
 					'version'      => '1.0.0',
-				),
-			)
+				],
+			]
 		);
 	}
 
+	/**
+	 * Register the xfn/remove_relationship ability.
+	 */
 	private function register_remove_relationship(): void {
 		wp_register_ability(
 			'xfn/remove_relationship',
-			array(
+			[
 				'label'               => __( 'Remove XFN Relationship', 'link-extension-for-xfn' ),
 				'description'         => __( 'Remove an XFN relationship from a post by URL.', 'link-extension-for-xfn' ),
 				'category'            => XFN_Abilities_Manager::CATEGORY_SLUG,
-				'input_schema'        => array(
+				'input_schema'        => [
 					'type'       => 'object',
-					'properties' => array(
-						'post_id' => array(
+					'properties' => [
+						'post_id' => [
 							'type'        => 'integer',
 							'description' => 'The post ID.',
-						),
-						'url'     => array(
+						],
+						'url'     => [
 							'type'        => 'string',
 							'format'      => 'uri',
 							'description' => 'The URL whose relationships should be removed.',
-						),
-					),
-					'required'   => array( 'post_id', 'url' ),
-				),
-				'output_schema'       => array(
+						],
+					],
+					'required'   => [ 'post_id', 'url' ],
+				],
+				'output_schema'       => [
 					'type'       => 'object',
-					'properties' => array(
-						'success' => array( 'type' => 'boolean' ),
-					),
-				),
-				'execute_callback'    => array( $this, 'execute_remove_relationship' ),
+					'properties' => [
+						'success' => [ 'type' => 'boolean' ],
+					],
+				],
+				'execute_callback'    => [ $this, 'execute_remove_relationship' ],
 				'permission_callback' => function () {
 					return current_user_can( 'edit_posts' );
 				},
-				'meta'                => array(
+				'meta'                => [
 					'show_in_rest' => true,
 					'version'      => '1.0.0',
-				),
-			)
+				],
+			]
 		);
 	}
 
+	/**
+	 * Register the xfn/validate_relationships ability.
+	 */
 	private function register_validate_relationships(): void {
 		wp_register_ability(
 			'xfn/validate_relationships',
-			array(
+			[
 				'label'               => __( 'Validate XFN Relationships', 'link-extension-for-xfn' ),
 				'description'         => __( 'Check if a set of XFN relationships respects exclusivity rules.', 'link-extension-for-xfn' ),
 				'category'            => XFN_Abilities_Manager::CATEGORY_SLUG,
-				'input_schema'        => array(
+				'input_schema'        => [
 					'type'       => 'object',
-					'properties' => array(
-						'rels' => array(
+					'properties' => [
+						'rels' => [
 							'type'        => 'array',
-							'items'       => array( 'type' => 'string' ),
+							'items'       => [ 'type' => 'string' ],
 							'description' => 'Array of XFN relationship values to validate.',
-						),
-					),
-					'required'   => array( 'rels' ),
-				),
-				'output_schema'       => array(
+						],
+					],
+					'required'   => [ 'rels' ],
+				],
+				'output_schema'       => [
 					'type'       => 'object',
-					'properties' => array(
-						'valid'    => array( 'type' => 'boolean' ),
-						'warnings' => array(
+					'properties' => [
+						'valid'    => [ 'type' => 'boolean' ],
+						'warnings' => [
 							'type'  => 'array',
-							'items' => array( 'type' => 'string' ),
-						),
-					),
-				),
-				'execute_callback'    => array( $this, 'execute_validate_relationships' ),
+							'items' => [ 'type' => 'string' ],
+						],
+					],
+				],
+				'execute_callback'    => [ $this, 'execute_validate_relationships' ],
 				'permission_callback' => function () {
 					return current_user_can( 'read' );
 				},
-				'meta'                => array(
+				'meta'                => [
 					'show_in_rest' => true,
 					'version'      => '1.0.0',
-				),
-			)
+				],
+			]
 		);
 	}
 
+	/**
+	 * Execute the xfn/set_relationships ability.
+	 *
+	 * @param array $input Validated ability input.
+	 * @return array Ability result.
+	 */
 	public function execute_set_relationships( array $input ): array {
 		$post_id       = (int) $input['post_id'];
 		$relationships = (array) $input['relationships'];
 
 		$post = get_post( $post_id );
 		if ( ! $post ) {
-			return array( 'success' => false, 'error' => 'Post not found.' );
+			return [
+				'success' => false,
+				'error'   => 'Post not found.',
+			];
 		}
 
 		if ( ! current_user_can( 'edit_post', $post_id ) ) {
-			return array( 'success' => false, 'error' => 'Insufficient permissions for this post.' );
+			return [
+				'success' => false,
+				'error'   => 'Insufficient permissions for this post.',
+			];
 		}
 
 		XFN_Meta_Mirror::set_relationships( $post_id, $relationships );
 
 		$stored = XFN_Meta_Mirror::get_relationships( $post_id );
 
-		return array(
+		return [
 			'success' => true,
 			'applied' => count( $stored ),
-		);
+		];
 	}
 
+	/**
+	 * Execute the xfn/get_relationships ability.
+	 *
+	 * @param array $input Validated ability input.
+	 * @return array Ability result.
+	 */
 	public function execute_get_relationships( array $input ): array {
 		$post_id = (int) $input['post_id'];
 
 		$post = get_post( $post_id );
 		if ( ! $post ) {
-			return array( 'relationships' => array(), 'error' => 'Post not found.' );
+			return [
+				'relationships' => [],
+				'error'         => 'Post not found.',
+			];
 		}
 
 		if ( ! current_user_can( 'read_post', $post_id ) ) {
-			return array( 'relationships' => array(), 'error' => 'Insufficient permissions for this post.' );
+			return [
+				'relationships' => [],
+				'error'         => 'Insufficient permissions for this post.',
+			];
 		}
 
 		$relationships = XFN_Meta_Mirror::get_relationships( $post_id );
 
-		return array(
+		return [
 			'relationships' => $relationships,
-		);
+		];
 	}
 
+	/**
+	 * Execute the xfn/add_relationship ability.
+	 *
+	 * @param array $input Validated ability input.
+	 * @return array Ability result.
+	 */
 	public function execute_add_relationship( array $input ): array {
 		$post_id = (int) $input['post_id'];
 		$url     = (string) $input['url'];
@@ -297,43 +351,67 @@ class XFN_Core_Abilities {
 
 		$post = get_post( $post_id );
 		if ( ! $post ) {
-			return array( 'success' => false, 'error' => 'Post not found.' );
+			return [
+				'success' => false,
+				'error'   => 'Post not found.',
+			];
 		}
 
 		if ( ! current_user_can( 'edit_post', $post_id ) ) {
-			return array( 'success' => false, 'error' => 'Insufficient permissions for this post.' );
+			return [
+				'success' => false,
+				'error'   => 'Insufficient permissions for this post.',
+			];
 		}
 
 		XFN_Meta_Mirror::add_relationship( $post_id, $url, $rels );
 
-		return array(
+		return [
 			'success' => true,
-		);
+		];
 	}
 
+	/**
+	 * Execute the xfn/remove_relationship ability.
+	 *
+	 * @param array $input Validated ability input.
+	 * @return array Ability result.
+	 */
 	public function execute_remove_relationship( array $input ): array {
 		$post_id = (int) $input['post_id'];
 		$url     = (string) $input['url'];
 
 		$post = get_post( $post_id );
 		if ( ! $post ) {
-			return array( 'success' => false, 'error' => 'Post not found.' );
+			return [
+				'success' => false,
+				'error'   => 'Post not found.',
+			];
 		}
 
 		if ( ! current_user_can( 'edit_post', $post_id ) ) {
-			return array( 'success' => false, 'error' => 'Insufficient permissions for this post.' );
+			return [
+				'success' => false,
+				'error'   => 'Insufficient permissions for this post.',
+			];
 		}
 
 		XFN_Meta_Mirror::remove_relationship( $post_id, $url );
 
-		return array(
+		return [
 			'success' => true,
-		);
+		];
 	}
 
+	/**
+	 * Execute the xfn/validate_relationships ability.
+	 *
+	 * @param array $input Validated ability input.
+	 * @return array Ability result.
+	 */
 	public function execute_validate_relationships( array $input ): array {
 		$rels     = (array) $input['rels'];
-		$warnings = array();
+		$warnings = [];
 
 		foreach ( self::EXCLUSIVITY_GROUPS as $group_name => $group_values ) {
 			$matches = array_intersect( $rels, $group_values );
@@ -347,9 +425,9 @@ class XFN_Core_Abilities {
 			}
 		}
 
-		return array(
+		return [
 			'valid'    => empty( $warnings ),
 			'warnings' => $warnings,
-		);
+		];
 	}
 }

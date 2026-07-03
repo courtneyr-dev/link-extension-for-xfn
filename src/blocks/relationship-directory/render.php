@@ -15,65 +15,65 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 $lexfn_links = XFN_Content_Scanner::scan_all_posts_for_xfn();
-$limit       = (int) ( $attributes['limit'] ?? 50 );
-$show_search = (bool) ( $attributes['showSearch'] ?? true );
-$show_filter = (bool) ( $attributes['showFilters'] ?? true );
+$lexfn_limit       = (int) ( $attributes['limit'] ?? 50 );
+$lexfn_show_search = (bool) ( $attributes['showSearch'] ?? true );
+$lexfn_show_filter = (bool) ( $attributes['showFilters'] ?? true );
 
 // Trim to limit.
-if ( count( $lexfn_links ) > $limit ) {
-	$lexfn_links = array_slice( $lexfn_links, 0, $limit );
+if ( count( $lexfn_links ) > $lexfn_limit ) {
+	$lexfn_links = array_slice( $lexfn_links, 0, $lexfn_limit );
 }
 
 // Collect unique relationship types for filter buttons.
-$all_rels = array();
+$lexfn_all_rels = [];
 foreach ( $lexfn_links as $lexfn_link ) {
-	foreach ( $lexfn_link['rels'] as $rel ) {
-		$all_rels[ $rel ] = true;
+	foreach ( $lexfn_link['rels'] as $lexfn_rel ) {
+		$lexfn_all_rels[ $lexfn_rel ] = true;
 	}
 }
-ksort( $all_rels );
-$all_rels = array_keys( $all_rels );
+ksort( $lexfn_all_rels );
+$lexfn_all_rels = array_keys( $lexfn_all_rels );
 
 // Build link data for client-side filtering.
-$link_data = array();
-foreach ( $lexfn_links as $i => $lexfn_link ) {
-	$post_title  = get_the_title( $lexfn_link['post_id'] );
-	$link_data[] = array(
-		'id'        => $i,
+$lexfn_link_data = [];
+foreach ( $lexfn_links as $lexfn_i => $lexfn_link ) {
+	$lexfn_post_title  = get_the_title( $lexfn_link['post_id'] );
+	$lexfn_link_data[] = [
+		'id'        => $lexfn_i,
 		'url'       => $lexfn_link['url'],
 		'rels'      => $lexfn_link['rels'],
 		'postId'    => $lexfn_link['post_id'],
-		'postTitle' => $post_title,
-	);
+		'postTitle' => $lexfn_post_title,
+	];
 }
 
-$context = wp_json_encode(
-	array(
+$lexfn_context = wp_json_encode(
+	[
 		'searchTerm'   => '',
 		'activeFilter' => '',
-	)
+	]
 );
 
 wp_interactivity_state(
 	'xfn-directory',
-	array(
-		'links'   => $link_data,
-		'allRels' => $all_rels,
-	)
+	[
+		'links'   => $lexfn_link_data,
+		'allRels' => $lexfn_all_rels,
+	]
 );
 
-$wrapper_attrs = get_block_wrapper_attributes(
-	array(
+$lexfn_wrapper_attrs = get_block_wrapper_attributes(
+	[
 		'class' => 'xfn-directory',
-	)
+	]
 );
 ?>
 <div
-	<?php echo $wrapper_attrs; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_block_wrapper_attributes() output is escaped by core. ?>
+	<?php echo $lexfn_wrapper_attrs; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_block_wrapper_attributes() output is escaped by core. ?>
 	data-wp-interactive="xfn-directory"
-	data-wp-context='<?php echo esc_attr( $context ); ?>'
+	data-wp-context='<?php echo esc_attr( $lexfn_context ); ?>'
 >
-	<?php if ( $show_search ) : ?>
+	<?php if ( $lexfn_show_search ) : ?>
 		<div class="xfn-directory__search">
 			<input
 				type="search"
@@ -85,7 +85,7 @@ $wrapper_attrs = get_block_wrapper_attributes(
 		</div>
 	<?php endif; ?>
 
-	<?php if ( $show_filter && ! empty( $all_rels ) ) : ?>
+	<?php if ( $lexfn_show_filter && ! empty( $lexfn_all_rels ) ) : ?>
 		<div class="xfn-directory__filters xfn-pills">
 			<button
 				type="button"
@@ -95,22 +95,22 @@ $wrapper_attrs = get_block_wrapper_attributes(
 			>
 				<?php esc_html_e( 'All', 'link-extension-for-xfn' ); ?>
 			</button>
-			<?php foreach ( $all_rels as $rel ) : ?>
+			<?php foreach ( $lexfn_all_rels as $lexfn_rel ) : ?>
 				<button
 					type="button"
-					class="xfn-pill xfn-pill-<?php echo esc_attr( $rel ); ?> xfn-directory__filter-btn"
-					data-rel="<?php echo esc_attr( $rel ); ?>"
+					class="xfn-pill xfn-pill-<?php echo esc_attr( $lexfn_rel ); ?> xfn-directory__filter-btn"
+					data-rel="<?php echo esc_attr( $lexfn_rel ); ?>"
 					data-wp-on--click="actions.toggleFilter"
-					data-wp-class--xfn-pill--active="<?php echo esc_attr( 'state.isActiveFilter_' . $rel ); ?>"
+					data-wp-class--xfn-pill--active="<?php echo esc_attr( 'state.isActiveFilter_' . $lexfn_rel ); ?>"
 				>
-					<?php echo esc_html( $rel ); ?>
+					<?php echo esc_html( $lexfn_rel ); ?>
 				</button>
 			<?php endforeach; ?>
 		</div>
 	<?php endif; ?>
 
 	<ul class="xfn-directory__list" role="list">
-		<?php foreach ( $link_data as $lexfn_link ) : ?>
+		<?php foreach ( $lexfn_link_data as $lexfn_link ) : ?>
 			<li
 				class="xfn-directory__item"
 				data-link-id="<?php echo esc_attr( $lexfn_link['id'] ); ?>"
@@ -133,9 +133,9 @@ $wrapper_attrs = get_block_wrapper_attributes(
 					?>
 				</span>
 				<span class="xfn-pills">
-					<?php foreach ( $lexfn_link['rels'] as $rel ) : ?>
-						<span class="xfn-pill xfn-pill-<?php echo esc_attr( $rel ); ?>">
-							<?php echo esc_html( $rel ); ?>
+					<?php foreach ( $lexfn_link['rels'] as $lexfn_rel ) : ?>
+						<span class="xfn-pill xfn-pill-<?php echo esc_attr( $lexfn_rel ); ?>">
+							<?php echo esc_html( $lexfn_rel ); ?>
 						</span>
 					<?php endforeach; ?>
 				</span>
@@ -143,7 +143,7 @@ $wrapper_attrs = get_block_wrapper_attributes(
 		<?php endforeach; ?>
 	</ul>
 
-	<?php if ( empty( $link_data ) ) : ?>
+	<?php if ( empty( $lexfn_link_data ) ) : ?>
 		<p class="xfn-directory__empty">
 			<?php esc_html_e( 'No XFN relationships found.', 'link-extension-for-xfn' ); ?>
 		</p>

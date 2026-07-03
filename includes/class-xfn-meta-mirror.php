@@ -7,54 +7,92 @@
  */
 final class XFN_Meta_Mirror {
 
-	public const META_KEY    = '_xfn_relationships';
-	public const SOURCE_KEY  = '_xfn_meta_source';
+	public const META_KEY   = '_xfn_relationships';
+	public const SOURCE_KEY = '_xfn_meta_source';
 
-	private static array $valid_xfn = array(
-		'contact', 'acquaintance', 'friend', 'met',
-		'co-worker', 'colleague', 'co-resident', 'neighbor',
-		'child', 'parent', 'sibling', 'spouse', 'kin',
-		'muse', 'crush', 'date', 'sweetheart', 'me',
-	);
+	/**
+	 * Valid XFN 1.1 relationship values.
+	 *
+	 * @var string[]
+	 */
+	private static array $valid_xfn = [
+		'contact',
+		'acquaintance',
+		'friend',
+		'met',
+		'co-worker',
+		'colleague',
+		'co-resident',
+		'neighbor',
+		'child',
+		'parent',
+		'sibling',
+		'spouse',
+		'kin',
+		'muse',
+		'crush',
+		'date',
+		'sweetheart',
+		'me',
+	];
 
+	/**
+	 * Hook meta registration and the save-time content sync.
+	 */
 	public static function init(): void {
-		add_action( 'init', array( __CLASS__, 'register_meta' ) );
-		add_action( 'save_post', array( __CLASS__, 'sync_meta_to_content' ), 20, 2 );
+		add_action( 'init', [ __CLASS__, 'register_meta' ] );
+		add_action( 'save_post', [ __CLASS__, 'sync_meta_to_content' ], 20, 2 );
 	}
 
+	/**
+	 * Register the relationships post meta for all post types.
+	 */
 	public static function register_meta(): void {
-		register_post_meta( '', self::META_KEY, array(
-			'type'              => 'array',
-			'single'            => true,
-			'default'           => array(),
-			'show_in_rest'      => array(
-				'schema' => array(
-					'type'  => 'array',
-					'items' => array(
-						'type'       => 'object',
-						'properties' => array(
-							'url'  => array( 'type' => 'string', 'format' => 'uri' ),
-							'rels' => array(
-								'type'  => 'array',
-								'items' => array( 'type' => 'string' ),
-							),
-						),
-					),
-				),
-			),
-			'sanitize_callback' => array( __CLASS__, 'sanitize_relationships' ),
-			'auth_callback'     => function () {
-				return current_user_can( 'edit_posts' );
-			},
-		) );
+		register_post_meta(
+			'',
+			self::META_KEY,
+			[
+				'type'              => 'array',
+				'single'            => true,
+				'default'           => [],
+				'show_in_rest'      => [
+					'schema' => [
+						'type'  => 'array',
+						'items' => [
+							'type'       => 'object',
+							'properties' => [
+								'url'  => [
+									'type'   => 'string',
+									'format' => 'uri',
+								],
+								'rels' => [
+									'type'  => 'array',
+									'items' => [ 'type' => 'string' ],
+								],
+							],
+						],
+					],
+				],
+				'sanitize_callback' => [ __CLASS__, 'sanitize_relationships' ],
+				'auth_callback'     => function () {
+					return current_user_can( 'edit_posts' );
+				},
+			]
+		);
 	}
 
+	/**
+	 * Sanitize a relationships array: valid http(s) URL plus XFN rels only.
+	 *
+	 * @param mixed $input Raw meta value.
+	 * @return array Sanitized list of { url, rels } entries.
+	 */
 	public static function sanitize_relationships( $input ): array {
 		if ( ! is_array( $input ) ) {
-			return array();
+			return [];
 		}
 
-		$clean = array();
+		$clean = [];
 		foreach ( $input as $entry ) {
 			if ( ! is_array( $entry ) || empty( $entry['url'] ) || empty( $entry['rels'] ) ) {
 				continue;
@@ -65,11 +103,11 @@ final class XFN_Meta_Mirror {
 			// apply — they drop unresolvable hosts and offline saves.
 			$parsed = wp_parse_url( (string) $entry['url'] );
 			if ( empty( $parsed['scheme'] ) || empty( $parsed['host'] )
-				|| ! in_array( strtolower( $parsed['scheme'] ), array( 'http', 'https' ), true ) ) {
+				|| ! in_array( strtolower( $parsed['scheme'] ), [ 'http', 'https' ], true ) ) {
 				continue;
 			}
 
-			$url = esc_url_raw( $entry['url'], array( 'http', 'https' ) );
+			$url = esc_url_raw( $entry['url'], [ 'http', 'https' ] );
 			if ( empty( $url ) ) {
 				continue;
 			}
@@ -82,27 +120,46 @@ final class XFN_Meta_Mirror {
 			);
 
 			if ( ! empty( $rels ) ) {
-				$clean[] = array(
+				$clean[] = [
 					'url'  => $url,
 					'rels' => array_values( $rels ),
-				);
+				];
 			}
 		}
 
 		return $clean;
 	}
 
+	/**
+	 * Get the stored relationships for a post.
+	 *
+	 * @param int $post_id Post ID.
+	 * @return array List of { url, rels } entries.
+	 */
 	public static function get_relationships( int $post_id ): array {
 		$meta = get_post_meta( $post_id, self::META_KEY, true );
-		return is_array( $meta ) ? $meta : array();
+		return is_array( $meta ) ? $meta : [];
 	}
 
+	/**
+	 * Replace the stored relationships for a post.
+	 *
+	 * @param int   $post_id       Post ID.
+	 * @param array $relationships List of { url, rels } entries.
+	 */
 	public static function set_relationships( int $post_id, array $relationships ): void {
 		$clean = self::sanitize_relationships( $relationships );
 		update_post_meta( $post_id, self::META_KEY, $clean );
 		update_post_meta( $post_id, self::SOURCE_KEY, 'meta' );
 	}
 
+	/**
+	 * Add or merge a relationship for a URL on a post.
+	 *
+	 * @param int      $post_id Post ID.
+	 * @param string   $url     Target URL.
+	 * @param string[] $rels    XFN rel values to add.
+	 */
 	public static function add_relationship( int $post_id, string $url, array $rels ): void {
 		$existing = self::get_relationships( $post_id );
 
@@ -118,24 +175,42 @@ final class XFN_Meta_Mirror {
 		unset( $entry );
 
 		if ( ! $found ) {
-			$existing[] = array( 'url' => $url, 'rels' => $rels );
+			$existing[] = [
+				'url'  => $url,
+				'rels' => $rels,
+			];
 		}
 
 		self::set_relationships( $post_id, $existing );
 	}
 
+	/**
+	 * Remove the relationship entry for a URL on a post.
+	 *
+	 * @param int    $post_id Post ID.
+	 * @param string $url     Target URL.
+	 */
 	public static function remove_relationship( int $post_id, string $url ): void {
 		$existing = self::get_relationships( $post_id );
-		$filtered = array_values( array_filter(
-			$existing,
-			function ( $entry ) use ( $url ) {
-				return $entry['url'] !== $url;
-			}
-		) );
+		$filtered = array_values(
+			array_filter(
+				$existing,
+				function ( $entry ) use ( $url ) {
+					return $entry['url'] !== $url;
+				}
+			)
+		);
 
 		self::set_relationships( $post_id, $filtered );
 	}
 
+	/**
+	 * Inject rel attributes for stored relationships into post content.
+	 *
+	 * @param string $content       Post content HTML.
+	 * @param array  $relationships List of { url, rels } entries.
+	 * @return string Updated content.
+	 */
 	public static function apply_to_content( string $content, array $relationships ): string {
 		foreach ( $relationships as $entry ) {
 			$url      = preg_quote( $entry['url'], '/' );
@@ -152,7 +227,7 @@ final class XFN_Meta_Mirror {
 					$existing_rel = '';
 					if ( preg_match( '/rel=["\']([^"\']*)["\']/', $before . $after, $rel_match ) ) {
 						$existing_rel = $rel_match[1];
-						$tag = str_replace( $rel_match[0], '', $tag );
+						$tag          = str_replace( $rel_match[0], '', $tag );
 					}
 
 					// Separate non-XFN rels.
@@ -172,6 +247,12 @@ final class XFN_Meta_Mirror {
 		return $content;
 	}
 
+	/**
+	 * On save, write meta-sourced relationships back into post content.
+	 *
+	 * @param int      $post_id Post ID.
+	 * @param \WP_Post $post    Post object.
+	 */
 	public static function sync_meta_to_content( int $post_id, \WP_Post $post ): void {
 		// Only sync if meta was the last writer.
 		$source = get_post_meta( $post_id, self::SOURCE_KEY, true );
@@ -186,12 +267,14 @@ final class XFN_Meta_Mirror {
 
 		$updated_content = self::apply_to_content( $post->post_content, $relationships );
 		if ( $updated_content !== $post->post_content ) {
-			remove_action( 'save_post', array( __CLASS__, 'sync_meta_to_content' ), 20 );
-			wp_update_post( array(
-				'ID'           => $post_id,
-				'post_content' => $updated_content,
-			) );
-			add_action( 'save_post', array( __CLASS__, 'sync_meta_to_content' ), 20, 2 );
+			remove_action( 'save_post', [ __CLASS__, 'sync_meta_to_content' ], 20 );
+			wp_update_post(
+				[
+					'ID'           => $post_id,
+					'post_content' => $updated_content,
+				]
+			);
+			add_action( 'save_post', [ __CLASS__, 'sync_meta_to_content' ], 20, 2 );
 		}
 
 		// Reset source flag.

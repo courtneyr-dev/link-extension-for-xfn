@@ -13,6 +13,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Registers frontend tooltip behavior for XFN-annotated links.
+ */
 class XFN_Interactivity {
 
 	/**
@@ -26,8 +29,8 @@ class XFN_Interactivity {
 	 * Register hooks.
 	 */
 	public function init(): void {
-		add_action( 'wp_enqueue_scripts', array( $this, 'register_assets' ) );
-		add_filter( 'render_block', array( $this, 'process_block' ), 10, 2 );
+		add_action( 'wp_enqueue_scripts', [ $this, 'register_assets' ] );
+		add_filter( 'render_block', [ $this, 'process_block' ], 10, 2 );
 	}
 
 	/**
@@ -37,14 +40,14 @@ class XFN_Interactivity {
 		wp_register_script_module(
 			'xfn-links/tooltip',
 			XFN_LINK_EXTENSION_PLUGIN_URL . 'build/interactivity/tooltip.js',
-			array( '@wordpress/interactivity' ),
+			[ '@wordpress/interactivity' ],
 			XFN_LINK_EXTENSION_VERSION
 		);
 
 		wp_register_style(
 			'xfn-tooltip',
 			XFN_LINK_EXTENSION_PLUGIN_URL . 'build/interactivity/tooltip.css',
-			array(),
+			[],
 			XFN_LINK_EXTENSION_VERSION
 		);
 	}
@@ -67,7 +70,7 @@ class XFN_Interactivity {
 
 		// Pass 1: Find XFN links and add directives.
 		$processor = new WP_HTML_Tag_Processor( $block_content );
-		$xfn_links = array();
+		$xfn_links = [];
 
 		while ( $processor->next_tag( 'a' ) ) {
 			$rel = $processor->get_attribute( 'rel' );
@@ -103,7 +106,7 @@ class XFN_Interactivity {
 		// Pass 2: Wrap each marked link with its tooltip container.
 		foreach ( $xfn_links as $id => $rels ) {
 			$tooltip_html = self::build_tooltip_html( $rels );
-			$context      = wp_json_encode( array( 'isOpen' => false ) );
+			$context      = wp_json_encode( [ 'isOpen' => false ] );
 
 			$html = preg_replace_callback(
 				'/(<a\s[^>]*data-xfn-tooltip-id="' . $id . '"[^>]*>)(.*?)(<\/a>)/s',

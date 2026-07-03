@@ -15,12 +15,12 @@
  * @package LinkExtensionForXFN
  */
 
-// Prevent direct access
+// Prevent direct access.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// Define plugin constants
+// Define plugin constants.
 define( 'XFN_LINK_EXTENSION_VERSION', '1.0.3' );
 define( 'XFN_LINK_EXTENSION_PLUGIN_FILE', __FILE__ );
 define( 'XFN_LINK_EXTENSION_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -63,10 +63,10 @@ class XFN_Link_Extension {
 	 * Initialize plugin hooks and functionality.
 	 */
 	private function __construct() {
-		add_action( 'init', array( $this, 'init' ) );
-		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ) );
-		add_action( 'admin_menu', array( $this, 'add_settings_page' ) );
-		add_action( 'admin_init', array( $this, 'register_settings' ) );
+		add_action( 'init', [ $this, 'init' ] );
+		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_block_editor_assets' ] );
+		add_action( 'admin_menu', [ $this, 'add_settings_page' ] );
+		add_action( 'admin_init', [ $this, 'register_settings' ] );
 
 		// Load new classes.
 		require_once XFN_LINK_EXTENSION_PLUGIN_PATH . 'includes/class-xfn-feature-flags.php';
@@ -111,7 +111,7 @@ class XFN_Link_Extension {
 	 */
 	public function init() {
 		// Add REST API endpoint for XFN validation (if needed in future)
-		// This would be used for server-side validation of relationship combinations
+		// This would be used for server-side validation of relationship combinations.
 	}
 
 	/**
@@ -125,7 +125,7 @@ class XFN_Link_Extension {
 			__( 'Link Extension for XFN', 'link-extension-for-xfn' ),
 			'manage_options',
 			'xfn-link-extension',
-			array( $this, 'render_settings_page' )
+			[ $this, 'render_settings_page' ]
 		);
 	}
 
@@ -138,26 +138,26 @@ class XFN_Link_Extension {
 		register_setting(
 			'xfn_link_extension_settings',
 			'xfn_link_extension_options',
-			array(
-				'sanitize_callback' => array( $this, 'sanitize_settings' ),
-				'default' => array(
+			[
+				'sanitize_callback' => [ $this, 'sanitize_settings' ],
+				'default'           => [
 					'enable_inspector_controls' => false,
-					'enable_floating_toolbar' => false,
-				),
-			)
+					'enable_floating_toolbar'   => false,
+				],
+			]
 		);
 
 		add_settings_section(
 			'xfn_interface_settings',
 			__( 'Interface Options', 'link-extension-for-xfn' ),
-			array( $this, 'render_interface_section' ),
+			[ $this, 'render_interface_section' ],
 			'xfn-link-extension'
 		);
 
 		add_settings_field(
 			'enable_inspector_controls',
 			__( 'Inspector Controls', 'link-extension-for-xfn' ),
-			array( $this, 'render_inspector_controls_field' ),
+			[ $this, 'render_inspector_controls_field' ],
 			'xfn-link-extension',
 			'xfn_interface_settings'
 		);
@@ -165,7 +165,7 @@ class XFN_Link_Extension {
 		add_settings_field(
 			'enable_floating_toolbar',
 			__( 'Floating Toolbar Button', 'link-extension-for-xfn' ),
-			array( $this, 'render_floating_toolbar_field' ),
+			[ $this, 'render_floating_toolbar_field' ],
 			'xfn-link-extension',
 			'xfn_interface_settings'
 		);
@@ -178,10 +178,10 @@ class XFN_Link_Extension {
 	 * @return array Plugin settings
 	 */
 	public function get_plugin_settings() {
-		$defaults = array(
+		$defaults = [
 			'enable_inspector_controls' => false,
-			'enable_floating_toolbar' => false,
-		);
+			'enable_floating_toolbar'   => false,
+		];
 
 		$options = get_option( 'xfn_link_extension_options', $defaults );
 		return wp_parse_args( $options, $defaults );
@@ -191,14 +191,14 @@ class XFN_Link_Extension {
 	 * Sanitize settings
 	 *
 	 * @since 1.0.2
-	 * @param array $input Raw input from settings form
+	 * @param array $input Raw input from settings form.
 	 * @return array Sanitized settings
 	 */
 	public function sanitize_settings( $input ) {
-		$sanitized = array();
+		$sanitized = [];
 
 		$sanitized['enable_inspector_controls'] = ! empty( $input['enable_inspector_controls'] );
-		$sanitized['enable_floating_toolbar'] = ! empty( $input['enable_floating_toolbar'] );
+		$sanitized['enable_floating_toolbar']   = ! empty( $input['enable_floating_toolbar'] );
 
 		return $sanitized;
 	}
@@ -290,7 +290,7 @@ class XFN_Link_Extension {
 	 */
 	public function enqueue_block_editor_assets() {
 		$asset_file_path = XFN_LINK_EXTENSION_PLUGIN_PATH . 'build/index.asset.php';
-		$default_deps    = array(
+		$default_deps    = [
 			'wp-blocks',
 			'wp-element',
 			'wp-components',
@@ -300,14 +300,14 @@ class XFN_Link_Extension {
 			'wp-rich-text',
 			'wp-block-editor',
 			'wp-compose',
-		);
+		];
 
 		$asset_meta = file_exists( $asset_file_path )
 			? include $asset_file_path
-			: array(
+			: [
 				'dependencies' => $default_deps,
 				'version'      => filemtime( XFN_LINK_EXTENSION_PLUGIN_PATH . 'build/index.js' ),
-			);
+			];
 
 		$script_hash = file_exists( XFN_LINK_EXTENSION_PLUGIN_PATH . 'build/index.js' )
 			? md5_file( XFN_LINK_EXTENSION_PLUGIN_PATH . 'build/index.js' )
@@ -327,10 +327,10 @@ class XFN_Link_Extension {
 			'%s-%s-%s',
 			XFN_LINK_EXTENSION_VERSION,
 			substr( $style_hash, 0, 8 ),
-			time() // Add timestamp for aggressive cache busting during development
+			time() // Add timestamp for aggressive cache busting during development.
 		);
 
-		// Enqueue main JavaScript file
+		// Enqueue main JavaScript file.
 		wp_enqueue_script(
 			'link-extension-for-xfn',
 			XFN_LINK_EXTENSION_PLUGIN_URL . 'build/index.js',
@@ -339,32 +339,32 @@ class XFN_Link_Extension {
 			true
 		);
 
-		// Enqueue editor-specific styles
+		// Enqueue editor-specific styles.
 		wp_enqueue_style(
 			'xfn-link-extension-editor',
 			XFN_LINK_EXTENSION_PLUGIN_URL . 'build/index.css',
-			array( 'wp-components' ),
+			[ 'wp-components' ],
 			$style_version
 		);
 
-		// Localize script with XFN relationship data and translations
+		// Localize script with XFN relationship data and translations.
 		wp_localize_script(
 			'link-extension-for-xfn',
 			'linkexfoData',
-			array(
+			[
 				'relationships' => $this->get_xfn_relationships(),
-				'version' => XFN_LINK_EXTENSION_VERSION,
-				'nonce' => wp_create_nonce( 'xfn_link_extension' ),
-				'settings' => $this->get_plugin_settings(),
-				'interfaces' => array(
-					'toolbar' => __( 'Floating Toolbar', 'link-extension-for-xfn' ),
+				'version'       => XFN_LINK_EXTENSION_VERSION,
+				'nonce'         => wp_create_nonce( 'xfn_link_extension' ),
+				'settings'      => $this->get_plugin_settings(),
+				'interfaces'    => [
+					'toolbar'   => __( 'Floating Toolbar', 'link-extension-for-xfn' ),
 					'inspector' => __( 'Inspector Controls', 'link-extension-for-xfn' ),
-					'advanced' => __( 'Link Advanced Panel', 'link-extension-for-xfn' ),
-				),
-			)
+					'advanced'  => __( 'Link Advanced Panel', 'link-extension-for-xfn' ),
+				],
+			]
 		);
 
-		// Set script translations for JavaScript
+		// Set script translations for JavaScript.
 		wp_set_script_translations(
 			'link-extension-for-xfn',
 			'link-extension-for-xfn',
@@ -381,79 +381,79 @@ class XFN_Link_Extension {
 	 * @since 1.0.0
 	 * @return array XFN relationship structure
 	 */
-	private function get_xfn_relationships() {
-		return array(
-			'friendship' => array(
-				'type' => 'radio',
-				'label' => __( 'Friendship', 'link-extension-for-xfn' ),
+	public function get_xfn_relationships() {
+		return [
+			'friendship'   => [
+				'type'        => 'radio',
+				'label'       => __( 'Friendship', 'link-extension-for-xfn' ),
 				'description' => __( 'Your friendship level with this person (choose one)', 'link-extension-for-xfn' ),
-				'options' => array(
-					'contact' => __( 'Contact', 'link-extension-for-xfn' ),
+				'options'     => [
+					'contact'      => __( 'Contact', 'link-extension-for-xfn' ),
 					'acquaintance' => __( 'Acquaintance', 'link-extension-for-xfn' ),
-					'friend' => __( 'Friend', 'link-extension-for-xfn' ),
-				),
-				'default' => null,
-			),
-			'physical' => array(
-				'type' => 'checkbox',
-				'label' => __( 'Physical', 'link-extension-for-xfn' ),
+					'friend'       => __( 'Friend', 'link-extension-for-xfn' ),
+				],
+				'default'     => null,
+			],
+			'physical'     => [
+				'type'        => 'checkbox',
+				'label'       => __( 'Physical', 'link-extension-for-xfn' ),
 				'description' => __( 'Have you met this person in real life?', 'link-extension-for-xfn' ),
-				'options' => array(
+				'options'     => [
 					'met' => __( 'Met', 'link-extension-for-xfn' ),
-				),
-			),
-			'professional' => array(
-				'type' => 'checkbox',
-				'label' => __( 'Professional', 'link-extension-for-xfn' ),
+				],
+			],
+			'professional' => [
+				'type'        => 'checkbox',
+				'label'       => __( 'Professional', 'link-extension-for-xfn' ),
 				'description' => __( 'Professional relationships (multiple allowed)', 'link-extension-for-xfn' ),
-				'options' => array(
+				'options'     => [
 					'co-worker' => __( 'Co-worker', 'link-extension-for-xfn' ),
 					'colleague' => __( 'Colleague', 'link-extension-for-xfn' ),
-				),
-			),
-			'geographical' => array(
-				'type' => 'radio',
-				'label' => __( 'Geographical', 'link-extension-for-xfn' ),
+				],
+			],
+			'geographical' => [
+				'type'        => 'radio',
+				'label'       => __( 'Geographical', 'link-extension-for-xfn' ),
 				'description' => __( 'Your geographical relationship (choose one)', 'link-extension-for-xfn' ),
-				'options' => array(
+				'options'     => [
 					'co-resident' => __( 'Co-resident', 'link-extension-for-xfn' ),
-					'neighbor' => __( 'Neighbor', 'link-extension-for-xfn' ),
-				),
-				'default' => null,
-			),
-			'family' => array(
-				'type' => 'radio',
-				'label' => __( 'Family', 'link-extension-for-xfn' ),
+					'neighbor'    => __( 'Neighbor', 'link-extension-for-xfn' ),
+				],
+				'default'     => null,
+			],
+			'family'       => [
+				'type'        => 'radio',
+				'label'       => __( 'Family', 'link-extension-for-xfn' ),
 				'description' => __( 'Family relationship (choose one)', 'link-extension-for-xfn' ),
-				'options' => array(
-					'child' => __( 'Child', 'link-extension-for-xfn' ),
-					'parent' => __( 'Parent', 'link-extension-for-xfn' ),
+				'options'     => [
+					'child'   => __( 'Child', 'link-extension-for-xfn' ),
+					'parent'  => __( 'Parent', 'link-extension-for-xfn' ),
 					'sibling' => __( 'Sibling', 'link-extension-for-xfn' ),
-					'spouse' => __( 'Spouse', 'link-extension-for-xfn' ),
-					'kin' => __( 'Kin', 'link-extension-for-xfn' ),
-				),
-				'default' => null,
-			),
-			'romantic' => array(
-				'type' => 'checkbox',
-				'label' => __( 'Romantic', 'link-extension-for-xfn' ),
+					'spouse'  => __( 'Spouse', 'link-extension-for-xfn' ),
+					'kin'     => __( 'Kin', 'link-extension-for-xfn' ),
+				],
+				'default'     => null,
+			],
+			'romantic'     => [
+				'type'        => 'checkbox',
+				'label'       => __( 'Romantic', 'link-extension-for-xfn' ),
 				'description' => __( 'Romantic relationships (multiple allowed)', 'link-extension-for-xfn' ),
-				'options' => array(
-					'muse' => __( 'Muse', 'link-extension-for-xfn' ),
-					'crush' => __( 'Crush', 'link-extension-for-xfn' ),
-					'date' => __( 'Date', 'link-extension-for-xfn' ),
+				'options'     => [
+					'muse'       => __( 'Muse', 'link-extension-for-xfn' ),
+					'crush'      => __( 'Crush', 'link-extension-for-xfn' ),
+					'date'       => __( 'Date', 'link-extension-for-xfn' ),
 					'sweetheart' => __( 'Sweetheart', 'link-extension-for-xfn' ),
-				),
-			),
-			'identity' => array(
-				'type' => 'checkbox',
-				'label' => __( 'Identity', 'link-extension-for-xfn' ),
+				],
+			],
+			'identity'     => [
+				'type'        => 'checkbox',
+				'label'       => __( 'Identity', 'link-extension-for-xfn' ),
 				'description' => __( 'Is this link to your own content?', 'link-extension-for-xfn' ),
-				'options' => array(
+				'options'     => [
 					'me' => __( 'Me', 'link-extension-for-xfn' ),
-				),
-			),
-		);
+				],
+			],
+		];
 	}
 
 	/**
@@ -463,25 +463,42 @@ class XFN_Link_Extension {
 	 * other rel values like nofollow, noopener, etc.
 	 *
 	 * @since 1.0.0
-	 * @param string $rel_string The rel attribute value to parse
+	 * @param string $rel_string The rel attribute value to parse.
 	 * @return array Array with 'xfn' and 'other' keys containing respective values
 	 */
 	public static function parse_rel_attribute( $rel_string ) {
 		if ( empty( $rel_string ) ) {
-			return array( 'xfn' => array(), 'other' => array() );
+			return [
+				'xfn'   => [],
+				'other' => [],
+			];
 		}
 
-		// All possible XFN relationship values
-		$xfn_values = array(
-			'contact', 'acquaintance', 'friend', 'met',
-			'co-worker', 'colleague', 'co-resident', 'neighbor',
-			'child', 'parent', 'sibling', 'spouse', 'kin',
-			'muse', 'crush', 'date', 'sweetheart', 'me'
-		);
+		// All possible XFN relationship values.
+		$xfn_values = [
+			'contact',
+			'acquaintance',
+			'friend',
+			'met',
+			'co-worker',
+			'colleague',
+			'co-resident',
+			'neighbor',
+			'child',
+			'parent',
+			'sibling',
+			'spouse',
+			'kin',
+			'muse',
+			'crush',
+			'date',
+			'sweetheart',
+			'me',
+		];
 
 		$rel_parts = array_filter( array_map( 'trim', explode( ' ', $rel_string ) ) );
-		$xfn = array();
-		$other = array();
+		$xfn       = [];
+		$other     = [];
 
 		foreach ( $rel_parts as $part ) {
 			if ( in_array( $part, $xfn_values, true ) ) {
@@ -491,10 +508,10 @@ class XFN_Link_Extension {
 			}
 		}
 
-		return array(
-			'xfn' => $xfn,
+		return [
+			'xfn'   => $xfn,
 			'other' => $other,
-		);
+		];
 	}
 
 	/**
@@ -504,8 +521,8 @@ class XFN_Link_Extension {
 	 * into a properly formatted rel attribute string.
 	 *
 	 * @since 1.0.0
-	 * @param array $xfn_values Array of XFN relationship values
-	 * @param array $other_values Array of non-XFN rel values
+	 * @param array $xfn_values Array of XFN relationship values.
+	 * @param array $other_values Array of non-XFN rel values.
 	 * @return string Combined rel attribute value
 	 */
 	public static function combine_rel_values( $xfn_values, $other_values ) {
@@ -514,7 +531,7 @@ class XFN_Link_Extension {
 			array_filter( (array) $xfn_values )
 		);
 
-		// Remove duplicates and empty values
+		// Remove duplicates and empty values.
 		$all_values = array_unique( array_filter( $all_values ) );
 
 		return implode( ' ', $all_values );
@@ -527,7 +544,7 @@ class XFN_Link_Extension {
 	 * the XFN specification. Checks for mutually exclusive relationships.
 	 *
 	 * @since 1.0.0
-	 * @param array $relationships Array of selected XFN relationships
+	 * @param array $relationships Array of selected XFN relationships.
 	 * @return bool Whether the relationship combination is valid
 	 */
 	public static function validate_xfn_relationships( $relationships ) {
@@ -535,14 +552,14 @@ class XFN_Link_Extension {
 			return true;
 		}
 
-		// Define mutually exclusive groups
-		$exclusive_groups = array(
-			array( 'contact', 'acquaintance', 'friend' ),
-			array( 'co-resident', 'neighbor' ),
-			array( 'child', 'parent', 'sibling', 'spouse', 'kin' ),
-		);
+		// Define mutually exclusive groups.
+		$exclusive_groups = [
+			[ 'contact', 'acquaintance', 'friend' ],
+			[ 'co-resident', 'neighbor' ],
+			[ 'child', 'parent', 'sibling', 'spouse', 'kin' ],
+		];
 
-		// Check each exclusive group
+		// Check each exclusive group.
 		foreach ( $exclusive_groups as $group ) {
 			$selected_in_group = array_intersect( $relationships, $group );
 			if ( count( $selected_in_group ) > 1 ) {
@@ -560,7 +577,7 @@ class XFN_Link_Extension {
 	 * only valid XFN and standard rel values.
 	 *
 	 * @since 1.0.0
-	 * @param string $rel_value The rel attribute value to sanitize
+	 * @param string $rel_value The rel attribute value to sanitize.
 	 * @return string Sanitized rel attribute value
 	 */
 	public static function sanitize_rel_attribute( $rel_value ) {
@@ -568,16 +585,16 @@ class XFN_Link_Extension {
 			return '';
 		}
 
-		// Parse the rel attribute
+		// Parse the rel attribute.
 		$parsed = self::parse_rel_attribute( $rel_value );
-		
-		// Validate XFN relationships
+
+		// Validate XFN relationships.
 		if ( ! self::validate_xfn_relationships( $parsed['xfn'] ) ) {
-			// If invalid, remove all XFN values and keep only other values
-			$parsed['xfn'] = array();
+			// If invalid, remove all XFN values and keep only other values.
+			$parsed['xfn'] = [];
 		}
 
-		// Combine and return
+		// Combine and return.
 		return self::combine_rel_values( $parsed['xfn'], $parsed['other'] );
 	}
 }
@@ -598,13 +615,13 @@ add_action( 'plugins_loaded', 'xfn_link_extension_init' );
  * @since 1.0.0
  */
 function xfn_link_extension_activate() {
-	// Check minimum requirements
+	// Check minimum requirements.
 	if ( version_compare( get_bloginfo( 'version' ), '6.4', '<' ) ) {
 		deactivate_plugins( plugin_basename( __FILE__ ) );
 		wp_die(
 			esc_html__( 'Link Extension for XFN requires WordPress 6.4 or higher.', 'link-extension-for-xfn' ),
 			esc_html__( 'Plugin Activation Error', 'link-extension-for-xfn' ),
-			array( 'back_link' => true )
+			[ 'back_link' => true ]
 		);
 	}
 
@@ -613,7 +630,7 @@ function xfn_link_extension_activate() {
 		wp_die(
 			esc_html__( 'Link Extension for XFN requires PHP 7.4 or higher.', 'link-extension-for-xfn' ),
 			esc_html__( 'Plugin Activation Error', 'link-extension-for-xfn' ),
-			array( 'back_link' => true )
+			[ 'back_link' => true ]
 		);
 	}
 }
@@ -639,7 +656,7 @@ function xfn_get_relationships() {
  * Provides a public interface for parsing rel attribute strings.
  *
  * @since 1.0.0
- * @param string $rel_string The rel attribute value to parse
+ * @param string $rel_string The rel attribute value to parse.
  * @return array Array with 'xfn' and 'other' keys
  */
 function xfn_parse_rel_attribute( $rel_string ) {
@@ -652,8 +669,8 @@ function xfn_parse_rel_attribute( $rel_string ) {
  * Provides a public interface for combining XFN and other rel values.
  *
  * @since 1.0.0
- * @param array $xfn_values Array of XFN relationship values
- * @param array $other_values Array of non-XFN rel values
+ * @param array $xfn_values Array of XFN relationship values.
+ * @param array $other_values Array of non-XFN rel values.
  * @return string Combined rel attribute value
  */
 function xfn_combine_rel_values( $xfn_values, $other_values ) {
@@ -666,7 +683,7 @@ function xfn_combine_rel_values( $xfn_values, $other_values ) {
  * Provides a public interface for validating XFN relationship combinations.
  *
  * @since 1.0.0
- * @param array $relationships Array of selected XFN relationships
+ * @param array $relationships Array of selected XFN relationships.
  * @return bool Whether the relationship combination is valid
  */
 function xfn_validate_relationships( $relationships ) {
@@ -679,7 +696,7 @@ function xfn_validate_relationships( $relationships ) {
  * Provides a public interface for sanitizing rel attribute values.
  *
  * @since 1.0.0
- * @param string $rel_value The rel attribute value to sanitize
+ * @param string $rel_value The rel attribute value to sanitize.
  * @return string Sanitized rel attribute value
  */
 function xfn_sanitize_rel_attribute( $rel_value ) {
@@ -694,54 +711,54 @@ function xfn_sanitize_rel_attribute( $rel_value ) {
  * embed output, or adds a data-rel attribute to the figure element.
  *
  * @since 1.0.2
- * @param string $block_content The block content about to be rendered
- * @param array  $block The full block, including name and attributes
+ * @param string $block_content The block content about to be rendered.
+ * @param array  $block The full block, including name and attributes.
  * @return string Modified block content with XFN attributes
  */
 function xfn_render_embed_block( $block_content, $block ) {
-	// Only process embed blocks
+	// Only process embed blocks.
 	if ( 'core/embed' !== $block['blockName'] ) {
 		return $block_content;
 	}
 
-	// Check if block has XFN metadata
+	// Check if block has XFN metadata.
 	if ( empty( $block['attrs']['metadata']['rel'] ) ) {
 		return $block_content;
 	}
 
 	$rel_value = $block['attrs']['metadata']['rel'];
 
-	// Sanitize the rel value
+	// Sanitize the rel value.
 	$rel_value = XFN_Link_Extension::sanitize_rel_attribute( $rel_value );
 
 	if ( empty( $rel_value ) ) {
 		return $block_content;
 	}
 
-	// Try to find and modify any existing links in the embed output
+	// Try to find and modify any existing links in the embed output.
 	if ( preg_match( '/<a\s+([^>]*?)>/', $block_content ) ) {
-		// Embed contains a link - add rel to it
+		// Embed contains a link - add rel to it.
 		$block_content = preg_replace_callback(
 			'/<a\s+([^>]*?)>/',
-			function( $matches ) use ( $rel_value ) {
+			function ( $matches ) use ( $rel_value ) {
 				$attrs = $matches[1];
 
-				// Check if rel already exists
+				// Check if rel already exists.
 				if ( preg_match( '/rel=["\']([^"\']*)["\']/', $attrs, $rel_match ) ) {
-					// Combine existing rel with XFN
+					// Combine existing rel with XFN.
 					$existing_rel = $rel_match[1];
-					$parsed = XFN_Link_Extension::parse_rel_attribute( $existing_rel );
-					$new_xfn = XFN_Link_Extension::parse_rel_attribute( $rel_value );
-					$combined = XFN_Link_Extension::combine_rel_values( $new_xfn['xfn'], $parsed['other'] );
+					$parsed       = XFN_Link_Extension::parse_rel_attribute( $existing_rel );
+					$new_xfn      = XFN_Link_Extension::parse_rel_attribute( $rel_value );
+					$combined     = XFN_Link_Extension::combine_rel_values( $new_xfn['xfn'], $parsed['other'] );
 
-					// Replace existing rel
+					// Replace existing rel.
 					$attrs = preg_replace(
 						'/rel=["\'][^"\']*["\']/',
 						'rel="' . esc_attr( $combined ) . '"',
 						$attrs
 					);
 				} else {
-					// Add new rel attribute
+					// Add new rel attribute.
 					$attrs .= ' rel="' . esc_attr( $rel_value ) . '"';
 				}
 
@@ -750,7 +767,7 @@ function xfn_render_embed_block( $block_content, $block ) {
 			$block_content
 		);
 	} else {
-		// No link in embed output - add data-xfn-rel to figure element for semantic purposes
+		// No link in embed output - add data-xfn-rel to figure element for semantic purposes.
 		$block_content = preg_replace(
 			'/<figure\s+([^>]*?)class="([^"]*)"([^>]*)>/',
 			'<figure $1class="$2"$3 data-xfn-rel="' . esc_attr( $rel_value ) . '">',

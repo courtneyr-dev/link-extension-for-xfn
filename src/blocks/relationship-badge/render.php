@@ -14,18 +14,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$url      = $attributes['url'] ?? '';
-$show_url = (bool) ( $attributes['showUrl'] ?? true );
+$lexfn_url      = $attributes['url'] ?? '';
+$lexfn_show_url = (bool) ( $attributes['showUrl'] ?? true );
 
-$wrapper_attrs = get_block_wrapper_attributes(
-	array(
+$lexfn_wrapper_attrs = get_block_wrapper_attributes(
+	[
 		'class' => 'xfn-relationship-badge',
-	)
+	]
 );
 
-if ( empty( $url ) ) :
+if ( empty( $lexfn_url ) ) :
 	?>
-	<div <?php echo $wrapper_attrs; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_block_wrapper_attributes() output is escaped by core. ?>>
+	<div <?php echo $lexfn_wrapper_attrs; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_block_wrapper_attributes() output is escaped by core. ?>>
 		<p class="xfn-relationship-badge__empty">
 			<?php esc_html_e( 'Enter a URL to display its XFN relationships.', 'link-extension-for-xfn' ); ?>
 		</p>
@@ -36,25 +36,25 @@ endif;
 
 // Find relationships for the given URL across all posts.
 $lexfn_links = XFN_Content_Scanner::scan_all_posts_for_xfn();
-$rels        = array();
+$lexfn_rels        = [];
 
 foreach ( $lexfn_links as $lexfn_link ) {
-	if ( $lexfn_link['url'] === $url ) {
-		$rels = array_merge( $rels, $lexfn_link['rels'] );
+	if ( $lexfn_link['url'] === $lexfn_url ) {
+		$lexfn_rels = array_merge( $lexfn_rels, $lexfn_link['rels'] );
 	}
 }
-$rels = array_unique( $rels );
-sort( $rels );
+$lexfn_rels = array_unique( $lexfn_rels );
+sort( $lexfn_rels );
 
-if ( empty( $rels ) ) :
+if ( empty( $lexfn_rels ) ) :
 	?>
-	<div <?php echo $wrapper_attrs; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_block_wrapper_attributes() output is escaped by core. ?>>
+	<div <?php echo $lexfn_wrapper_attrs; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_block_wrapper_attributes() output is escaped by core. ?>>
 		<p class="xfn-relationship-badge__empty">
 			<?php
 			printf(
 				/* translators: %s: URL being looked up. */
 				esc_html__( 'No XFN relationships found for %s.', 'link-extension-for-xfn' ),
-				'<code>' . esc_html( $url ) . '</code>'
+				'<code>' . esc_html( $lexfn_url ) . '</code>'
 			);
 			?>
 		</p>
@@ -63,16 +63,16 @@ if ( empty( $rels ) ) :
 	return;
 endif;
 ?>
-<div <?php echo $wrapper_attrs; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_block_wrapper_attributes() output is escaped by core. ?>>
-	<?php if ( $show_url ) : ?>
-		<a href="<?php echo esc_url( $url ); ?>" class="xfn-relationship-badge__link" rel="<?php echo esc_attr( implode( ' ', $rels ) ); ?>">
-			<?php echo esc_html( $url ); ?>
+<div <?php echo $lexfn_wrapper_attrs; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_block_wrapper_attributes() output is escaped by core. ?>>
+	<?php if ( $lexfn_show_url ) : ?>
+		<a href="<?php echo esc_url( $lexfn_url ); ?>" class="xfn-relationship-badge__link" rel="<?php echo esc_attr( implode( ' ', $lexfn_rels ) ); ?>">
+			<?php echo esc_html( $lexfn_url ); ?>
 		</a>
 	<?php endif; ?>
 	<span class="xfn-pills">
-		<?php foreach ( $rels as $rel ) : ?>
-			<span class="xfn-pill xfn-pill-<?php echo esc_attr( $rel ); ?>">
-				<?php echo esc_html( $rel ); ?>
+		<?php foreach ( $lexfn_rels as $lexfn_rel ) : ?>
+			<span class="xfn-pill xfn-pill-<?php echo esc_attr( $lexfn_rel ); ?>">
+				<?php echo esc_html( $lexfn_rel ); ?>
 			</span>
 		<?php endforeach; ?>
 	</span>

@@ -27,8 +27,8 @@ final class XFN_Outpost_Adapter {
 	 * Hook the adapter into postmeta writes.
 	 */
 	public static function init(): void {
-		add_action( 'added_post_meta', array( __CLASS__, 'consume' ), 10, 4 );
-		add_action( 'updated_post_meta', array( __CLASS__, 'consume' ), 10, 4 );
+		add_action( 'added_post_meta', [ __CLASS__, 'consume' ], 10, 4 );
+		add_action( 'updated_post_meta', [ __CLASS__, 'consume' ], 10, 4 );
 	}
 
 	/**
@@ -56,12 +56,12 @@ final class XFN_Outpost_Adapter {
 
 		$parsed = wp_parse_url( (string) $payload['target'] );
 		if ( empty( $parsed['scheme'] ) || empty( $parsed['host'] )
-			|| ! in_array( strtolower( $parsed['scheme'] ), array( 'http', 'https' ), true )
+			|| ! in_array( strtolower( $parsed['scheme'] ), [ 'http', 'https' ], true )
 		) {
 			return;
 		}
 
-		$target = esc_url_raw( (string) $payload['target'], array( 'http', 'https' ) );
+		$target = esc_url_raw( (string) $payload['target'], [ 'http', 'https' ] );
 		if ( '' === $target ) {
 			return;
 		}

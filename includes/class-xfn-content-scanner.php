@@ -13,6 +13,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Scans post content for XFN link relationships.
+ */
 final class XFN_Content_Scanner {
 
 	/**
@@ -20,12 +23,26 @@ final class XFN_Content_Scanner {
 	 *
 	 * @var string[]
 	 */
-	public const VALID_XFN = array(
-		'contact', 'acquaintance', 'friend', 'met',
-		'co-worker', 'colleague', 'co-resident', 'neighbor',
-		'child', 'parent', 'sibling', 'spouse', 'kin',
-		'muse', 'crush', 'date', 'sweetheart', 'me',
-	);
+	public const VALID_XFN = [
+		'contact',
+		'acquaintance',
+		'friend',
+		'met',
+		'co-worker',
+		'colleague',
+		'co-resident',
+		'neighbor',
+		'child',
+		'parent',
+		'sibling',
+		'spouse',
+		'kin',
+		'muse',
+		'crush',
+		'date',
+		'sweetheart',
+		'me',
+	];
 
 	/**
 	 * XFN 1.1 mutual exclusivity groups.
@@ -34,11 +51,11 @@ final class XFN_Content_Scanner {
 	 *
 	 * @var array<string, string[]>
 	 */
-	public const EXCLUSIVITY_GROUPS = array(
-		'friendship'   => array( 'contact', 'acquaintance', 'friend' ),
-		'geographical' => array( 'co-resident', 'neighbor' ),
-		'family'       => array( 'child', 'parent', 'sibling', 'spouse', 'kin' ),
-	);
+	public const EXCLUSIVITY_GROUPS = [
+		'friendship'   => [ 'contact', 'acquaintance', 'friend' ],
+		'geographical' => [ 'co-resident', 'neighbor' ],
+		'family'       => [ 'child', 'parent', 'sibling', 'spouse', 'kin' ],
+	];
 
 	private const TRANSIENT_PREFIX = 'xfn_rels_';
 	private const TRANSIENT_TTL    = 5 * MINUTE_IN_SECONDS;
@@ -52,7 +69,7 @@ final class XFN_Content_Scanner {
 	 * @return array Array of associative arrays with post_id, url, rels keys.
 	 */
 	public static function extract_xfn_links_from_post( \WP_Post $post ): array {
-		$relationships = array();
+		$relationships = [];
 
 		if ( ! preg_match_all( '/<a\s+[^>]*href=["\']([^"\']+)["\'][^>]*>/i', $post->post_content, $matches, PREG_SET_ORDER ) ) {
 			return $relationships;
@@ -68,11 +85,11 @@ final class XFN_Content_Scanner {
 
 			$parsed = XFN_Link_Extension::parse_rel_attribute( $rel_match[1] );
 			if ( ! empty( $parsed['xfn'] ) ) {
-				$relationships[] = array(
+				$relationships[] = [
 					'post_id' => $post->ID,
 					'url'     => $href,
 					'rels'    => $parsed['xfn'],
-				);
+				];
 			}
 		}
 
@@ -106,7 +123,7 @@ final class XFN_Content_Scanner {
 			 LIMIT 500"
 		);
 
-		$relationships = array();
+		$relationships = [];
 		foreach ( $post_ids as $pid ) {
 			$post = get_post( (int) $pid );
 			if ( $post ) {
