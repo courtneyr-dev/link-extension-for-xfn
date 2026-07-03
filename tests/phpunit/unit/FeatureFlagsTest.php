@@ -34,6 +34,9 @@ class FeatureFlagsTest extends WP_UnitTestCase {
 	}
 
 	public function test_has_abilities_api_requires_function(): void {
+		if ( function_exists( 'wp_register_ability' ) ) {
+			$this->markTestSkipped( 'wp_register_ability exists in this WordPress; the absent-function path cannot be exercised.' );
+		}
 		$this->assertFalse( XFN_Feature_Flags::has_abilities_api() );
 	}
 
