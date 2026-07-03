@@ -17,13 +17,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 $url      = $attributes['url'] ?? '';
 $show_url = (bool) ( $attributes['showUrl'] ?? true );
 
-$wrapper_attrs = get_block_wrapper_attributes( array(
-	'class' => 'xfn-relationship-badge',
-) );
+$wrapper_attrs = get_block_wrapper_attributes(
+	array(
+		'class' => 'xfn-relationship-badge',
+	)
+);
 
 if ( empty( $url ) ) :
 	?>
-	<div <?php echo $wrapper_attrs; ?>>
+	<div <?php echo $wrapper_attrs; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_block_wrapper_attributes() output is escaped by core. ?>>
 		<p class="xfn-relationship-badge__empty">
 			<?php esc_html_e( 'Enter a URL to display its XFN relationships.', 'link-extension-for-xfn' ); ?>
 		</p>
@@ -33,12 +35,12 @@ if ( empty( $url ) ) :
 endif;
 
 // Find relationships for the given URL across all posts.
-$all_links = XFN_Content_Scanner::scan_all_posts_for_xfn();
-$rels      = array();
+$lexfn_links = XFN_Content_Scanner::scan_all_posts_for_xfn();
+$rels        = array();
 
-foreach ( $all_links as $link ) {
-	if ( $link['url'] === $url ) {
-		$rels = array_merge( $rels, $link['rels'] );
+foreach ( $lexfn_links as $lexfn_link ) {
+	if ( $lexfn_link['url'] === $url ) {
+		$rels = array_merge( $rels, $lexfn_link['rels'] );
 	}
 }
 $rels = array_unique( $rels );
@@ -46,7 +48,7 @@ sort( $rels );
 
 if ( empty( $rels ) ) :
 	?>
-	<div <?php echo $wrapper_attrs; ?>>
+	<div <?php echo $wrapper_attrs; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_block_wrapper_attributes() output is escaped by core. ?>>
 		<p class="xfn-relationship-badge__empty">
 			<?php
 			printf(
@@ -61,7 +63,7 @@ if ( empty( $rels ) ) :
 	return;
 endif;
 ?>
-<div <?php echo $wrapper_attrs; ?>>
+<div <?php echo $wrapper_attrs; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_block_wrapper_attributes() output is escaped by core. ?>>
 	<?php if ( $show_url ) : ?>
 		<a href="<?php echo esc_url( $url ); ?>" class="xfn-relationship-badge__link" rel="<?php echo esc_attr( implode( ' ', $rels ) ); ?>">
 			<?php echo esc_html( $url ); ?>

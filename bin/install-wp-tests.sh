@@ -22,7 +22,12 @@ WP_CORE_DIR=${WP_CORE_DIR-$TMPDIR/wordpress}
 
 download() {
 	if [ "$(which curl)" ]; then
-		curl -fsSL "$1" > "$2"
+		if [ "$2" = "-" ]; then
+			# "-" means stdout; "> -" would create a file literally named "-".
+			curl -fsSL "$1"
+		else
+			curl -fsSL "$1" > "$2"
+		fi
 	elif [ "$(which wget)" ]; then
 		wget -nv -O "$2" "$1"
 	fi
@@ -93,29 +98,44 @@ install_test_suite() {
 	if [ ! -d "$WP_TESTS_DIR" ]; then
 		mkdir -p "$WP_TESTS_DIR"
 
-		local testslib_url
+		# svn is gone from GitHub's runner images (removed 2024), so pull
+		# the test suite from the wordpress-develop GitHub mirror instead.
+		local develop_ref
 
 		if [ "$WP_VERSION" = "trunk" ] || [ "$WP_VERSION" = "nightly" ]; then
-			testslib_url="https://develop.svn.wordpress.org/trunk/tests/phpunit"
+			develop_ref="refs/heads/trunk"
 		else
 			if [ "$WP_VERSION" = "latest" ]; then
 				resolve_wp_version
 			fi
-			local tag
-			if [[ "$WP_VERSION" == *".0" ]]; then
-				tag="${WP_VERSION%.0}"
-			else
-				tag="$WP_VERSION"
+
+			# GitHub's wordpress-develop tags are full triplets (7.0.0),
+			# unlike core zip names (7.0).
+			local tag="$WP_VERSION"
+			if [[ "$tag" =~ ^[0-9]+\.[0-9]+$ ]]; then
+				tag="${tag}.0"
 			fi
-			testslib_url="https://develop.svn.wordpress.org/tags/${tag}/tests/phpunit"
+			develop_ref="refs/tags/${tag}"
 		fi
 
-		svn export --quiet --force "$testslib_url/includes/" "$WP_TESTS_DIR/includes/"
-		svn export --quiet --force "$testslib_url/data/" "$WP_TESTS_DIR/data/"
+		local suite_staging
+		suite_staging=$(mktemp -d)
+		download "https://github.com/WordPress/wordpress-develop/archive/${develop_ref}.tar.gz" "$suite_staging/develop.tar.gz"
+
+		# GNU tar needs --wildcards for glob members; bsdtar globs by default.
+		local wildcards=""
+		if tar --version 2>/dev/null | grep -q GNU; then
+			wildcards="--wildcards"
+		fi
+		tar -xzf "$suite_staging/develop.tar.gz" -C "$suite_staging" $wildcards --strip-components=3 \
+			"*/tests/phpunit/includes" "*/tests/phpunit/data"
+		mv "$suite_staging/includes" "$WP_TESTS_DIR/includes"
+		mv "$suite_staging/data" "$WP_TESTS_DIR/data"
+		rm -rf "$suite_staging"
 	fi
 
 	if [ ! -f "$WP_TESTS_DIR/wp-tests-config.php" ]; then
-		download "https://develop.svn.wordpress.org/trunk/wp-tests-config-sample.php" "$WP_TESTS_DIR/wp-tests-config.php"
+		download "https://raw.githubusercontent.com/WordPress/wordpress-develop/trunk/wp-tests-config-sample.php" "$WP_TESTS_DIR/wp-tests-config.php"
 
 		# Portable sed — macOS and Linux.
 		if [ "$(uname -s)" = "Darwin" ]; then

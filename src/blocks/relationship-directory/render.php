@@ -14,20 +14,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$links       = XFN_Content_Scanner::scan_all_posts_for_xfn();
+$lexfn_links = XFN_Content_Scanner::scan_all_posts_for_xfn();
 $limit       = (int) ( $attributes['limit'] ?? 50 );
 $show_search = (bool) ( $attributes['showSearch'] ?? true );
 $show_filter = (bool) ( $attributes['showFilters'] ?? true );
 
 // Trim to limit.
-if ( count( $links ) > $limit ) {
-	$links = array_slice( $links, 0, $limit );
+if ( count( $lexfn_links ) > $limit ) {
+	$lexfn_links = array_slice( $lexfn_links, 0, $limit );
 }
 
 // Collect unique relationship types for filter buttons.
 $all_rels = array();
-foreach ( $links as $link ) {
-	foreach ( $link['rels'] as $rel ) {
+foreach ( $lexfn_links as $lexfn_link ) {
+	foreach ( $lexfn_link['rels'] as $rel ) {
 		$all_rels[ $rel ] = true;
 	}
 }
@@ -36,33 +36,40 @@ $all_rels = array_keys( $all_rels );
 
 // Build link data for client-side filtering.
 $link_data = array();
-foreach ( $links as $i => $link ) {
-	$post_title = get_the_title( $link['post_id'] );
+foreach ( $lexfn_links as $i => $lexfn_link ) {
+	$post_title  = get_the_title( $lexfn_link['post_id'] );
 	$link_data[] = array(
 		'id'        => $i,
-		'url'       => $link['url'],
-		'rels'      => $link['rels'],
-		'postId'    => $link['post_id'],
+		'url'       => $lexfn_link['url'],
+		'rels'      => $lexfn_link['rels'],
+		'postId'    => $lexfn_link['post_id'],
 		'postTitle' => $post_title,
 	);
 }
 
-$context = wp_json_encode( array(
-	'searchTerm'  => '',
-	'activeFilter' => '',
-) );
+$context = wp_json_encode(
+	array(
+		'searchTerm'   => '',
+		'activeFilter' => '',
+	)
+);
 
-wp_interactivity_state( 'xfn-directory', array(
-	'links'   => $link_data,
-	'allRels' => $all_rels,
-) );
+wp_interactivity_state(
+	'xfn-directory',
+	array(
+		'links'   => $link_data,
+		'allRels' => $all_rels,
+	)
+);
 
-$wrapper_attrs = get_block_wrapper_attributes( array(
-	'class' => 'xfn-directory',
-) );
+$wrapper_attrs = get_block_wrapper_attributes(
+	array(
+		'class' => 'xfn-directory',
+	)
+);
 ?>
 <div
-	<?php echo $wrapper_attrs; ?>
+	<?php echo $wrapper_attrs; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_block_wrapper_attributes() output is escaped by core. ?>
 	data-wp-interactive="xfn-directory"
 	data-wp-context='<?php echo esc_attr( $context ); ?>'
 >
@@ -103,30 +110,30 @@ $wrapper_attrs = get_block_wrapper_attributes( array(
 	<?php endif; ?>
 
 	<ul class="xfn-directory__list" role="list">
-		<?php foreach ( $link_data as $link ) : ?>
+		<?php foreach ( $link_data as $lexfn_link ) : ?>
 			<li
 				class="xfn-directory__item"
-				data-link-id="<?php echo esc_attr( $link['id'] ); ?>"
-				data-wp-bind--hidden="<?php echo esc_attr( 'state.isHidden_' . $link['id'] ); ?>"
+				data-link-id="<?php echo esc_attr( $lexfn_link['id'] ); ?>"
+				data-wp-bind--hidden="<?php echo esc_attr( 'state.isHidden_' . $lexfn_link['id'] ); ?>"
 			>
 				<a
-					href="<?php echo esc_url( $link['url'] ); ?>"
+					href="<?php echo esc_url( $lexfn_link['url'] ); ?>"
 					class="xfn-directory__link"
-					rel="<?php echo esc_attr( implode( ' ', $link['rels'] ) ); ?>"
+					rel="<?php echo esc_attr( implode( ' ', $lexfn_link['rels'] ) ); ?>"
 				>
-					<?php echo esc_html( $link['url'] ); ?>
+					<?php echo esc_html( $lexfn_link['url'] ); ?>
 				</a>
 				<span class="xfn-directory__meta">
 					<?php
 					printf(
 						/* translators: %s: post title */
 						esc_html__( 'from %s', 'link-extension-for-xfn' ),
-						esc_html( $link['postTitle'] )
+						esc_html( $lexfn_link['postTitle'] )
 					);
 					?>
 				</span>
 				<span class="xfn-pills">
-					<?php foreach ( $link['rels'] as $rel ) : ?>
+					<?php foreach ( $lexfn_link['rels'] as $rel ) : ?>
 						<span class="xfn-pill xfn-pill-<?php echo esc_attr( $rel ); ?>">
 							<?php echo esc_html( $rel ); ?>
 						</span>
