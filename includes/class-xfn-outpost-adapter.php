@@ -12,64 +12,71 @@
  * @package LinkExtensionForXFN
  * @since   1.1.0
  */
-final class XFN_Outpost_Adapter
-{
 
-    public const OUTPOST_META_KEY = '_outpost_xfn';
+/**
+ * Translates Outpost's `_outpost_xfn` postmeta into XFN relationships.
+ */
+final class XFN_Outpost_Adapter {
 
-    public static function init(): void
-    {
-        add_action('added_post_meta', array( __CLASS__, 'consume' ), 10, 4);
-        add_action('updated_post_meta', array( __CLASS__, 'consume' ), 10, 4);
-    }
+	/**
+	 * Meta key Outpost's Micropub bridge writes.
+	 */
+	public const OUTPOST_META_KEY = '_outpost_xfn';
 
-    /**
-     * Translate an `_outpost_xfn` write into XFN_Meta_Mirror relationships.
-     *
-     * Runs on every postmeta write and returns immediately for other keys.
-     * The payload is validated here only for shape (valid JSON, non-empty
-     * target URL, non-empty rels array); rel values are validated against
-     * the XFN 1.1 list by XFN_Meta_Mirror::sanitize_relationships().
-     *
-     * @param int    $meta_id  Meta row ID (unused).
-     * @param int    $post_id  Post the meta belongs to.
-     * @param string $meta_key Meta key being written.
-     * @param mixed  $value    Meta value being written.
-     */
-    public static function consume( $meta_id, $post_id, $meta_key, $value ): void
-    {
-        if (self::OUTPOST_META_KEY !== $meta_key || ! is_string($value) ) {
-            return;
-        }
+	/**
+	 * Hook the adapter into postmeta writes.
+	 */
+	public static function init(): void {
+		add_action( 'added_post_meta', array( __CLASS__, 'consume' ), 10, 4 );
+		add_action( 'updated_post_meta', array( __CLASS__, 'consume' ), 10, 4 );
+	}
 
-        $payload = json_decode($value, true);
-        if (! is_array($payload) || empty($payload['target']) || empty($payload['rels']) ) {
-            return;
-        }
+	/**
+	 * Translate an `_outpost_xfn` write into XFN_Meta_Mirror relationships.
+	 *
+	 * Runs on every postmeta write and returns immediately for other keys.
+	 * The payload is validated here only for shape (valid JSON, non-empty
+	 * target URL, non-empty rels array); rel values are validated against
+	 * the XFN 1.1 list by XFN_Meta_Mirror::sanitize_relationships().
+	 *
+	 * @param int    $meta_id  Meta row ID (unused).
+	 * @param int    $post_id  Post the meta belongs to.
+	 * @param string $meta_key Meta key being written.
+	 * @param mixed  $value    Meta value being written.
+	 */
+	public static function consume( $meta_id, $post_id, $meta_key, $value ): void {
+		if ( self::OUTPOST_META_KEY !== $meta_key || ! is_string( $value ) ) {
+			return;
+		}
 
-        $parsed = wp_parse_url((string) $payload['target']);
-        if (empty($parsed['scheme']) || empty($parsed['host'])
-            || ! in_array(strtolower($parsed['scheme']), array( 'http', 'https' ), true) 
-        ) {
-            return;
-        }
+		$payload = json_decode( $value, true );
+		if ( ! is_array( $payload ) || empty( $payload['target'] ) || empty( $payload['rels'] ) ) {
+			return;
+		}
 
-        $target = esc_url_raw((string) $payload['target'], array( 'http', 'https' ));
-        if ('' === $target ) {
-            return;
-        }
+		$parsed = wp_parse_url( (string) $payload['target'] );
+		if ( empty( $parsed['scheme'] ) || empty( $parsed['host'] )
+			|| ! in_array( strtolower( $parsed['scheme'] ), array( 'http', 'https' ), true )
+		) {
+			return;
+		}
 
-        $rels = array_values(array_filter(array_map('strval', (array) $payload['rels'])));
-        if (empty($rels) ) {
-            return;
-        }
+		$target = esc_url_raw( (string) $payload['target'], array( 'http', 'https' ) );
+		if ( '' === $target ) {
+			return;
+		}
 
-        XFN_Meta_Mirror::add_relationship((int) $post_id, $target, $rels);
+		$rels = array_values( array_filter( array_map( 'strval', (array) $payload['rels'] ) ) );
+		if ( empty( $rels ) ) {
+			return;
+		}
 
-        // Micropub posts get no further save_post, so sync content now.
-        $post = get_post((int) $post_id);
-        if ($post instanceof WP_Post ) {
-            XFN_Meta_Mirror::sync_meta_to_content((int) $post_id, $post);
-        }
-    }
+		XFN_Meta_Mirror::add_relationship( (int) $post_id, $target, $rels );
+
+		// Micropub posts get no further save_post, so sync content now.
+		$post = get_post( (int) $post_id );
+		if ( $post instanceof WP_Post ) {
+			XFN_Meta_Mirror::sync_meta_to_content( (int) $post_id, $post );
+		}
+	}
 }
