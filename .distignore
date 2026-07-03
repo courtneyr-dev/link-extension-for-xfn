@@ -49,6 +49,7 @@
 /.stylelintrc.json
 /phpcs.xml
 /phpcs.xml.dist
+/phpstan.neon
 
 # Documentation - exclude all markdown except readme.txt
 /docs

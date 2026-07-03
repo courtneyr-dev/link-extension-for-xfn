@@ -381,7 +381,7 @@ class XFN_Link_Extension {
 	 * @since 1.0.0
 	 * @return array XFN relationship structure
 	 */
-	private function get_xfn_relationships() {
+	public function get_xfn_relationships() {
 		return [
 			'friendship'   => [
 				'type'        => 'radio',

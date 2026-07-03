@@ -1,0 +1,36 @@
+includes:
+	- vendor/szepeviktor/phpstan-wordpress/extension.neon
+
+parameters:
+	level: 5
+	paths:
+		- includes/
+		- link-extension-for-xfn.php
+	excludePaths:
+		- vendor/
+		- node_modules/ (?)
+		- build/ (?)
+		- tests/
+	bootstrapFiles:
+		- vendor/autoload.php
+	scanFiles:
+		- link-extension-for-xfn.php
+	parallel:
+		maximumNumberOfProcesses: 1
+		processTimeout: 600.0
+	# WordPress core return shapes are imprecise (mixed/scalar/array), so
+	# PHPDoc-only impossible-type narrowings are noise, not dead code.
+	treatPhpDocTypesAsCertain: false
+	ignoreErrors:
+		# Plugin constants are define()d with runtime values
+		# (plugin_dir_url(__FILE__)) in the main file; the analyzer can't
+		# resolve them when analyzing includes/ in isolation.
+		- '#Constant XFN_LINK_EXTENSION_[A-Z_]+ not found\.#'
+		# WP 7.0 AI Client; every call site is gated behind
+		# function_exists( 'wp_ai_client' ).
+		- '#Function wp_ai_client not found\.#'
+		# Stub is stricter than core: next_tag() accepts a string tag name.
+		- '#Parameter \#1 \$query of method WP_HTML_Tag_Processor::next_tag\(\)#'
+		# Stub is stricter than core: script module deps accept plain
+		# module-ID strings.
+		- '#Parameter \#3 \$deps of function wp_register_script_module#'
