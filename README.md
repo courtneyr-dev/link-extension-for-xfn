@@ -6,6 +6,16 @@ Extends the native WordPress block editor link interface to include XFN (XHTML F
 [![PHP](https://img.shields.io/badge/PHP-8.2%2B-purple.svg)](https://php.net/)
 [![License](https://img.shields.io/badge/license-GPL--2.0%2B-red.svg)](https://www.gnu.org/licenses/gpl-2.0.html)
 
+## User documentation
+
+Full user docs live in [docs/index.md](docs/index.md). Key pages:
+
+- [Installation](docs/installation.md)
+- [Getting started](docs/getting-started.md)
+- [Settings](docs/settings.md)
+- [Common tasks](docs/common-tasks.md) — including the XFN Blogroll, Relationship Badge, and Relationship Directory blocks
+- [Troubleshooting](docs/troubleshooting.md)
+
 ## Overview
 
 The Link Extension for XFN seamlessly integrates XFN (XHTML Friends Network) relationship options into WordPress's native link interface. This plugin enhances every block that supports links—including Paragraph, Button, Navigation, List, Embed, and more—with comprehensive relationship tagging capabilities through an intuitive collapsible interface.

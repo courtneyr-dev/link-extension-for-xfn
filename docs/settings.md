@@ -1,429 +1,94 @@
-# Plugin Settings
+# Settings
 
-This guide explains how to configure the Link Extension for XFN plugin settings to control where XFN relationship options appear in your WordPress editor.
+Configure where XFN relationship controls appear in the block editor. There's one settings page with two checkboxes; the inline-link interface is always on.
 
-## Accessing Plugin Settings
+## Accessing the settings
 
-1. **Log in to your WordPress admin dashboard**
-2. **Go to Settings → Link Extension for XFN** in the left sidebar
-3. You'll see the **Link Extension for XFN Settings** page
+1. Log in to wp-admin.
+2. Go to **Settings → Link Extension for XFN**.
 
-## Settings Overview
+The page requires the `manage_options` capability (administrators). Settings apply site-wide for all users. After saving, refresh any open editor windows to see the change.
 
-The plugin offers two optional interface locations that you can enable or disable. A third interface (Link Advanced Panel) is always enabled and cannot be disabled.
+![Settings page with the Inspector Controls and Floating Toolbar Button checkboxes and the always-on Advanced panel note](assets/screenshots/admin-settings-overview.png)
 
-## Interface Options
+## The three interfaces at a glance
 
-### 1. Inspector Controls (Sidebar Panel)
-
-**Setting Name:** Inspector Controls
-**Default:** Disabled (unchecked)
-**Applies to:** Block-level links (Button, Image, Navigation, Site Logo, etc.)
-
-#### What It Does
+| Interface | Setting | Default | Works on |
+|---|---|---|---|
+| Link Advanced panel | none — always on | always on | inline text links (Paragraph, Heading, List, and other text blocks) |
+| Inspector Controls panel | "Inspector Controls" checkbox | off | block-level links (Button, Image, Navigation Link, Site Logo, Post Title, Query Title, Embed) |
+| Floating toolbar button | "Floating Toolbar Button" checkbox | off | see note below — may not appear in version 1.1.0 |
 
-When enabled, this adds an "XFN Relationships" panel to the **Inspector sidebar** (right side of the editor) for blocks that are entirely links.
-
-#### When to Enable
-
-✅ **Enable if you**:
-- Frequently work with Button blocks and want XFN options visible
-- Add relationships to Navigation menu items regularly
-- Link Images often and want quick access to XFN
-- Prefer having all block settings in one place (the sidebar)
-- Work with Site Logo or Post Title links
+## Link Advanced panel (always on)
 
-#### Where It Appears
+For links inside text, the plugin adds a collapsible **XFN** section to the link popover's Advanced area. It can't be turned off.
 
-When enabled, you'll see "XFN Relationships" panel in the Inspector sidebar when you select:
-- **Button blocks** (opens by default)
-- **Image blocks** (opens by default)
-- **Navigation link items** (opens by default)
-- **Site Logo block** (opens by default)
-- **Post Title blocks** (when linked)
-- **Query Title blocks** (when linked)
+To use it: select linked text, click the link, expand **Advanced**, then expand **XFN**. Pick relationships from the category groups (radio groups for choose-one categories, checkboxes for the rest), watch the count badge and "Active Relationships" pills update, then click Apply and save the post.
 
-#### Visual Example
+This covers the most common case — links inside paragraphs and other text — which is why it's always available. See [Paragraph links](paragraph-links.md) for a full walkthrough.
 
-```
-┌─────────────────────────────┐
-│   Inspector Controls        │
-│   (Right Sidebar)           │
-├─────────────────────────────┤
-│ Block                       │
-│ ▼ Button                    │
-│   - Link URL                │
-│   - Style options           │
-│                             │
-│ ▼ XFN Relationships         │ ← Appears here when enabled
-│   Friendship                │
-│   ○ None                    │
-│   ○ Contact                 │
-│   ○ Acquaintance            │
-│   ○ Friend                  │
-│   ...                       │
-└─────────────────────────────┘
-```
+## Inspector Controls
 
-#### Best For
+**Setting:** Inspector Controls · **Default:** off (unchecked)
 
-- **Content editors** who work with Button blocks regularly
-- **Site builders** creating navigation menus
-- **Users who prefer sidebar controls** over popups
-- **Multi-block workflows** where you're editing many buttons/images
+When enabled, an **XFN Relationships** panel appears in the editor's right-hand sidebar when you select a block-level link: Button, Image, Navigation Link, Site Logo, Post Title, Query Title, or Embed. The panel opens by default for those blocks and uses radio controls for the choose-one categories (with a "None" option) plus checkboxes for the multi-select ones, with a summary of the selected relationships as pills.
 
----
+Enable it if you:
 
-### 2. Floating Toolbar Button
+- Work with Button blocks, navigation menus, or linked images often.
+- Prefer having block settings in the sidebar rather than in popovers.
+- Use IndieWeb blocks that expose an event URL (RSVP cards) — the panel also targets blocks with `url`, `href`, or `eventUrl` attributes.
 
-**Setting Name:** Floating Toolbar Button
-**Default:** Disabled (unchecked)
-**Applies to:** Block-level links (Button, Image, Navigation, etc.)
+Leave it off if you mostly tag inline text links; the always-on Advanced panel already covers those. See [Button links](button-links.md), [Image links](image-links.md), and [Other block links](other-block-links.md).
 
-#### What It Does
+## Floating Toolbar Button
 
-When enabled, this adds an "XFN" button to the **floating toolbar** that appears above blocks when selected.
+**Setting:** Floating Toolbar Button · **Default:** off (unchecked)
 
-#### When to Enable
+The settings page includes a checkbox labeled "Show XFN button in floating toolbar for block-level links." However, in version 1.1.0 the toolbar button may not appear in the editor even when the checkbox is enabled — a review of the plugin source found no code that renders it. The feature is under maintainer review (see [Documentation plan](documentation-plan.md)).
 
-✅ **Enable if you**:
-- Want quick access to XFN without opening the sidebar
-- Prefer toolbar buttons over sidebar panels
-- Have limited screen space and keep the sidebar closed
-- Want a consistent XFN button across all block types
+Until that's resolved, don't rely on this setting. Use the Link Advanced panel for inline links and the Inspector Controls panel for block-level links instead.
 
-#### Where It Appears
+## Recommended setups
 
-When enabled, you'll see an "XFN" button in the toolbar above:
-- **Button blocks**
-- **Image blocks** (when linked)
-- **Navigation link items**
-- **Site Logo block**
-- **Other block-level links**
+**Most users:** leave both checkboxes off. The always-on Link Advanced panel handles inline links, which is the most common case.
 
-#### Visual Example
+**Site builders and button-heavy sites:** enable Inspector Controls. It saves a lot of clicks when you tag Buttons, Navigation Links, and Images regularly.
 
-```
-┌─────────────────────────────────────┐
-│  [B] [I] [Link] [XFN] [•••]        │ ← XFN button in toolbar
-└─────────────────────────────────────┘
-        ↓
-┌─────────────────────────────────────┐
-│  XFN Relationship Options           │
-│  ┌───────────────────────────────┐  │
-│  │ ▼ XFN                         │  │
-│  │   Friendship: Friend          │  │
-│  │   Physical: Met               │  │
-│  │   Active: friend met          │  │
-│  └───────────────────────────────┘  │
-└─────────────────────────────────────┘
-```
+**Teams:** settings are site-wide, so pick one approach, tell your editors where to find the XFN controls, and note the choice in your team docs.
 
-#### Best For
+## Changing a setting
 
-- **Quick edits** to existing links
-- **Users with small screens** who keep the sidebar collapsed
-- **Keyboard-first workflows** using toolbar shortcuts
-- **Minimal UI preference** (fewer open panels)
+1. Go to Settings → Link Extension for XFN.
+2. Check or uncheck the option.
+3. Click **Save Changes**.
+4. Refresh any open editor windows.
 
----
+## Troubleshooting settings
 
-### 3. Link Advanced Panel (Always Enabled)
+**I enabled Inspector Controls but don't see the panel.** Confirm you clicked Save Changes and refreshed the editor. The panel only appears for block-level links (select a Button block to test); it never appears for inline paragraph links. It may also be below other panels in the sidebar — scroll down.
 
-**Setting Name:** None - Always enabled
-**Cannot be disabled**
-**Applies to:** Inline links (paragraphs, headings, lists, etc.)
+**I enabled the Floating Toolbar Button and nothing appears.** Known behavior in 1.1.0 — see above. Use the Advanced panel or Inspector Controls instead.
 
-#### What It Is
+**I want to turn XFN off entirely.** Uncheck both options to remove it from block-level links. The Link Advanced panel can't be disabled while the plugin is active; deactivate the plugin at Plugins to remove it completely. Relationships already saved in your content stay in place (see [Privacy and data](privacy-and-data.md)).
 
-This is the XFN section that appears in the **Link Advanced panel** when you create or edit inline links within text blocks like paragraphs.
+**Some editors see the controls, others don't.** Settings are site-wide. Have everyone refresh their editor and clear the browser cache; confirm they can edit posts.
 
-#### Why It's Always Enabled
+More symptoms are covered in [Troubleshooting](troubleshooting.md).
 
-Inline links (links within text) are the most common type of link in WordPress. The Link Advanced Panel is the standard WordPress interface for these links, and XFN fits naturally here.
+## For developers: where settings are stored
 
-#### Where It Appears
+Settings live in the `wp_options` table under the option name `xfn_link_extension_options`:
 
-You'll find the XFN section when you:
-1. **Select text** in a paragraph, heading, or list
-2. **Add a link** (Cmd/Ctrl+K)
-3. **Click the link** to open the link popover
-4. **Click "Advanced"** to expand advanced options
-5. **Find the "XFN" collapsible section**
-
-#### Visual Example
-
-```
-┌─────────────────────────────────────┐
-│  Link: https://example.com          │
-│  [✓] Open in new tab                │
-│  ───────────────────────────────    │
-│  ▼ Advanced                          │
-│    Link Rel                          │
-│    ▼ XFN (6)                         │ ← Always available
-│      Friendship: Friend              │
-│      Physical: Met                   │
-│      ...                             │
-│    [Apply]                           │
-└─────────────────────────────────────┘
-```
-
-#### Best For
-
-- **Paragraph links** - most common use case
-- **Blog posts** with inline references
-- **Article authors** linking to sources
-- **Any text-based content** with links
-
----
-
-## Recommended Settings
-
-### For Most Users
-
-```
-☐ Inspector Controls (Leave unchecked)
-☐ Floating Toolbar Button (Leave unchecked)
-✓ Link Advanced Panel (Always on)
-```
-
-**Why**: The Link Advanced Panel handles most use cases. Enable the others only if you frequently work with block-level links.
-
-### For Site Builders / Designers
-
-```
-✓ Inspector Controls (Enable)
-☐ Floating Toolbar Button (Leave unchecked)
-✓ Link Advanced Panel (Always on)
-```
-
-**Why**: Site builders work with Buttons, Navigation, and Images often. Having the Inspector panel open saves time.
-
-### For Button-Heavy Sites
-
-```
-✓ Inspector Controls (Enable)
-✓ Floating Toolbar Button (Enable)
-✓ Link Advanced Panel (Always on)
-```
-
-**Why**: If your site uses many Button blocks (landing pages, CTAs), both options provide maximum flexibility.
-
-### For Minimal UI / Small Screens
-
-```
-☐ Inspector Controls (Leave unchecked)
-✓ Floating Toolbar Button (Enable)
-✓ Link Advanced Panel (Always on)
-```
-
-**Why**: Keep the sidebar clean and use the toolbar button only when needed.
-
----
-
-## Enabling/Disabling Settings
-
-### To Enable an Interface Option
-
-1. **Go to Settings → Link Extension for XFN**
-2. **Check the checkbox** next to the interface option
-3. **Click "Save Changes"** at the bottom
-4. **Refresh any open editor windows** to see the changes
-
-### To Disable an Interface Option
-
-1. **Go to Settings → Link Extension for XFN**
-2. **Uncheck the checkbox** next to the interface option
-3. **Click "Save Changes"** at the bottom
-4. **Refresh any open editor windows** to remove the interface
-
-### Important Notes
-
-- Changes apply **site-wide** for all users
-- Changes take effect immediately after saving
-- You may need to **refresh the editor** to see changes
-- **Link Advanced Panel cannot be disabled** (it's always available)
-
----
-
-## Which Interface Should I Use?
-
-### Comparison Table
-
-| Feature | Inspector Controls | Floating Toolbar | Link Advanced Panel |
-|---------|-------------------|------------------|---------------------|
-| **Always visible when block selected** | ✓ | ✗ | ✗ |
-| **Saves space** | ✗ | ✓ | ✓ |
-| **Works for inline links** | ✗ | ✗ | ✓ |
-| **Works for block links** | ✓ | ✓ | ✗ |
-| **Panel open by default (Buttons/Images)** | ✓ | ✗ | N/A |
-| **Requires click to access** | ✗ | ✓ | ✓ |
-| **Can be disabled** | ✓ | ✓ | ✗ |
-
-### Decision Guide
-
-**Question 1: What kind of links do you work with most?**
-- Inline links in paragraphs → Use Link Advanced Panel (always on)
-- Button blocks → Enable Inspector Controls
-- Mix of both → Enable Inspector Controls + use Link Advanced Panel
-
-**Question 2: Do you prefer sidebar or toolbar?**
-- Sidebar → Enable Inspector Controls
-- Toolbar → Enable Floating Toolbar Button
-- Both → Enable both!
-
-**Question 3: How much screen space do you have?**
-- Large screen → Enable Inspector Controls (always visible)
-- Small screen → Enable Floating Toolbar Button (on-demand)
-
----
-
-## Troubleshooting Settings
-
-### Problem: I enabled a setting but don't see any changes
-
-**Solution:**
-1. Click "Save Changes" on the settings page
-2. Go back to your post/page editor
-3. Refresh the page (F5 or Cmd/Ctrl+R)
-4. Select a block that should show XFN options
-5. Look for the "XFN Relationships" panel or "XFN" button
-
-### Problem: I enabled Inspector Controls but don't see the panel
-
-**Solution:**
-- Make sure you're editing a **block-level link** (Button, Image, Navigation)
-- The panel won't appear for inline paragraph links
-- Try selecting a Button block specifically
-- Scroll down in the Inspector sidebar - it may be below other panels
-
-### Problem: I want to disable XFN entirely
-
-**Solution:**
-- Uncheck both Interface Options (Inspector Controls and Floating Toolbar)
-- This will hide XFN from block-level links
-- **Note**: Link Advanced Panel cannot be disabled, so XFN will still appear for inline links
-- To fully disable the plugin, go to Plugins → Deactivate "Link Extension for XFN"
-
-### Problem: Settings reset after update
-
-**Solution:**
-- Settings should persist across plugin updates
-- If they reset, check Settings → Link Extension for XFN
-- Re-enable your preferred options
-- Report this as a bug on [GitHub](https://github.com/courtneyr-dev/link-extension-for-xfn/issues)
-
-### Problem: Some users see XFN options, others don't
-
-**Solution:**
-- Settings apply site-wide, so all users should see the same interfaces
-- Make sure all users have refreshed their editor
-- Check that all users have the necessary permissions (editor or above)
-- Clear browser cache and try again
-
----
-
-## Best Practices
-
-### ✅ Do
-
-- **Start with defaults** (both unchecked) and enable as needed
-- **Enable Inspector Controls** if you work with Buttons/Navigation frequently
-- **Refresh the editor** after changing settings
-- **Test on a staging site** before changing production settings
-- **Document your settings** for team members
-
-### ⚠️ Don't
-
-- **Don't enable all options** if you don't use block-level links often
-- **Don't forget to save** after changing settings
-- **Don't expect changes instantly** - refresh the editor
-- **Don't disable Link Advanced Panel** - you can't (it's always on)
-
----
-
-## Settings for Teams
-
-### Multi-User Sites
-
-If multiple people edit your site:
-
-1. **Communicate changes**: Let your team know when you change settings
-2. **Standardize on one approach**: Choose Inspector or Toolbar, not both (reduces confusion)
-3. **Train on the interface**: Make sure everyone knows where to find XFN options
-4. **Document your choice**: Add a note to your team documentation
-
-### Recommended Team Settings
-
-**Small team (2-5 editors):**
-```
-✓ Inspector Controls
-✗ Floating Toolbar Button
-```
-
-**Large team (6+ editors):**
-```
-✓ Inspector Controls
-✓ Floating Toolbar Button
-(Gives flexibility for different workflows)
-```
-
----
-
-## Advanced: Settings Storage
-
-For developers and administrators:
-
-### Database Storage
-
-Settings are stored in `wp_options` table:
 ```php
-// Option name
-'xfn_link_extension_options'
-
-// Structure
 array(
-    'enable_inspector_controls' => false,
-    'enable_floating_toolbar' => false,
+	'enable_inspector_controls' => false,
+	'enable_floating_toolbar'   => false,
 )
 ```
 
-### Programmatic Access
-
-```php
-// Get settings
-$options = get_option( 'xfn_link_extension_options' );
-
-// Check if Inspector Controls enabled
-$inspector_enabled = ! empty( $options['enable_inspector_controls'] );
-
-// Check if Floating Toolbar enabled
-$toolbar_enabled = ! empty( $options['enable_floating_toolbar'] );
-```
-
-### Reset to Defaults
-
-To reset settings to defaults:
-1. Go to Settings → Link Extension for XFN
-2. Uncheck all options
-3. Click "Save Changes"
-
-Or via database:
-```sql
-DELETE FROM wp_options WHERE option_name = 'xfn_link_extension_options';
-```
+Read them with `get_option( 'xfn_link_extension_options' )`. Both values are sanitized to booleans on save. Deleting the option resets both settings to their defaults (off).
 
 ---
 
-## Related Documentation
-
-- [Paragraph Links](paragraph-links.md) - Using XFN with inline text links
-- [Button Links](button-links.md) - Using XFN with Button blocks
-- [Image Links](image-links.md) - Using XFN with clickable images
-- [Other Block Links](other-block-links.md) - Navigation, Site Logo, etc.
-
-## Need More Help?
-
-- Visit the [WordPress.org support forum](https://wordpress.org/support/plugin/link-extension-for-xfn/)
-- Report issues on [GitHub](https://github.com/courtneyr-dev/link-extension-for-xfn/issues)
-- Check the [main documentation](README.md)
+[Documentation home](index.md) · Previous: [Getting started](getting-started.md) · Next: [Common tasks](common-tasks.md)
