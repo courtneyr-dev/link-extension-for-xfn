@@ -15,7 +15,8 @@
     "start": "wp-scripts start --blocks-manifest",
     "dev": "npm run start",
     "sync": "./sync-to-local.sh",
-    "screenshots": "node screenshots/capture.js"
+    "screenshots": "node screenshots/capture.js",
+    "screenshots:docs": "node screenshots/capture-docs.js"
   },
   "devDependencies": {
     "@wordpress/scripts": "^30.15.0",
