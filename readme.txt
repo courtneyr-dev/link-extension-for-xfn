@@ -2,11 +2,11 @@
 
 Contributors:      courane01
 Tags:              xfn, links, relationships, accessibility, gutenberg
-Tested up to:      6.9
+Tested up to:      7.0
 Stable tag:        1.1.0
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
-Requires at least: 6.4
+Requires at least: 6.5
 Requires PHP:      8.2
 
 Add XFN (XHTML Friends Network) relationship metadata to WordPress links. Semantic social connections for the block editor.
