@@ -1,6 +1,6 @@
 === Link Extension for XFN ===
 
-Developers:        courane01
+Contributors:      courane01
 Tags:              xfn, links, relationships, accessibility, gutenberg
 Tested up to:      6.9
 Stable tag:        1.1.0
@@ -267,12 +267,13 @@ Absolutely! XFN includes professional relationships (co-worker, colleague) and c
 
 ## Troubleshooting
 
-### XFN options don't appear in floating toolbar
+### XFN options don't appear in the floating toolbar
 
-1. **Check block type**: Only blocks that are entirely links (Button, Navigation Link, etc.) show the XFN toolbar button
-2. **Verify WordPress version**: Requires WordPress 6.4 or later
-3. **Clear browser cache**: Try refreshing the page or clearing browser cache
-4. **Check for block selection**: Ensure the block is properly selected
+In version 1.1.0 the floating toolbar button may not appear even with its setting enabled; the feature is under review. Use the Inspector Controls panel (enable it at Settings → Link Extension for XFN) or the link popover's Advanced panel instead — both cover the same relationships.
+
+### Tooltips don't appear on the frontend
+
+Frontend relationship tooltips require WordPress 7.0 or later. On WordPress 6.9 and earlier they stay off by design; your rel attributes are still saved and published.
 
 ### XFN section won't expand in link popover
 
@@ -385,5 +386,4 @@ Absolutely! XFN includes professional relationships (co-worker, colleague) and c
 == Screenshots ==
 
 1. Live demo in WordPress Playground showing XFN in action - interactive buttons and embedded content with relationship attributes, plus comprehensive testing instructions and examples
-2. Inspector Controls panel in the block editor sidebar showing XFN Relationships options for a Button block, with collapsible sections for each relationship category
-3. Link Advanced Panel in the link popover showing the collapsible XFN section with button groups for selecting relationships like friend, met, and colleague
+2. The settings page (Settings → Link Extension for XFN) with the Inspector Controls and Floating Toolbar Button options and the always-on Advanced panel note
