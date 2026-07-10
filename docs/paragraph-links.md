@@ -32,18 +32,7 @@ This is the most direct method for inline links:
 
 The Advanced panel will automatically collapse after clicking Apply to keep your editing space clean.
 
-### Method 2: Floating Toolbar
-
-For quick access while editing:
-
-1. **Click on the block** containing your link
-2. **Look for the "XFN" button** in the floating toolbar above the block
-3. **Click the XFN button** to open the relationship panel
-4. **Expand the XFN section** if needed
-5. **Select your relationships**
-6. **The relationships are saved automatically** as you select them
-
-### Method 3: Inspector Sidebar
+### Method 2: Inspector Sidebar
 
 For a persistent panel while working:
 
@@ -144,7 +133,7 @@ After adding XFN relationships:
 **Solution**:
 - Make sure you've clicked "Advanced" in the link popover
 - Scroll down - the XFN section may be below other options
-- Try using the Floating Toolbar method instead
+- Try using the Inspector Sidebar method instead
 
 ### Problem: Relationships not saving
 **Solution**:

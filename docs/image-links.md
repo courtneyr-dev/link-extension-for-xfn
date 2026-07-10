@@ -28,17 +28,6 @@ The XFN Relationships panel is **open by default** for Image blocks, making it e
 6. **See your active relationships** in the summary at the bottom
 7. **Changes save automatically**
 
-### Method 2: Floating Toolbar
-
-For quick access while editing:
-
-1. **Click on the Image block**
-2. **Look for the "XFN" button** in the floating toolbar
-3. **Click it** to open the XFN panel
-4. **Expand the XFN section** to see relationship options
-5. **Select your relationships**
-6. **Changes save automatically**
-
 ## Step-by-Step Example: Author Profile Image
 
 Let's add a profile photo that links to your personal site:
@@ -211,7 +200,7 @@ To verify your XFN relationships were added correctly:
 - Make sure the image has a link first (must be a Custom URL)
 - Select the image block (click on it)
 - Scroll down in the Inspector sidebar
-- Try clicking the "XFN" button in the floating toolbar
+- Try the XFN panel in the Inspector sidebar (enable Inspector Controls in Settings → Link Extension for XFN)
 
 ### Problem: Image isn't clickable
 **Solution**:

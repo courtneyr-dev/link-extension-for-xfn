@@ -25,11 +25,11 @@ Symptoms, likely causes, and fixes for common problems. When nothing here helps,
 3. Select a supported block with a URL set — Button, Image, Navigation Link, Site Logo, Post Title, Query Title, or Embed. The panel never appears for inline paragraph links.
 4. Scroll down in the sidebar; the panel may be below other panels.
 
-## The floating toolbar button doesn't appear
+## I remember a "Floating Toolbar Button" setting — where did it go?
 
-**Likely cause:** in version 1.1.0, the "Floating Toolbar Button" setting exists but the toolbar button may not render in the editor — no implementation for it was found in the plugin source. The feature is under maintainer review.
+**Cause:** removed in 1.1.1. The setting existed in 1.0.x–1.1.0 but the toolbar button it promised was never implemented, so the checkbox did nothing.
 
-**Fix:** use the Link Advanced panel (inline links) or the Inspector Controls panel (block-level links) instead. See [Settings](settings.md).
+**Fix:** nothing to do — the two working interfaces cover the same relationships: the link popover's Advanced panel (inline links, always on) and the Inspector Controls panel (block-level links, enable in Settings). See [Settings](settings.md).
 
 ## Tooltips don't show on the frontend
 

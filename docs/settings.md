@@ -9,15 +9,14 @@ Configure where XFN relationship controls appear in the block editor. There's on
 
 The page requires the `manage_options` capability (administrators). Settings apply site-wide for all users. After saving, refresh any open editor windows to see the change.
 
-![Settings page with the Inspector Controls and Floating Toolbar Button checkboxes and the always-on Advanced panel note](assets/screenshots/admin-settings-overview.png)
+![Settings page with the Inspector Controls checkbox and the always-on Advanced panel note](assets/screenshots/admin-settings-overview.png)
 
-## The three interfaces at a glance
+## The two interfaces at a glance
 
 | Interface | Setting | Default | Works on |
 |---|---|---|---|
 | Link Advanced panel | none — always on | always on | inline text links (Paragraph, Heading, List, and other text blocks) |
 | Inspector Controls panel | "Inspector Controls" checkbox | off | block-level links (Button, Image, Navigation Link, Site Logo, Post Title, Query Title, Embed) |
-| Floating toolbar button | "Floating Toolbar Button" checkbox | off | see note below — may not appear in version 1.1.0 |
 
 ## Link Advanced panel (always on)
 
@@ -41,19 +40,13 @@ Enable it if you:
 
 Leave it off if you mostly tag inline text links; the always-on Advanced panel already covers those. See [Button links](button-links.md), [Image links](image-links.md), and [Other block links](other-block-links.md).
 
-## Floating Toolbar Button
-
-**Setting:** Floating Toolbar Button · **Default:** off (unchecked)
-
-The settings page includes a checkbox labeled "Show XFN button in floating toolbar for block-level links." However, in version 1.1.0 the toolbar button may not appear in the editor even when the checkbox is enabled — a review of the plugin source found no code that renders it. The feature is under maintainer review (see [Documentation plan](documentation-plan.md)).
-
-Until that's resolved, don't rely on this setting. Use the Link Advanced panel for inline links and the Inspector Controls panel for block-level links instead.
-
 ## Recommended setups
 
-**Most users:** leave both checkboxes off. The always-on Link Advanced panel handles inline links, which is the most common case.
+**Most users:** leave Inspector Controls off. The always-on Link Advanced panel handles inline links, which is the most common case.
 
 **Site builders and button-heavy sites:** enable Inspector Controls. It saves a lot of clicks when you tag Buttons, Navigation Links, and Images regularly.
+
+**Upgrading from 1.1.0 or earlier:** the "Floating Toolbar Button" checkbox was removed in 1.1.1 — it was advertised but the button it promised was never implemented, so the setting did nothing. No action needed.
 
 **Teams:** settings are site-wide, so pick one approach, tell your editors where to find the XFN controls, and note the choice in your team docs.
 
@@ -68,9 +61,7 @@ Until that's resolved, don't rely on this setting. Use the Link Advanced panel f
 
 **I enabled Inspector Controls but don't see the panel.** Confirm you clicked Save Changes and refreshed the editor. The panel only appears for block-level links (select a Button block to test); it never appears for inline paragraph links. It may also be below other panels in the sidebar — scroll down.
 
-**I enabled the Floating Toolbar Button and nothing appears.** Known behavior in 1.1.0 — see above. Use the Advanced panel or Inspector Controls instead.
-
-**I want to turn XFN off entirely.** Uncheck both options to remove it from block-level links. The Link Advanced panel can't be disabled while the plugin is active; deactivate the plugin at Plugins to remove it completely. Relationships already saved in your content stay in place (see [Privacy and data](privacy-and-data.md)).
+**I want to turn XFN off entirely.** Uncheck Inspector Controls to remove it from block-level links. The Link Advanced panel can't be disabled while the plugin is active; deactivate the plugin at Plugins to remove it completely. Relationships already saved in your content stay in place (see [Privacy and data](privacy-and-data.md)).
 
 **Some editors see the controls, others don't.** Settings are site-wide. Have everyone refresh their editor and clear the browser cache; confirm they can edit posts.
 
@@ -83,11 +74,10 @@ Settings live in the `wp_options` table under the option name `xfn_link_extensio
 ```php
 array(
 	'enable_inspector_controls' => false,
-	'enable_floating_toolbar'   => false,
 )
 ```
 
-Read them with `get_option( 'xfn_link_extension_options' )`. Both values are sanitized to booleans on save. Deleting the option resets both settings to their defaults (off).
+Read them with `get_option( 'xfn_link_extension_options' )`. The value is sanitized to a boolean on save. Deleting the option resets the setting to its default (off). A leftover `enable_floating_toolbar` key from 1.1.0 or earlier is ignored.
 
 ---
 

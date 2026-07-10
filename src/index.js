@@ -16,8 +16,6 @@ import {
 } from '@wordpress/components';
 import {
 	InspectorControls,
-	RichTextToolbarButton,
-	BlockControls,
 } from '@wordpress/block-editor';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { useState, useEffect } from '@wordpress/element';
@@ -1460,7 +1458,6 @@ const withXFNControls = createHigherOrderComponent( ( BlockEdit ) => {
 		// Get settings from localized data
 		const settings = window.linkexfoData?.settings || {
 			enable_inspector_controls: false,
-			enable_floating_toolbar: false,
 		};
 
 		// List of blocks that support links as the entire block
@@ -1558,7 +1555,6 @@ xfnLog( 'Link Extension loaded successfully!' );
 
 const settings = window.linkexfoData?.settings || {
 	enable_inspector_controls: false,
-	enable_floating_toolbar: false,
 };
 
 if ( settings.enable_inspector_controls ) {
@@ -1567,10 +1563,5 @@ if ( settings.enable_inspector_controls ) {
 	xfnLog( '✗ Inspector Controls for link blocks (DISABLED - enable in Settings > Link Extension for XFN)' );
 }
 
-if ( settings.enable_floating_toolbar ) {
-	xfnLog( '✓ Floating toolbar for link blocks (ENABLED)' );
-} else {
-	xfnLog( '✗ Floating toolbar for link blocks (DISABLED - enable in Settings > Link Extension for XFN)' );
-}
 
 xfnLog( '✓ Collapsible XFN section in Link Advanced Panel (ALWAYS ENABLED)' );

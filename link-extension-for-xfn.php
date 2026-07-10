@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Link Extension for XFN
  * Plugin URI:        https://github.com/courtneyr-dev/link-extension-for-xfn
- * Description:       Extends the native Gutenberg link interface to include XFN (XHTML Friends Network) relationship options across all blocks that support links. Features floating toolbar access, Inspector Controls integration, and Link Advanced panel support.
+ * Description:       Extends the native Gutenberg link interface to include XFN (XHTML Friends Network) relationship options across all blocks that support links. Features Inspector Controls integration and Link Advanced panel support.
  * Version:           1.1.0
  * Requires at least: 6.9
  * Tested up to:      7.0
@@ -31,7 +31,7 @@ define( 'XFN_LINK_EXTENSION_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
  *
  * Handles plugin initialization, asset enqueuing, and core functionality
  * for extending WordPress link interface with XFN relationship options
- * across multiple interface points: floating toolbar, inspector controls,
+ * across multiple interface points: inspector controls,
  * and link advanced panel.
  *
  * @since 1.0.0
@@ -142,7 +142,6 @@ class XFN_Link_Extension {
 				'sanitize_callback' => [ $this, 'sanitize_settings' ],
 				'default'           => [
 					'enable_inspector_controls' => false,
-					'enable_floating_toolbar'   => false,
 				],
 			]
 		);
@@ -162,13 +161,6 @@ class XFN_Link_Extension {
 			'xfn_interface_settings'
 		);
 
-		add_settings_field(
-			'enable_floating_toolbar',
-			__( 'Floating Toolbar Button', 'link-extension-for-xfn' ),
-			[ $this, 'render_floating_toolbar_field' ],
-			'xfn-link-extension',
-			'xfn_interface_settings'
-		);
 	}
 
 	/**
@@ -180,7 +172,6 @@ class XFN_Link_Extension {
 	public function get_plugin_settings() {
 		$defaults = [
 			'enable_inspector_controls' => false,
-			'enable_floating_toolbar'   => false,
 		];
 
 		$options = get_option( 'xfn_link_extension_options', $defaults );
@@ -198,7 +189,6 @@ class XFN_Link_Extension {
 		$sanitized = [];
 
 		$sanitized['enable_inspector_controls'] = ! empty( $input['enable_inspector_controls'] );
-		$sanitized['enable_floating_toolbar']   = ! empty( $input['enable_floating_toolbar'] );
 
 		return $sanitized;
 	}
@@ -253,26 +243,6 @@ class XFN_Link_Extension {
 				<?php checked( $options['enable_inspector_controls'], true ); ?>
 			/>
 			<?php esc_html_e( 'Show XFN panel in Inspector Controls (sidebar) for block-level links like Buttons and Navigation', 'link-extension-for-xfn' ); ?>
-		</label>
-		<?php
-	}
-
-	/**
-	 * Render floating toolbar setting field
-	 *
-	 * @since 1.0.2
-	 */
-	public function render_floating_toolbar_field() {
-		$options = $this->get_plugin_settings();
-		?>
-		<label>
-			<input
-				type="checkbox"
-				name="xfn_link_extension_options[enable_floating_toolbar]"
-				value="1"
-				<?php checked( $options['enable_floating_toolbar'], true ); ?>
-			/>
-			<?php esc_html_e( 'Show XFN button in floating toolbar for block-level links', 'link-extension-for-xfn' ); ?>
 		</label>
 		<p class="description">
 			<?php esc_html_e( 'Note: The XFN section in the Link Advanced Panel (for inline links) is always available and cannot be disabled.', 'link-extension-for-xfn' ); ?>
@@ -354,10 +324,8 @@ class XFN_Link_Extension {
 			[
 				'relationships' => $this->get_xfn_relationships(),
 				'version'       => XFN_LINK_EXTENSION_VERSION,
-				'nonce'         => wp_create_nonce( 'xfn_link_extension' ),
 				'settings'      => $this->get_plugin_settings(),
 				'interfaces'    => [
-					'toolbar'   => __( 'Floating Toolbar', 'link-extension-for-xfn' ),
 					'inspector' => __( 'Inspector Controls', 'link-extension-for-xfn' ),
 					'advanced'  => __( 'Link Advanced Panel', 'link-extension-for-xfn' ),
 				],
