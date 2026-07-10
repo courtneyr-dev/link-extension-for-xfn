@@ -1,42 +1,38 @@
 /**
  * Custom webpack configuration.
  *
- * Two-config array:
- * 1. Default @wordpress/scripts config — builds block editor scripts (src/index.js).
- * 2. Module config — builds Interactivity API view modules as ES modules.
+ * Uses @wordpress/scripts' native script-modules support
+ * (WP_EXPERIMENTAL_MODULES) instead of a hand-rolled second config.
+ * The default export then becomes a two-config array:
  *
- * The module config is necessary because @wordpress/interactivity is only
- * available as a script module in WordPress, not a regular script.
+ * 1. Script config — block editor scripts (src/index.js, block index.js).
+ * 2. Module config — Interactivity API view modules. block.json
+ *    `viewScriptModule` entries (relationship-directory/view.js) are
+ *    picked up automatically; the tooltip module is not block-bound
+ *    (PHP registers it with wp_register_script_module), so it is added
+ *    as an explicit entry.
+ *
+ * History: the previous version spread the script config into a second
+ * module config by hand. The shared plugin instances put the script
+ * compile into module mode, which failed every @wordpress/* import and
+ * — because a failed compile still cleans its output — wiped build/.
  */
 
-const defaultConfig = require("@wordpress/scripts/config/webpack.config");
+process.env.WP_EXPERIMENTAL_MODULES = "true";
+
 const path = require("path");
+const [scriptConfig, moduleConfig] = require("@wordpress/scripts/config/webpack.config");
 
-const moduleConfig = {
-  ...defaultConfig,
-  entry: {
-    "interactivity/tooltip": path.resolve(
-      __dirname,
-      "src/interactivity/tooltip.js",
-    ),
-    "blocks/relationship-directory/view": path.resolve(
-      __dirname,
-      "src/blocks/relationship-directory/view.js",
-    ),
+module.exports = [
+  scriptConfig,
+  {
+    ...moduleConfig,
+    entry: async () => ({
+      ...(await moduleConfig.entry()),
+      "interactivity/tooltip": path.resolve(
+        __dirname,
+        "src/interactivity/tooltip.js",
+      ),
+    }),
   },
-  output: {
-    path: path.resolve(__dirname, "build"),
-    filename: "[name].js",
-    module: true,
-    chunkFormat: "module",
-    library: { type: "module" },
-    clean: false,
-  },
-  experiments: {
-    ...(defaultConfig.experiments || {}),
-    outputModule: true,
-  },
-  externalsType: "module",
-};
-
-module.exports = [defaultConfig, moduleConfig];
+];
