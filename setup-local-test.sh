@@ -31,12 +31,12 @@ print_info() {
 
 # Get the directory where this script is located
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-PLUGIN_ZIP="$SCRIPT_DIR/xfn-link-extension.zip"
+PLUGIN_ZIP="$SCRIPT_DIR/link-extension-for-xfn.zip"
 
 # Check if plugin ZIP exists
 if [ ! -f "$PLUGIN_ZIP" ]; then
     print_error "Plugin ZIP not found: $PLUGIN_ZIP"
-    echo "Please run this script from the plugin directory containing xfn-link-extension.zip"
+    echo "Please run this script from the plugin directory containing link-extension-for-xfn.zip"
     exit 1
 fi
 
@@ -181,7 +181,7 @@ print_success "Plugin Check activated"
 echo ""
 print_info "Installing XFN Link Extension..."
 PLUGINS_DIR="$WP_PATH/wp-content/plugins"
-XFN_PLUGIN_DIR="$PLUGINS_DIR/xfn-link-extension"
+XFN_PLUGIN_DIR="$PLUGINS_DIR/link-extension-for-xfn"
 
 # Remove old version if exists
 if [ -d "$XFN_PLUGIN_DIR" ]; then
@@ -194,18 +194,18 @@ print_info "Extracting plugin..."
 unzip -q "$PLUGIN_ZIP" -d "$PLUGINS_DIR/"
 
 # Check if extraction was successful
-if [ ! -f "$XFN_PLUGIN_DIR/xfn-link-extension.php" ]; then
+if [ ! -f "$XFN_PLUGIN_DIR/link-extension-for-xfn.php" ]; then
     print_error "Plugin extraction failed"
     print_info "Trying alternative extraction..."
     # Sometimes zip creates a nested directory
-    if [ -d "$PLUGINS_DIR/xfn-link-extension/xfn-link-extension" ]; then
-        mv "$PLUGINS_DIR/xfn-link-extension/xfn-link-extension/"* "$PLUGINS_DIR/xfn-link-extension/"
-        rmdir "$PLUGINS_DIR/xfn-link-extension/xfn-link-extension"
+    if [ -d "$PLUGINS_DIR/link-extension-for-xfn/link-extension-for-xfn" ]; then
+        mv "$PLUGINS_DIR/link-extension-for-xfn/link-extension-for-xfn/"* "$PLUGINS_DIR/link-extension-for-xfn/"
+        rmdir "$PLUGINS_DIR/link-extension-for-xfn/link-extension-for-xfn"
     fi
 fi
 
 # Activate plugin
-if wp plugin activate xfn-link-extension --quiet; then
+if wp plugin activate link-extension-for-xfn --quiet; then
     print_success "XFN Link Extension activated"
 else
     print_error "Failed to activate XFN Link Extension"

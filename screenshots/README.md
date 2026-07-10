@@ -35,7 +35,7 @@ This will install Playwright and its browser binaries (Chromium).
 First, start the CORS-enabled HTTP server in a separate terminal:
 
 ```bash
-cd /Users/crobertson/Downloads/xfn/link-extension-for-xfn
+cd the repository root/link-extension-for-xfn
 python3 cors-server.py
 ```
 

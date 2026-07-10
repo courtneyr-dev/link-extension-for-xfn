@@ -13,7 +13,12 @@ NC='\033[0m' # No Color
 
 # Plugin information
 PLUGIN_SLUG="link-extension-for-xfn"
-PLUGIN_VERSION="1.0.3"
+# Version comes from readme.txt's stable tag — the deploy must never lag the release.
+PLUGIN_VERSION="$(awk -F': *' 'tolower($1) ~ /^stable tag$/ { print $2; exit }' readme.txt | tr -d '[:space:]')"
+if [ -z "${PLUGIN_VERSION}" ]; then
+    echo "Could not read the stable tag from readme.txt" >&2
+    exit 1
+fi
 SVN_URL="https://plugins.svn.wordpress.org/${PLUGIN_SLUG}/"
 SVN_DIR="/tmp/${PLUGIN_SLUG}-svn"
 
@@ -131,13 +136,7 @@ fi
 
 # Commit to trunk
 echo -e "${BLUE}Step 7: Committing to trunk...${NC}"
-svn ci -m "Deploy version ${PLUGIN_VERSION} to trunk
-
-- Fix plugin naming: now consistently uses 'Link Extension for XFN'
-- Fix installation directory path (xfn-link-extension → link-extension-for-xfn)
-- Fix Settings menu name (XFN Link Extension → Link Extension for XFN)
-- Change Contributors to Developers in plugin header
-- Update all documentation and user-facing strings"
+svn ci -m "Deploy version ${PLUGIN_VERSION} to trunk (see readme.txt changelog)"
 
 echo -e "${GREEN}✓ Committed to trunk${NC}"
 echo ""
