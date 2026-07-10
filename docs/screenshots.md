@@ -27,7 +27,7 @@ Screenshots live in `docs/assets/screenshots/`. The repo has two capture scripts
 
 - `frontend-tooltip.png` can't be captured on a stock WordPress 6.x site; it needs a WordPress 7.0+ (or trunk) environment. A capture attempt on WordPress 7.0.1 found that the links on the blueprint-published `/xfn-demo/` page carry no `rel` attributes at render time, so no tooltips appear there either — this is flagged for maintainer review in the [documentation plan](documentation-plan.md). Capturing this shot needs a post whose links verifiably keep their `rel` values.
 - The three block screenshots need real data: the site-wide scan only finds XFN links in published posts and pages, and results are cached for about 5 minutes.
-- `.wordpress-org/` contains directory assets (banner, icon, screenshot-1) maintained separately for the WordPress.org listing.
+- `.wordpress-org/` contains the directory assets for the WordPress.org listing: banners and icons from the Outpost & Co design system ("WordPress Listing Assets v2") plus screenshot-1 and screenshot-2. The design project is the source of truth for the banner/icon artwork.
 
 ---
 

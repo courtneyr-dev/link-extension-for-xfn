@@ -4,10 +4,10 @@ How to install and activate Link Extension for XFN, and how to confirm it's work
 
 ## Requirements
 
-- WordPress 6.4 or higher
+- WordPress 6.9 or higher
 - PHP 8.2 or higher (per the plugin header, as of version 1.1.0)
 
-If your site doesn't meet the WordPress minimum, activation stops with an error message ("Link Extension for XFN requires WordPress 6.4 or higher") and the plugin deactivates itself. There are no required companion plugins. The optional Outpost plugin adds a Micropub integration but isn't needed for anything else.
+If your site doesn't meet the WordPress minimum, activation stops with an error message ("Link Extension for XFN requires WordPress 6.9 or higher") and the plugin deactivates itself. There are no required companion plugins. The optional Outpost plugin adds a Micropub integration but isn't needed for anything else.
 
 ## Install from a ZIP file
 

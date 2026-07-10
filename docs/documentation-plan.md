@@ -4,7 +4,7 @@ Plan and status for the Link Extension for XFN user documentation, including ope
 
 ## Plugin summary
 
-Link Extension for XFN (version 1.1.0, WordPress 6.4+, PHP 8.2 per plugin header) adds XFN relationship options to the block editor's link tools. Relationships — 18 values in 7 categories from the XFN 1.1 spec — are stored in the standard HTML `rel` attribute of links in post content and mirrored to `_xfn_relationships` post meta. It ships three frontend blocks (XFN Blogroll, Relationship Badge, Relationship Directory) that build lists from a site-wide scan of published content, frontend tooltips gated to WordPress 7.0+, an automatic bridge for the Outpost plugin's Micropub XFN data, and Abilities API integration for automation. It does not use the classic Link Manager and makes no external requests.
+Link Extension for XFN (version 1.1.0, WordPress 6.9+, PHP 8.2 per plugin header) adds XFN relationship options to the block editor's link tools. Relationships — 18 values in 7 categories from the XFN 1.1 spec — are stored in the standard HTML `rel` attribute of links in post content and mirrored to `_xfn_relationships` post meta. It ships three frontend blocks (XFN Blogroll, Relationship Badge, Relationship Directory) that build lists from a site-wide scan of published content, frontend tooltips gated to WordPress 7.0+, an automatic bridge for the Outpost plugin's Micropub XFN data, and Abilities API integration for automation. It does not use the classic Link Manager and makes no external requests.
 
 ## Audience
 
@@ -34,7 +34,7 @@ GitHub Pages from `/docs` on the main branch, plain Markdown with the Primer Jek
 ## Validation checklist
 
 - [ ] Every claim traceable to the repo (plugin source, readme.txt, CHANGELOG, audit).
-- [ ] Version/compat statements cite the plugin header (1.1.0, WP 6.4+, PHP 8.2).
+- [ ] Version/compat statements cite the plugin header (1.1.0, WP 6.9+, PHP 8.2).
 - [ ] No walkthrough of the floating toolbar button anywhere in user docs.
 - [ ] Tooltip mentions always carry the WordPress 7.0+ caveat.
 - [ ] Block docs state the published-content scan and ~5 minute cache.
@@ -52,7 +52,7 @@ GitHub Pages from `/docs` on the main branch, plain Markdown with the Primer Jek
 
 1. **Floating Toolbar Button appears unimplemented.** The setting exists and is advertised in the plugin header, readme.txt, and the pre-existing guides (USER-GUIDE.md, paragraph-links.md, button-links.md, image-links.md — all pending review, left unchanged), but no code in `src/` renders a toolbar button (`RichTextToolbarButton`/`BlockControls` are imported, never used); the flag only feeds debug logging. The new user docs describe the checkbox and state the button may not appear in 1.1.0; the hub carries a caution next to the older guides. Confirm whether to implement or remove the setting and its marketing copy, then update those guides.
 2. **PHP requirement mismatch.** Header and readme.txt say Requires PHP 8.2; the activation gate only enforces PHP 7.4; CHANGELOG still says "PHP 7.4+ required"; composer requires >=8.2. Docs follow the header (8.2). Confirm the true floor and align all files.
-3. **Tooltips gated to WordPress 7.0+ while "Tested up to" is 6.9** — tooltips are effectively off on every currently shipping WordPress. Confirm intended timing and whether readme.txt should say so.
+3. **Tooltips gated to WordPress 7.0+** — with the supported floor now at 6.9 and "Tested up to" at 7.0 (2026-07-09 audit), only sites still on 6.9 lack tooltips. readme.txt and these docs state the gate; no further action unless the flag's timing changes.
 4. **The three blocks were undocumented** in readme.txt, README.md, and prior docs. They're now documented here from source; confirm they're intended for release (they sit behind a default-on `blocks` feature flag) and add them to readme.txt.
 5. **Two divergent Playground blueprints** (root `blueprint.json` draft-on-post-new vs `assets/blueprints/blueprint.json` published `/xfn-demo/`). Confirm which drives the wp.org live preview.
 6. **Stale deploy/test artifacts:** `deploy-to-wordpress-org.sh` hardcodes version 1.0.3 with a 1.0.1-era commit message; `setup-local-test.sh` and `screenshots/README.md` reference the old `xfn-link-extension` slug/paths; `npm run sync` points to a missing `sync-to-local.sh`.
