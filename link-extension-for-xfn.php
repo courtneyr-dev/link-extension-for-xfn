@@ -160,7 +160,6 @@ class XFN_Link_Extension {
 			'xfn-link-extension',
 			'xfn_interface_settings'
 		);
-
 	}
 
 	/**
