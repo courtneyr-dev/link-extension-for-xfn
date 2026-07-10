@@ -53,7 +53,6 @@ See [Settings](settings.md) for details, and [Button links](button-links.md) for
 - **Nothing looks different after activating.** That's expected — the plugin adds no visible output until you tag a link, and the editor controls are tucked inside the link popover's Advanced section.
 - **No XFN panel in the sidebar.** The Inspector Controls panel is off by default. Enable it at Settings → Link Extension for XFN.
 - **No tooltips on the frontend.** The hover/focus tooltip that shows a link's relationships is gated to WordPress 7.0 or later. On WordPress 6.9 and earlier it doesn't appear — your `rel` attributes are still saved and visible in the page source.
-- **The "Floating Toolbar Button" setting doesn't seem to do anything.** In version 1.1.0 the toolbar button may not appear in the editor; the feature is under maintainer review. See [Settings](settings.md).
 - **Relationships and old versions.** Version 1.1.0 fixed cases where relationships were dropped when saving offline or linking to hosts that don't resolve, and fixed frontend tooltips that never loaded in 1.0.3. If you're on an older version, update.
 
 ---

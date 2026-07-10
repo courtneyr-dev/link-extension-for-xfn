@@ -87,11 +87,10 @@ That's it! The plugin works immediately—no configuration needed.
 
 ### First Steps
 
-After activation, XFN controls appear automatically in three locations whenever you work with links in the block editor:
+After activation, XFN controls appear in two locations whenever you work with links in the block editor:
 
-1. **Floating Toolbar** - Quick access button
-2. **Inspector Controls** - Block settings sidebar
-3. **Link Advanced Panel** - Inline link popover
+1. **Link Advanced Panel** - Inline link popover (always on)
+2. **Inspector Controls** - Block settings sidebar (enable in Settings → Link Extension for XFN)
 
 No setup or configuration is required. Just start adding links as you normally would!
 
@@ -115,27 +114,9 @@ Your link now has XFN metadata!
 
 ## Using XFN Relationships
 
-### The Three Access Methods
+### The Two Access Methods
 
-#### Method 1: Floating Toolbar (Recommended for Block Links)
-
-**Best for**: Button blocks, Navigation blocks, and block-level links
-
-1. Select any block containing a link (Button, Navigation Link, etc.)
-2. Look for the **XFN** button in the block toolbar
-3. Click the XFN button to open the relationship selector
-4. Click the **XFN** toggle header to expand the collapsible section
-5. Select relationships using the button groups
-6. View active relationships as colored pills in the summary
-7. Click outside to save
-
-**Advantages**:
-- Quick access from the toolbar
-- Visual relationship pills
-- Count badges show active relationships at a glance
-- Clean collapsible interface
-
-#### Method 2: Inspector Controls (Recommended for Detailed Selection)
+#### Method 1: Inspector Controls (Recommended for Block Links)
 
 **Best for**: Careful selection, reviewing relationships, working with multiple options
 
@@ -159,7 +140,7 @@ Your link now has XFN metadata!
 - Shows validation rules (choose one vs. multiple)
 - Always accessible in sidebar
 
-#### Method 3: Link Advanced Panel (Recommended for Inline Links)
+#### Method 2: Link Advanced Panel (Recommended for Inline Links)
 
 **Best for**: Links within paragraph text, list items, and other inline content
 
@@ -313,11 +294,10 @@ These describe romantic connections. Multiple can apply to the same person.
 2. Enter the button text: "Visit Sarah's Blog"
 3. Click the button to select it
 4. Enter the URL in the link field: `https://sarahsblog.com`
-5. Look at the block toolbar and click the **XFN** button
-6. Click the **XFN** header to expand the section
-7. Under **Friendship**, select **Friend**
-8. Under **Physical**, select **Met** (if you've met Sarah)
-9. View the summary: You'll see `[friend] [met]` pills
+5. Open the **XFN Relationships** panel in the settings sidebar (enable Inspector Controls in Settings → Link Extension for XFN if you don't see it)
+6. Under **Friendship**, select **Friend**
+7. Under **Physical**, select **Met** (if you've met Sarah)
+8. View the summary: You'll see `[friend] [met]` pills
 10. Click outside the popover to save
 
 **Result**: Your button now has `rel="friend met"` in its HTML.
@@ -384,7 +364,7 @@ These describe romantic connections. Multiple can apply to the same person.
 **Scenario**: Linking to your business partner who is also a friend.
 
 1. Add a link using any method
-2. Open XFN controls (Toolbar, Inspector, or Advanced panel)
+2. Open XFN controls (Inspector panel or Advanced panel)
 3. Select multiple relationships:
    - **Friendship**: Friend
    - **Physical**: Met
@@ -514,7 +494,7 @@ The plugin is fully accessible, but follow these tips:
 **Solutions**:
 1. **Click Advanced**: Look for "Advanced" at bottom of link popover
 2. **Inline Links Only**: This method works for inline links (paragraph text, list items)
-3. **Try Alternative**: Use Floating Toolbar or Inspector Controls instead
+3. **Try Alternative**: Use the Inspector Controls panel instead
 4. **Plugin Conflict**: Deactivate other link-related plugins temporarily
 
 ---

@@ -17,9 +17,9 @@ Two places:
 - The link popover's **Advanced** panel has an **XFN** section for inline text links. It's always on.
 - An optional **XFN Relationships** sidebar panel handles block-level links (Button, Image, Navigation Link, Site Logo, Post Title, Query Title, Embed). Enable it at Settings → Link Extension for XFN.
 
-## Why don't I see the floating toolbar button?
+## What happened to the "Floating Toolbar Button" setting?
 
-The settings page has a "Floating Toolbar Button" checkbox, but in version 1.1.0 the button may not appear in the editor even when enabled — the feature is under maintainer review. Use the other two interfaces instead.
+It was removed in 1.1.1. The checkbox existed in earlier versions but the toolbar button it described was never implemented, so it did nothing. The two working interfaces — the link popover's Advanced panel and the optional Inspector Controls panel — cover the same relationships.
 
 ## Why don't tooltips appear on my links?
 

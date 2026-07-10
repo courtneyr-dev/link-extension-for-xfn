@@ -267,9 +267,9 @@ Absolutely! XFN includes professional relationships (co-worker, colleague) and c
 
 ## Troubleshooting
 
-### XFN options don't appear in the floating toolbar
+### What happened to the "Floating Toolbar Button" setting?
 
-In version 1.1.0 the floating toolbar button may not appear even with its setting enabled; the feature is under review. Use the Inspector Controls panel (enable it at Settings → Link Extension for XFN) or the link popover's Advanced panel instead — both cover the same relationships.
+Removed in 1.1.1: the checkbox existed in earlier versions but the toolbar button it described was never implemented, so it did nothing. The two working interfaces — the link popover's Advanced panel (always on) and the optional Inspector Controls panel — cover the same relationships.
 
 ### Tooltips don't appear on the frontend
 
@@ -386,4 +386,4 @@ Frontend relationship tooltips require WordPress 7.0 or later. On WordPress 6.9 
 == Screenshots ==
 
 1. Live demo in WordPress Playground showing XFN in action - interactive buttons and embedded content with relationship attributes, plus comprehensive testing instructions and examples
-2. The settings page (Settings → Link Extension for XFN) with the Inspector Controls and Floating Toolbar Button options and the always-on Advanced panel note
+2. The settings page (Settings → Link Extension for XFN) with the Inspector Controls option and the always-on Advanced panel note

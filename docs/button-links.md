@@ -27,17 +27,6 @@ The XFN Relationships panel is **open by default** for Button blocks, making it 
 
 No need to click Apply - your selections are saved instantly!
 
-### Method 2: Floating Toolbar
-
-For quick access while editing button text:
-
-1. **Click on the Button block**
-2. **Look for the "XFN" button** in the floating toolbar
-3. **Click it** to open the XFN panel
-4. **Expand the XFN section** to see relationship options
-5. **Select your relationships**
-6. **Changes save automatically**
-
 ## Step-by-Step Example: Portfolio Button
 
 Let's create a button linking to your portfolio with XFN:

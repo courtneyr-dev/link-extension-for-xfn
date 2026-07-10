@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- The "Floating Toolbar Button" setting. It was advertised from 1.0.x but the toolbar button it promised was never implemented — the checkbox did nothing. The Link Advanced panel (always on) and the Inspector Controls panel cover the same relationships. A leftover `enable_floating_toolbar` key in `xfn_link_extension_options` is ignored.
+- The unused `xfn_link_extension` nonce from the editor script's localized data — no endpoint ever verified it.
+
 ### Planned Features
 
 - User preferences for default collapsible states

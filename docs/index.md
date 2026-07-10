@@ -34,7 +34,7 @@ As of version 1.1.0 (plugin header), the plugin requires WordPress 6.9 or higher
 
 These guides pre-date the standard pages above and go deeper on specific link types.
 
-*Caution: these older guides are pending review — some still describe a floating toolbar button that may not appear in the editor in version 1.1.0. See [Settings](settings.md) for the current interface guidance.*
+*Note: the floating toolbar button some older material referenced was removed in 1.1.1 — it was advertised but never functional. The two working interfaces are the link popover's Advanced panel and the optional Inspector Controls panel; see [Settings](settings.md).*
 
 - [User guide](USER-GUIDE.md) — the full end-user walkthrough.
 - [Paragraph links](paragraph-links.md) — XFN on inline text links.
