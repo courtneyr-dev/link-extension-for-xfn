@@ -1,4 +1,7 @@
-# Settings
+---
+title: Settings
+description: "Reference for the Link Extension for XFN settings page: the Inspector Controls toggle, what it changes, and what is stored."
+---
 
 Configure where XFN relationship controls appear in the block editor. There's one settings page with two checkboxes; the inline-link interface is always on.
 
@@ -9,7 +12,7 @@ Configure where XFN relationship controls appear in the block editor. There's on
 
 The page requires the `manage_options` capability (administrators). Settings apply site-wide for all users. After saving, refresh any open editor windows to see the change.
 
-![Settings page with the Inspector Controls checkbox and the always-on Advanced panel note](assets/screenshots/admin-settings-overview.png)
+![Settings page with the Inspector Controls checkbox and the always-on Advanced panel note](../../assets/screenshots/admin-settings-overview.png)
 
 ## The two interfaces at a glance
 
@@ -24,7 +27,7 @@ For links inside text, the plugin adds a collapsible **XFN** section to the link
 
 To use it: select linked text, click the link, expand **Advanced**, then expand **XFN**. Pick relationships from the category groups (radio groups for choose-one categories, checkboxes for the rest), watch the count badge and "Active Relationships" pills update, then click Apply and save the post.
 
-This covers the most common case — links inside paragraphs and other text — which is why it's always available. See [Paragraph links](paragraph-links.md) for a full walkthrough.
+This covers the most common case — links inside paragraphs and other text — which is why it's always available. See [Paragraph links](https://github.com/courtneyr-dev/link-extension-for-xfn/blob/main/docs/paragraph-links.md) for a full walkthrough.
 
 ## Inspector Controls
 
@@ -38,7 +41,7 @@ Enable it if you:
 - Prefer having block settings in the sidebar rather than in popovers.
 - Use IndieWeb blocks that expose an event URL (RSVP cards) — the panel also targets blocks with `url`, `href`, or `eventUrl` attributes.
 
-Leave it off if you mostly tag inline text links; the always-on Advanced panel already covers those. See [Button links](button-links.md), [Image links](image-links.md), and [Other block links](other-block-links.md).
+Leave it off if you mostly tag inline text links; the always-on Advanced panel already covers those. See [Button links](https://github.com/courtneyr-dev/link-extension-for-xfn/blob/main/docs/button-links.md), [Image links](https://github.com/courtneyr-dev/link-extension-for-xfn/blob/main/docs/image-links.md), and [Other block links](https://github.com/courtneyr-dev/link-extension-for-xfn/blob/main/docs/other-block-links.md).
 
 ## Recommended setups
 
@@ -46,7 +49,7 @@ Leave it off if you mostly tag inline text links; the always-on Advanced panel a
 
 **Site builders and button-heavy sites:** enable Inspector Controls. It saves a lot of clicks when you tag Buttons, Navigation Links, and Images regularly.
 
-**Upgrading from 1.1.0 or earlier:** the "Floating Toolbar Button" checkbox was removed in 1.1.1 — it was advertised but the button it promised was never implemented, so the setting did nothing. No action needed.
+**Upgrading from an earlier version:** the "Floating Toolbar Button" checkbox was removed in 1.0.4 — it was advertised but the button it promised was never implemented, so the setting did nothing. No action needed.
 
 **Teams:** settings are site-wide, so pick one approach, tell your editors where to find the XFN controls, and note the choice in your team docs.
 
@@ -61,11 +64,11 @@ Leave it off if you mostly tag inline text links; the always-on Advanced panel a
 
 **I enabled Inspector Controls but don't see the panel.** Confirm you clicked Save Changes and refreshed the editor. The panel only appears for block-level links (select a Button block to test); it never appears for inline paragraph links. It may also be below other panels in the sidebar — scroll down.
 
-**I want to turn XFN off entirely.** Uncheck Inspector Controls to remove it from block-level links. The Link Advanced panel can't be disabled while the plugin is active; deactivate the plugin at Plugins to remove it completely. Relationships already saved in your content stay in place (see [Privacy and data](privacy-and-data.md)).
+**I want to turn XFN off entirely.** Uncheck Inspector Controls to remove it from block-level links. The Link Advanced panel can't be disabled while the plugin is active; deactivate the plugin at Plugins to remove it completely. Relationships already saved in your content stay in place (see [Privacy and data](/link-extension-for-xfn/privacy-and-data/)).
 
 **Some editors see the controls, others don't.** Settings are site-wide. Have everyone refresh their editor and clear the browser cache; confirm they can edit posts.
 
-More symptoms are covered in [Troubleshooting](troubleshooting.md).
+More symptoms are covered in [Troubleshooting](/link-extension-for-xfn/troubleshooting/).
 
 ## For developers: where settings are stored
 
@@ -73,12 +76,8 @@ Settings live in the `wp_options` table under the option name `xfn_link_extensio
 
 ```php
 array(
-	'enable_inspector_controls' => false,
+ 'enable_inspector_controls' => false,
 )
 ```
 
-Read them with `get_option( 'xfn_link_extension_options' )`. The value is sanitized to a boolean on save. Deleting the option resets the setting to its default (off). A leftover `enable_floating_toolbar` key from 1.1.0 or earlier is ignored.
-
----
-
-[Documentation home](index.md) · Previous: [Getting started](getting-started.md) · Next: [Common tasks](common-tasks.md)
+Read them with `get_option( 'xfn_link_extension_options' )`. The value is sanitized to a boolean on save. Deleting the option resets the setting to its default (off). A leftover `enable_floating_toolbar` key from earlier versions is ignored.

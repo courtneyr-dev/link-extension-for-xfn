@@ -1,10 +1,13 @@
-# Getting started
+---
+title: Getting started
+description: "Add your first XFN relationship to a link in the block editor and confirm the rel attribute appears in your published page."
+---
 
 Add your first XFN relationship to a link and see the result on your site.
 
 ## What XFN is, in one minute
 
-XFN (XHTML Friends Network) lets you say how you know the person behind a link. When you tag a link with values like `friend` or `colleague`, the plugin writes them into the link's standard HTML `rel` attribute — for example `<a href="https://example.com" rel="friend met">`. That's visible to anyone reading your page source and to tools that parse XFN. Nothing is sent anywhere; the data lives in your post content.
+[XFN (XHTML Friends Network)](https://gmpg.org/xfn/) lets you say how you know the person behind a link. When you tag a link with values like `friend` or `colleague`, the plugin writes them into the link's standard HTML `rel` attribute — for example `<a href="https://example.com" rel="friend met">`. That's visible to anyone reading your page source and to tools that parse XFN. Nothing is sent anywhere; the data lives in your post content.
 
 There are 18 relationship values in 7 categories. Some categories let you pick only one value (radio buttons), others allow several (checkboxes):
 
@@ -33,9 +36,9 @@ This works out of the box — no settings needed.
 5. View the published post, right-click the link, and choose Inspect (browser developer tools).
    - Expected: the anchor shows `rel="friend met"`.
 
-(Screenshot planned: see [screenshot inventory](screenshots.md).)
+(Screenshot planned: see [screenshot inventory](/link-extension-for-xfn/screenshots/).)
 
-For a deeper walkthrough of this flow, see [Paragraph links](paragraph-links.md).
+For a deeper walkthrough of this flow, see [Paragraph links](https://github.com/courtneyr-dev/link-extension-for-xfn/blob/main/docs/paragraph-links.md).
 
 ## Second task: tag a block-level link (optional)
 
@@ -46,15 +49,11 @@ Blocks that are themselves links — Button, Image, Navigation Link, Site Logo, 
 3. Back in the editor (refresh it), select a Button block with a URL set.
    - Expected: an "XFN Relationships" panel appears in the right-hand sidebar with the same category groups.
 
-See [Settings](settings.md) for details, and [Button links](button-links.md) for the full workflow.
+See [Settings](/link-extension-for-xfn/settings/) for details, and [Button links](https://github.com/courtneyr-dev/link-extension-for-xfn/blob/main/docs/button-links.md) for the full workflow.
 
 ## Common first-run confusion
 
 - **Nothing looks different after activating.** That's expected — the plugin adds no visible output until you tag a link, and the editor controls are tucked inside the link popover's Advanced section.
 - **No XFN panel in the sidebar.** The Inspector Controls panel is off by default. Enable it at Settings → Link Extension for XFN.
 - **No tooltips on the frontend.** The hover/focus tooltip that shows a link's relationships is gated to WordPress 7.0 or later. On WordPress 6.9 and earlier it doesn't appear — your `rel` attributes are still saved and visible in the page source.
-- **Relationships and old versions.** Version 1.1.0 fixed cases where relationships were dropped when saving offline or linking to hosts that don't resolve, and fixed frontend tooltips that never loaded in 1.0.3. If you're on an older version, update.
-
----
-
-[Documentation home](index.md) · Previous: [Installation](installation.md) · Next: [Settings](settings.md)
+- **Relationships and old versions.** Version 1.0.4 fixed cases where relationships were dropped when saving offline or linking to hosts that don't resolve, and fixed frontend tooltips that never loaded in 1.0.3. If you're on an older version, update.

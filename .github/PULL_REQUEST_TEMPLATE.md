@@ -1,30 +1,16 @@
 ## Summary
 
-Brief description of changes.
+<!-- What changed and why. -->
 
-## Related Issue
+## Documentation checklist
 
-Closes #
+Skip for purely internal refactors with no user-facing effect.
 
-## Type of Change
-
-- [ ] Bug fix
-- [ ] New feature
-- [ ] Documentation update
-- [ ] Refactoring
-- [ ] Other (describe):
-
-## Testing
-
-- [ ] Tested in block editor with multiple block types
-- [ ] Tested keyboard navigation
-- [ ] Tested in multiple browsers
-- [ ] No console errors or warnings
-- [ ] Query Monitor shows zero errors
-
-## Checklist
-
-- [ ] Code follows WordPress coding standards
-- [ ] CHANGELOG.md updated
-- [ ] Documentation updated (if applicable)
-- [ ] Accessibility maintained (ARIA labels, keyboard nav, screen reader)
+- [ ] User-facing behavior changes are documented in `docs/src/content/docs/`
+- [ ] Settings and labels in the docs match the current UI
+- [ ] Screenshots remain current (recapture with `npm run screenshots:docs` if not)
+- [ ] Accessibility implications were reviewed
+- [ ] `README.md` remains accurate
+- [ ] `readme.txt` remains accurate (description, versions, changelog)
+- [ ] Links and metadata were validated (`cd docs && npm run build && npm run check:links`)
+- [ ] Release notes describe the user impact

@@ -1,11 +1,14 @@
-# Installation
+---
+title: Installation
+description: "Install Link Extension for XFN from WordPress.org or GitHub, check the WordPress 6.9 and PHP 8.2 requirements, and confirm it works."
+---
 
 How to install and activate Link Extension for XFN, and how to confirm it's working.
 
 ## Requirements
 
 - WordPress 6.9 or higher
-- PHP 8.2 or higher (per the plugin header, as of version 1.1.0)
+- PHP 8.2 or higher (per the plugin header, as of version 1.0.4)
 
 If your site doesn't meet the WordPress minimum, activation stops with an error message ("Link Extension for XFN requires WordPress 6.9 or higher") and the plugin deactivates itself. There are no required companion plugins. The optional Outpost plugin adds a Micropub integration but isn't needed for anything else.
 
@@ -24,7 +27,7 @@ The plugin's readme and README also link to a WordPress.org plugin page (`wordpr
 
 1. Clone the repository into your plugins directory:
 
-   ```
+   ```text
    cd wp-content/plugins
    git clone https://github.com/courtneyr-dev/link-extension-for-xfn.git
    ```
@@ -42,12 +45,8 @@ Because `build/` is committed, a fresh clone activates without running `npm inst
 
 You can also confirm the settings page exists: go to Settings → Link Extension for XFN. If the page is there, the plugin is active.
 
-(Screenshot planned: see [screenshot inventory](screenshots.md).)
+(Screenshot planned: see [screenshot inventory](/link-extension-for-xfn/screenshots/).)
 
 ## Next step
 
-Head to [Getting started](getting-started.md) to add your first relationship.
-
----
-
-[Documentation home](index.md) · Previous: [Home](index.md) · Next: [Getting started](getting-started.md)
+Head to [Getting started](/link-extension-for-xfn/getting-started/) to add your first relationship.

@@ -1,6 +1,9 @@
-# Privacy and data
+---
+title: Privacy and data
+description: "What Link Extension for XFN stores, what it publishes in your public markup, and what it never sends anywhere — verified against the source."
+---
 
-What the plugin stores, what it publishes, and what it doesn't do. Findings below are based on a source review of version 1.1.0.
+What the plugin stores, what it publishes, and what it doesn't do. Findings below are based on a source review of version 1.0.4.
 
 ## Think before you tag
 
@@ -41,8 +44,4 @@ None found. The plugin makes no outbound HTTP requests (no `wp_remote_*`, cURL, 
 
 ## Verified and unverified
 
-Verified from source: the storage locations above, the absence of external calls, and the REST visibility of `_xfn_relationships`. For anything beyond this — for example formal privacy review of the meta mirror's REST exposure — see the "Needs maintainer review" list in the [documentation plan](documentation-plan.md).
-
----
-
-[Documentation home](index.md) · Previous: [FAQ](faq.md) · Next: [Accessibility](accessibility.md)
+Verified from source: the storage locations above, the absence of external calls, and the REST visibility of `_xfn_relationships`. For anything beyond this — for example formal privacy review of the meta mirror's REST exposure — see the "Needs maintainer review" list in the [documentation plan](https://github.com/courtneyr-dev/link-extension-for-xfn/blob/main/docs/documentation-plan.md).
