@@ -114,6 +114,7 @@ final class XFN_Content_Scanner {
 		global $wpdb;
 
 		// Only fetch posts whose content contains a rel attribute to minimize processing.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Static LIKE prefilter on core columns with no WP_Query equivalent; result set is cached in a transient above.
 		$post_ids = $wpdb->get_col(
 			"SELECT ID FROM {$wpdb->posts}
 			 WHERE post_status = 'publish'

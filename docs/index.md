@@ -8,7 +8,7 @@ XFN lets you describe how you know the person or site you're linking to — frie
 
 It's built for bloggers, IndieWeb users, and site owners who want semantic, human-readable relationships on their links — without a custom database table or a separate link manager.
 
-As of version 1.1.0 (plugin header), the plugin requires WordPress 6.4 or higher and PHP 8.2 or higher.
+As of version 1.1.0 (plugin header), the plugin requires WordPress 6.9 or higher and PHP 8.2 or higher.
 
 ## Start here
 
