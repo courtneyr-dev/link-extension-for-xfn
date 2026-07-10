@@ -7,11 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Removed
-
-- The "Floating Toolbar Button" setting. It was advertised from 1.0.x but the toolbar button it promised was never implemented — the checkbox did nothing. The Link Advanced panel (always on) and the Inspector Controls panel cover the same relationships. A leftover `enable_floating_toolbar` key in `xfn_link_extension_options` is ignored.
-- The unused `xfn_link_extension` nonce from the editor script's localized data — no endpoint ever verified it.
-
 ### Planned Features
 
 - User preferences for default collapsible states
@@ -20,6 +15,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - REST API endpoint for XFN management
 - Block pattern library with XFN examples
 - Import/export functionality for XFN settings
+
+## [1.1.1] - 2026-07-10
+
+### Fixed
+
+- readme.txt header uses the standard `Contributors:` field — the nonstandard `Developers:` field kept WordPress.org from showing the plugin author
+- The editor scripts declared by the Blogroll, Relationship Badge, and Relationship Directory blocks (`blocks/*/index.js`) now actually build and ship — every `block.json` declared an `editorScript`, but the old webpack config never emitted them
+- Build system rebuilt on `@wordpress/scripts` native script-modules support (`WP_EXPERIMENTAL_MODULES`) — the hand-rolled config shared plugin instances between the script and module passes, forcing the script compile into module mode and breaking clean builds
+- `deploy-to-wordpress-org.sh` reads the release version from readme.txt's stable tag instead of a hardcoded value
+
+### Removed
+
+- The "Floating Toolbar Button" setting. It was advertised from 1.0.x but the toolbar button it promised was never implemented — the checkbox did nothing. The Link Advanced panel (always on) and the Inspector Controls panel cover the same relationships. A leftover `enable_floating_toolbar` key in `xfn_link_extension_options` is ignored.
+- The unused `xfn_link_extension` nonce from the editor script's localized data — no endpoint ever verified it.
+
+### Changed
+
+- Requires WordPress 6.9 or newer (script modules and the guarded Abilities API integration need it); tested up to 7.0
+- The distributed plugin ships compiled build output only; uncompiled source stays in the GitHub repository
 
 ## [1.1.0] - 2026-07-03
 

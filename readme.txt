@@ -3,7 +3,7 @@
 Contributors:      courane01
 Tags:              xfn, links, relationships, accessibility, gutenberg
 Tested up to:      7.0
-Stable tag:        1.1.0
+Stable tag:        1.1.1
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 6.9
@@ -318,6 +318,15 @@ Frontend relationship tooltips require WordPress 7.0 or later. On WordPress 6.9 
 4. **Update screen reader**: Ensure you're using a current version of your screen reader
 
 ## Changelog
+
+= 1.1.1 =
+* Fixed: readme header uses the standard Contributors field, so the WordPress.org listing shows the plugin author again
+* Fixed: the editor scripts declared by the Blogroll, Relationship Badge, and Relationship Directory blocks now actually ship — earlier builds never emitted them
+* Fixed: build system rebuilt on the @wordpress/scripts native script-modules support; clean checkouts build again
+* Removed: the "Floating Toolbar Button" setting — the button it promised was never implemented, so the checkbox did nothing; the Link Advanced panel and Inspector Controls cover the same relationships
+* Removed: an unused editor nonce
+* Changed: requires WordPress 6.9 or newer; tested up to 7.0
+* Changed: the distributed plugin ships compiled build output only; uncompiled source lives in the GitHub repository
 
 = 1.1.0 =
 * Added: Outpost integration — relationships written by Outpost's Micropub mp-xfn bridge are now consumed automatically and mirrored into XFN metadata and rel attributes
