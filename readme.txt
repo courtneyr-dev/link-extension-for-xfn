@@ -144,7 +144,7 @@ Add relationship context to overlay links and media-associated links using the L
 
 **This plugin uses build tools to compile and optimize code for production.**
 
-All uncompiled, human-readable source code is included in the plugin's `src/` directory and is publicly available on GitHub.
+All uncompiled, human-readable source code is publicly available in the `src/` directory of the GitHub repository (the distributed plugin ships only the compiled `build/` output).
 
 **Source files (uncompiled):**
 * JavaScript: `src/index.js` (main plugin logic)
