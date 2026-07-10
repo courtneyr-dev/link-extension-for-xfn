@@ -7,7 +7,7 @@ Answers to real questions about how Link Extension for XFN behaves.
 
 ## What is XFN?
 
-XFN (XHTML Friends Network) is a way to say how you know the person behind a link, using values like `friend`, `colleague`, `spouse`, or `met` in the link's standard HTML `rel` attribute. The plugin supports all 18 values of the XFN 1.1 specification across 7 categories, and enforces the spec's rules — you can pick only one Friendship, one Geographical, and one Family value per link, while the other categories allow multiples.
+XFN (XHTML Friends Network) is a way to say how you know the person behind a link, using values like `friend`, `colleague`, `spouse`, or `met` in the link's standard HTML `rel` attribute. The plugin supports all 18 values of the [XFN 1.1 specification](https://gmpg.org/xfn/11) across 7 categories, and enforces the spec's rules — you can pick only one Friendship, one Geographical, and one Family value per link, while the other categories allow multiples.
 
 ## Does this restore the classic Link Manager?
 
@@ -52,7 +52,7 @@ No. It makes no external requests and includes no analytics. See [Privacy and da
 
 ## Does it integrate with the IndieWeb?
 
-Yes, in a few ways: `rel="me"` identity links, support for blocks that expose an event URL (RSVP cards), and an automatic bridge for the separate Outpost plugin — relationships posted by a Micropub client through Outpost are applied to the matching links in your content. See [Common tasks](/link-extension-for-xfn/common-tasks/).
+Yes, in a few ways: [`rel="me"`](https://indieweb.org/rel-me) identity links, support for blocks that expose an event URL (RSVP cards), and an automatic bridge for the separate [Outpost](https://courtneyr-dev.github.io/outpost/) plugin — relationships posted by a [Micropub](https://indieweb.org/Micropub) client through Outpost are applied to the matching links in your content. XFN itself is one of the [IndieWeb](https://indieweb.org/) building blocks. See [Common tasks](/link-extension-for-xfn/common-tasks/).
 
 ## Can I add custom relationship values?
 

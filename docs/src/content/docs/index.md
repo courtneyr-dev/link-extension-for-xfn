@@ -3,11 +3,11 @@ title: Link Extension for XFN
 description: "User documentation for Link Extension for XFN: add XFN relationship metadata to links in the WordPress block editor."
 ---
 
-Link Extension for XFN adds XFN (XHTML Friends Network) relationship options to the WordPress block editor's link tools, so you can say how you know the person behind a link. These docs help you install the plugin, tag your first link, and display relationships on your site.
+Link Extension for XFN adds [XFN (XHTML Friends Network)](https://gmpg.org/xfn/) relationship options to the WordPress block editor's link tools, so you can say how you know the person behind a link. These docs help you install the plugin, tag your first link, and display relationships on your site.
 
 ## What the plugin does
 
-XFN lets you describe how you know the person or site you're linking to — friend, colleague, spouse, met, and so on. The plugin stores those relationships in the link's standard HTML `rel` attribute, which is visible to anyone reading the page source and to tools that parse XFN. There are 18 values in 7 categories, and the plugin enforces the XFN 1.1 rules for which values can be combined.
+XFN lets you describe how you know the person or site you're linking to — friend, colleague, spouse, met, and so on. The plugin stores those relationships in the link's standard HTML `rel` attribute, which is visible to anyone reading the page source and to tools that parse XFN. There are 18 values in 7 categories, and the plugin enforces the [XFN 1.1](https://gmpg.org/xfn/11) rules for which values can be combined.
 
 It also ships three server-rendered blocks — **XFN Blogroll**, **Relationship Badge**, and **Relationship Directory** — that turn the relationships in your published content into browsable listings.
 
@@ -37,7 +37,7 @@ Link Extension for XFN is published in the [WordPress.org plugin directory](http
 
 - No specific theme is required — `rel` attributes work with any theme.
 - Frontend tooltips (a hover/focus popover showing a link's relationships) are gated to WordPress 7.0 or later by a feature flag; on 6.9 they don't appear. See [FAQ](/link-extension-for-xfn/faq/).
-- The optional Outpost plugin's Micropub bridge can set relationships automatically; see [Common tasks](/link-extension-for-xfn/common-tasks/).
+- The optional [Outpost](https://courtneyr-dev.github.io/outpost/) plugin's [Micropub](https://indieweb.org/Micropub) bridge can set relationships automatically; see [Common tasks](/link-extension-for-xfn/common-tasks/).
 
 ## Get help
 

@@ -7,7 +7,7 @@ Add your first XFN relationship to a link and see the result on your site.
 
 ## What XFN is, in one minute
 
-XFN (XHTML Friends Network) lets you say how you know the person behind a link. When you tag a link with values like `friend` or `colleague`, the plugin writes them into the link's standard HTML `rel` attribute — for example `<a href="https://example.com" rel="friend met">`. That's visible to anyone reading your page source and to tools that parse XFN. Nothing is sent anywhere; the data lives in your post content.
+[XFN (XHTML Friends Network)](https://gmpg.org/xfn/) lets you say how you know the person behind a link. When you tag a link with values like `friend` or `colleague`, the plugin writes them into the link's standard HTML `rel` attribute — for example `<a href="https://example.com" rel="friend met">`. That's visible to anyone reading your page source and to tools that parse XFN. Nothing is sent anywhere; the data lives in your post content.
 
 There are 18 relationship values in 7 categories. Some categories let you pick only one value (radio buttons), others allow several (checkboxes):
 
