@@ -1,4 +1,7 @@
-# Common tasks
+---
+title: Common tasks
+description: "How-to recipes for XFN work: inline links, block-level links, blogrolls, relationship pills, directories, and frontend verification."
+---
 
 Step-by-step instructions for the things you'll do most often with Link Extension for XFN.
 
@@ -10,7 +13,7 @@ Step-by-step instructions for the things you'll do most often with Link Extensio
 4. Pick relationships — one value each from Friendship, Geographical, and Family (they're choose-one groups), plus any of met, co-worker, colleague, muse, crush, date, sweetheart, or me.
 5. Click Apply, then save the post.
 
-The values are written to the link's `rel` attribute. Details: [Paragraph links](paragraph-links.md).
+The values are written to the link's `rel` attribute. Details: [Paragraph links](https://github.com/courtneyr-dev/link-extension-for-xfn/blob/main/docs/paragraph-links.md).
 
 ## Add relationships to a Button, Image, or other block-level link
 
@@ -20,7 +23,7 @@ The values are written to the link's `rel` attribute. Details: [Paragraph links]
 4. Choose relationships using the radio and checkbox groups; the selected values show as pills.
 5. Save the post.
 
-Blocks with a native `rel` attribute (like Button) store the values there; blocks without one store them under the block's `metadata.rel`. Details: [Button links](button-links.md), [Image links](image-links.md), [Other block links](other-block-links.md).
+Blocks with a native `rel` attribute (like Button) store the values there; blocks without one store them under the block's `metadata.rel`. Details: [Button links](https://github.com/courtneyr-dev/link-extension-for-xfn/blob/main/docs/button-links.md), [Image links](https://github.com/courtneyr-dev/link-extension-for-xfn/blob/main/docs/image-links.md), [Other block links](https://github.com/courtneyr-dev/link-extension-for-xfn/blob/main/docs/other-block-links.md).
 
 ## Enable the Inspector Controls panel
 
@@ -28,7 +31,7 @@ Blocks with a native `rel` attribute (like Button) store the values there; block
 2. Check **Inspector Controls** and click Save Changes.
 3. Refresh any open editor windows.
 
-See [Settings](settings.md).
+See [Settings](/link-extension-for-xfn/settings/).
 
 ## Remove relationships from a link
 
@@ -79,7 +82,7 @@ Each entry shows the URL, which post it came from, and its relationship pills. V
 2. Right-click the tagged link and choose Inspect.
 3. Check the anchor's `rel` attribute — for example `rel="friend met"`. Embed blocks without an internal anchor carry the values as `data-xfn-rel` on the figure element instead.
 
-The repo also ships `xfn-checker.js`, a snippet you can paste into the browser console to list every XFN link on the page, and `xfn-test-page-content.html`, ready-made test content. Full instructions: [XFN testing guide](XFN-TESTING-GUIDE.md).
+The repo also ships `xfn-checker.js`, a snippet you can paste into the browser console to list every XFN link on the page, and `xfn-test-page-content.html`, ready-made test content. Full instructions: [XFN testing guide](https://github.com/courtneyr-dev/link-extension-for-xfn/blob/main/docs/XFN-TESTING-GUIDE.md).
 
 ## Apply relationships posted through Outpost (Micropub)
 
@@ -91,8 +94,4 @@ If you run the separate Outpost plugin, its Micropub bridge can set XFN relation
 2. Wait up to 5 minutes — results are cached and refresh automatically when the cache expires.
 3. Check the frontend `rel` attribute directly (task above) to confirm the tags saved.
 
-More in [Troubleshooting](troubleshooting.md).
-
----
-
-[Documentation home](index.md) · Previous: [Settings](settings.md) · Next: [Troubleshooting](troubleshooting.md)
+More in [Troubleshooting](/link-extension-for-xfn/troubleshooting/).

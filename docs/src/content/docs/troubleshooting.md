@@ -1,4 +1,7 @@
-# Troubleshooting
+---
+title: Troubleshooting
+description: "Fixes for common Link Extension for XFN problems: missing XFN section, relationships not saving, empty blocks, and inert tooltips."
+---
 
 Symptoms, likely causes, and fixes for common problems. When nothing here helps, see "When to open an issue" at the bottom.
 
@@ -29,7 +32,7 @@ Symptoms, likely causes, and fixes for common problems. When nothing here helps,
 
 **Cause:** removed in 1.1.1. The setting existed in 1.0.x–1.1.0 but the toolbar button it promised was never implemented, so the checkbox did nothing.
 
-**Fix:** nothing to do — the two working interfaces cover the same relationships: the link popover's Advanced panel (inline links, always on) and the Inspector Controls panel (block-level links, enable in Settings). See [Settings](settings.md).
+**Fix:** nothing to do — the two working interfaces cover the same relationships: the link popover's Advanced panel (inline links, always on) and the Inspector Controls panel (block-level links, enable in Settings). See [Settings](/link-extension-for-xfn/settings/).
 
 ## Tooltips don't show on the frontend
 
@@ -58,7 +61,7 @@ On very large sites, note the scan covers the 500 most recent published posts an
 
 ## Settings don't seem to take effect
 
-**Fix:** click Save Changes, then refresh any open editor windows. Settings apply site-wide; every editor needs a refresh. See [Settings](settings.md#troubleshooting-settings).
+**Fix:** click Save Changes, then refresh any open editor windows. Settings apply site-wide; every editor needs a refresh. See [Settings](/link-extension-for-xfn/settings/#troubleshooting-settings).
 
 ## When to open an issue
 
@@ -66,8 +69,4 @@ If you've worked through the steps above:
 
 1. Check the FAQ in the plugin readme and search existing reports.
 2. Test with a default theme (such as Twenty Twenty-Four) and no other plugins active.
-3. Report bugs on [GitHub Issues](https://github.com/courtneyr-dev/link-extension-for-xfn/issues), or ask usage questions on the [WordPress.org support forum](https://wordpress.org/support/plugin/link-extension-for-xfn/). Include your WordPress and PHP versions and any browser console errors — see [SUPPORT.md](../SUPPORT.md) for the full checklist.
-
----
-
-[Documentation home](index.md) · Previous: [Common tasks](common-tasks.md) · Next: [FAQ](faq.md)
+3. Report bugs on [GitHub Issues](https://github.com/courtneyr-dev/link-extension-for-xfn/issues), or ask usage questions on the [WordPress.org support forum](https://wordpress.org/support/plugin/link-extension-for-xfn/). Include your WordPress and PHP versions and any browser console errors — see [SUPPORT.md](https://github.com/courtneyr-dev/link-extension-for-xfn/blob/main/SUPPORT.md) for the full checklist.

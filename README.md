@@ -8,13 +8,17 @@ Extends the native WordPress block editor link interface to include XFN (XHTML F
 
 ## User documentation
 
-Full user docs live in [docs/index.md](docs/index.md). Key pages:
+**User documentation:** [Read the complete Link Extension for XFN documentation](https://courtneyr-dev.github.io/link-extension-for-xfn/)
 
-- [Installation](docs/installation.md)
-- [Getting started](docs/getting-started.md)
-- [Settings](docs/settings.md)
-- [Common tasks](docs/common-tasks.md) — including the XFN Blogroll, Relationship Badge, and Relationship Directory blocks
-- [Troubleshooting](docs/troubleshooting.md)
+Key pages:
+
+- [Installation](https://courtneyr-dev.github.io/link-extension-for-xfn/installation/)
+- [Getting started](https://courtneyr-dev.github.io/link-extension-for-xfn/getting-started/)
+- [Settings](https://courtneyr-dev.github.io/link-extension-for-xfn/settings/)
+- [Common tasks](https://courtneyr-dev.github.io/link-extension-for-xfn/common-tasks/) — including the XFN Blogroll, Relationship Badge, and Relationship Directory blocks
+- [Troubleshooting](https://courtneyr-dev.github.io/link-extension-for-xfn/troubleshooting/)
+
+The docs site builds from [`docs/`](docs/) with Astro Starlight — see [docs/MAINTAINING.md](docs/MAINTAINING.md) to update it.
 
 ## Overview
 

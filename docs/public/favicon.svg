@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-label="Link Extension for XFN">
+  <title>Link Extension for XFN — plugin icon (two posts, one crossbar)</title>
+  <rect width="256" height="256" fill="#855c2a"></rect>
+  <rect x="14" y="14" width="228" height="228" rx="10" fill="none" stroke="#faf6ec" stroke-width="5" opacity="0.26"></rect>
+  <rect x="74" y="48" width="14" height="156" fill="#faf6ec"></rect>
+  <rect x="168" y="48" width="14" height="156" fill="#faf6ec"></rect>
+  <rect x="62" y="204" width="38" height="10" fill="#faf6ec"></rect>
+  <rect x="156" y="204" width="38" height="10" fill="#faf6ec"></rect>
+  <path d="M 70 112 L 186 112 L 210 128 L 186 144 L 70 144 L 46 128 Z" fill="#1c2e25"></path>
+</svg>

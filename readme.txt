@@ -383,6 +383,10 @@ Frontend relationship tooltips require WordPress 7.0 or later. On WordPress 6.9 
 * Responsive design with mobile-friendly collapsible toggles
 * High contrast mode support for enhanced accessibility
 
+## Documentation
+
+Full user documentation — installation, settings, common tasks, blocks, troubleshooting, privacy — lives at [courtneyr-dev.github.io/link-extension-for-xfn](https://courtneyr-dev.github.io/link-extension-for-xfn/).
+
 == Installation ==
 
 1. Upload the plugin files to the `/wp-content/plugins/link-extension-for-xfn` directory, or install the plugin through the WordPress plugins screen directly.

@@ -1,4 +1,7 @@
-# FAQ
+---
+title: FAQ
+description: "Short answers about Link Extension for XFN: what XFN is, which blocks work, what happens to rel attributes, and removed settings."
+---
 
 Answers to real questions about how Link Extension for XFN behaves.
 
@@ -19,7 +22,7 @@ Two places:
 
 ## What happened to the "Floating Toolbar Button" setting?
 
-It was removed in 1.1.1. The checkbox existed in earlier versions but the toolbar button it described was never implemented, so it did nothing. The two working interfaces — the link popover's Advanced panel and the optional Inspector Controls panel — cover the same relationships.
+It was removed in 1.0.4. The checkbox existed in earlier versions but the toolbar button it described was never implemented, so it did nothing. The two working interfaces — the link popover's Advanced panel and the optional Inspector Controls panel — cover the same relationships.
 
 ## Why don't tooltips appear on my links?
 
@@ -27,15 +30,17 @@ Frontend tooltips — the hover/focus popover that shows a link's relationships 
 
 ## Are my relationships private?
 
-No. Relationships are published as standard `rel` attributes in your page HTML, visible to anyone who views the source and to any tool that parses XFN. Think before tagging values like `spouse`, `crush`, or `co-resident`. See [Privacy and data](privacy-and-data.md).
+No. Relationships are published as standard `rel` attributes in your page HTML, visible to anyone who views the source and to any tool that parses XFN. Think before tagging values like `spouse`, `crush`, or `co-resident`. See [Privacy and data](/link-extension-for-xfn/privacy-and-data/).
 
 ## What happens to my relationships if I deactivate the plugin?
 
 They stay. Relationships live in your post content as `rel` attributes, not in a plugin table, so deactivating or deleting the plugin leaves existing links untouched. You just lose the editor controls, blocks, and tooltips.
 
+Two removal details worth knowing: the plugin has no uninstall script, so its single settings row (`xfn_link_extension_options`) stays in the database after deletion — remove it manually if you want a full purge. And the Blogroll, Relationship Badge, and Relationship Directory blocks are server-rendered, so after deletion they output nothing where they were placed.
+
 ## Why is my XFN Blogroll or Relationship Directory empty?
 
-Those blocks build their lists by scanning your published posts and pages for XFN-tagged links, with results cached for about 5 minutes. They need existing tagged links in published content to show anything. See [Troubleshooting](troubleshooting.md).
+Those blocks build their lists by scanning your published posts and pages for XFN-tagged links, with results cached for about 5 minutes. They need existing tagged links in published content to show anything. See [Troubleshooting](/link-extension-for-xfn/troubleshooting/).
 
 ## Does the plugin work with my theme?
 
@@ -43,16 +48,12 @@ Yes — `rel` attributes are part of standard HTML and don't depend on the theme
 
 ## Does the plugin send data anywhere or track anything?
 
-No. It makes no external requests and includes no analytics. See [Privacy and data](privacy-and-data.md).
+No. It makes no external requests and includes no analytics. See [Privacy and data](/link-extension-for-xfn/privacy-and-data/).
 
 ## Does it integrate with the IndieWeb?
 
-Yes, in a few ways: `rel="me"` identity links, support for blocks that expose an event URL (RSVP cards), and an automatic bridge for the separate Outpost plugin — relationships posted by a Micropub client through Outpost are applied to the matching links in your content. See [Common tasks](common-tasks.md).
+Yes, in a few ways: `rel="me"` identity links, support for blocks that expose an event URL (RSVP cards), and an automatic bridge for the separate Outpost plugin — relationships posted by a Micropub client through Outpost are applied to the matching links in your content. See [Common tasks](/link-extension-for-xfn/common-tasks/).
 
 ## Can I add custom relationship values?
 
 No. The plugin validates against the fixed XFN 1.1 list of 18 values.
-
----
-
-[Documentation home](index.md) · Previous: [Troubleshooting](troubleshooting.md) · Next: [Privacy and data](privacy-and-data.md)

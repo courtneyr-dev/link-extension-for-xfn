@@ -74,3 +74,7 @@ wp-includes/
 # Note: .wordpress-org/ is tracked in git for version control
 # but excluded from plugin ZIP via .distignore
 .gstack/
+
+# Docs site build output (docs/ is an Astro Starlight project)
+docs/dist/
+docs/.astro/

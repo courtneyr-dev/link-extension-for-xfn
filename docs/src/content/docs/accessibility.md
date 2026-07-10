@@ -1,4 +1,7 @@
-# Accessibility
+---
+title: Accessibility
+description: "The accessibility behavior built into the XFN editor interface, the evidence in the repository, and what still needs testing."
+---
 
 Accessibility-relevant behavior in the editor and on the frontend, what the repo shows, and what still needs independent testing. This page describes evidence; it does not certify compliance.
 
@@ -30,7 +33,3 @@ The directory's interactive controls use native semantics: the search field is a
 - Color contrast review of the relationship pills in both the editor and frontend styles.
 
 If you hit an accessibility problem, report it on [GitHub Issues](https://github.com/courtneyr-dev/link-extension-for-xfn/issues).
-
----
-
-[Documentation home](index.md) · Previous: [Privacy and data](privacy-and-data.md) · Next: [Screenshots](screenshots.md)
