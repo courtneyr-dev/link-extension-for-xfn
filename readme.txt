@@ -3,7 +3,7 @@
 Contributors:      courane01
 Tags:              xfn, links, relationships, accessibility, gutenberg
 Tested up to:      7.0
-Stable tag:        1.1.1
+Stable tag:        1.0.4
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 6.9
@@ -269,7 +269,7 @@ Absolutely! XFN includes professional relationships (co-worker, colleague) and c
 
 ### What happened to the "Floating Toolbar Button" setting?
 
-Removed in 1.1.1: the checkbox existed in earlier versions but the toolbar button it described was never implemented, so it did nothing. The two working interfaces — the link popover's Advanced panel (always on) and the optional Inspector Controls panel — cover the same relationships.
+Removed in 1.0.4: the checkbox existed in earlier versions but the toolbar button it described was never implemented, so it did nothing. The two working interfaces — the link popover's Advanced panel (always on) and the optional Inspector Controls panel — cover the same relationships.
 
 ### Tooltips don't appear on the frontend
 
@@ -319,7 +319,14 @@ Frontend relationship tooltips require WordPress 7.0 or later. On WordPress 6.9 
 
 ## Changelog
 
-= 1.1.1 =
+= 1.0.4 =
+
+**Everything since 1.0.3, consolidated.** The 1.1.0 release was GitHub-only and never reached WordPress.org; the public numbering continues from 1.0.3. Full per-release history lives in CHANGELOG.md on GitHub.
+
+* Added: Outpost integration — relationships written by Outpost's Micropub mp-xfn bridge are consumed automatically and mirrored into XFN metadata and rel attributes
+* Fixed: tooltips work again — the Interactivity view module was missing from 1.0.3 builds, leaving tooltips inert on every install
+* Fixed: links nested inside multiple block levels are no longer wrapped with duplicate tooltip markup
+* Fixed: relationship metadata is no longer dropped when saving posts offline or with unresolvable link hosts
 * Fixed: readme header uses the standard Contributors field, so the WordPress.org listing shows the plugin author again
 * Fixed: the editor scripts declared by the Blogroll, Relationship Badge, and Relationship Directory blocks now actually ship — earlier builds never emitted them
 * Fixed: build system rebuilt on the @wordpress/scripts native script-modules support; clean checkouts build again
@@ -327,13 +334,6 @@ Frontend relationship tooltips require WordPress 7.0 or later. On WordPress 6.9 
 * Removed: an unused editor nonce
 * Changed: requires WordPress 6.9 or newer; tested up to 7.0
 * Changed: the distributed plugin ships compiled build output only; uncompiled source lives in the GitHub repository
-
-= 1.1.0 =
-* Added: Outpost integration — relationships written by Outpost's Micropub mp-xfn bridge are now consumed automatically and mirrored into XFN metadata and rel attributes
-* Fixed: Tooltips work again — the Interactivity view module was missing from 1.0.3 builds, leaving tooltips inert on every install
-* Fixed: Links nested inside multiple block levels are no longer wrapped with duplicate tooltip markup
-* Fixed: Relationship metadata is no longer dropped when saving posts offline or with unresolvable link hosts
-* Technical: Repo-wide adoption of the canonical WordPress coding-standards ruleset with a real PHPStan gate in CI
 
 = 1.0.3 =
 * Fixed: WordPress Playground blueprint now works correctly with proper JSON structure

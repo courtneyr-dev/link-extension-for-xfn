@@ -16,7 +16,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Block pattern library with XFN examples
 - Import/export functionality for XFN settings
 
-## [1.1.1] - 2026-07-10
+## [1.0.4] - 2026-07-10
+
+> **Version renumbering.** WordPress.org never published 1.1.0 (its listing continues from 1.0.3), so the public line resumes at 1.0.4. The 1.1.0 entry below records a GitHub-only release; everything in it ships to WordPress.org as part of 1.0.4.
 
 ### Fixed
 
