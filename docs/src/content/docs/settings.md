@@ -27,6 +27,8 @@ For links inside text, the plugin adds a collapsible **XFN** section to the link
 
 To use it: select linked text, click the link, expand **Advanced**, then expand **XFN**. Pick relationships from the category groups (radio groups for choose-one categories, checkboxes for the rest), watch the count badge and "Active Relationships" pills update, then click Apply and save the post.
 
+![Link popover Advanced section showing the collapsible XFN area with a count badge and relationship button groups](../../assets/screenshots/editor-link-advanced-xfn.png)
+
 This covers the most common case — links inside paragraphs and other text — which is why it's always available. See [Paragraph links](https://github.com/courtneyr-dev/link-extension-for-xfn/blob/main/docs/paragraph-links.md) for a full walkthrough.
 
 ## Inspector Controls
@@ -34,6 +36,8 @@ This covers the most common case — links inside paragraphs and other text — 
 **Setting:** Inspector Controls · **Default:** off (unchecked)
 
 When enabled, an **XFN Relationships** panel appears in the editor's right-hand sidebar when you select a block-level link: Button, Image, Navigation Link, Site Logo, Post Title, Query Title, or Embed. The panel opens by default for those blocks and uses radio controls for the choose-one categories (with a "None" option) plus checkboxes for the multi-select ones, with a summary of the selected relationships as pills.
+
+![XFN Relationships sidebar panel showing radio and checkbox groups with selected relationship pills](../../assets/screenshots/editor-inspector-controls-button.png)
 
 Enable it if you:
 
