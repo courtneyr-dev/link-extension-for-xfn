@@ -36,7 +36,7 @@ This works out of the box — no settings needed.
 5. View the published post, right-click the link, and choose Inspect (browser developer tools).
    - Expected: the anchor shows `rel="friend met"`.
 
-(Screenshot planned: see [screenshot inventory](/link-extension-for-xfn/screenshots/).)
+![Link popover Advanced section showing the collapsible XFN area with a count badge and relationship button groups](../../assets/screenshots/editor-link-advanced-xfn.png)
 
 For a deeper walkthrough of this flow, see [Paragraph links](https://github.com/courtneyr-dev/link-extension-for-xfn/blob/main/docs/paragraph-links.md).
 
@@ -48,6 +48,8 @@ Blocks that are themselves links — Button, Image, Navigation Link, Site Logo, 
 2. Check **Inspector Controls** and click Save Changes.
 3. Back in the editor (refresh it), select a Button block with a URL set.
    - Expected: an "XFN Relationships" panel appears in the right-hand sidebar with the same category groups.
+
+![XFN Relationships sidebar panel showing radio and checkbox groups with selected relationship pills](../../assets/screenshots/editor-inspector-controls-button.png)
 
 See [Settings](/link-extension-for-xfn/settings/) for details, and [Button links](https://github.com/courtneyr-dev/link-extension-for-xfn/blob/main/docs/button-links.md) for the full workflow.
 

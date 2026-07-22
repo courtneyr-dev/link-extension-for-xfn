@@ -13,6 +13,8 @@ Step-by-step instructions for the things you'll do most often with Link Extensio
 4. Pick relationships — one value each from Friendship, Geographical, and Family (they're choose-one groups), plus any of met, co-worker, colleague, muse, crush, date, sweetheart, or me.
 5. Click Apply, then save the post.
 
+![Link popover Advanced section showing the collapsible XFN area with a count badge and relationship button groups](../../assets/screenshots/editor-link-advanced-xfn.png)
+
 The values are written to the link's `rel` attribute. Details: [Paragraph links](https://github.com/courtneyr-dev/link-extension-for-xfn/blob/main/docs/paragraph-links.md).
 
 ## Add relationships to a Button, Image, or other block-level link
@@ -22,6 +24,10 @@ The values are written to the link's `rel` attribute. Details: [Paragraph links]
 3. In the right-hand sidebar, find the **XFN Relationships** panel (it opens by default for these blocks).
 4. Choose relationships using the radio and checkbox groups; the selected values show as pills.
 5. Save the post.
+
+![XFN Relationships sidebar panel showing radio and checkbox groups with selected relationship pills](../../assets/screenshots/editor-inspector-controls-button.png)
+
+![Editor pill summary listing the active XFN relationships for a link](../../assets/screenshots/editor-active-pills.png)
 
 Blocks with a native `rel` attribute (like Button) store the values there; blocks without one store them under the block's `metadata.rel`. Details: [Button links](https://github.com/courtneyr-dev/link-extension-for-xfn/blob/main/docs/button-links.md), [Image links](https://github.com/courtneyr-dev/link-extension-for-xfn/blob/main/docs/image-links.md), [Other block links](https://github.com/courtneyr-dev/link-extension-for-xfn/blob/main/docs/other-block-links.md).
 
@@ -50,6 +56,8 @@ The **XFN Blogroll** block lists every XFN-tagged link found in your published p
    - **Show relationships** — when grouping by domain, show or hide the relationship pills (default on).
 3. Publish.
 
+![XFN Blogroll block grouping linked sites under relationship headings with counts](../../assets/screenshots/frontend-blogroll-block.png)
+
 The block scans your published posts and pages for links with XFN `rel` values and caches the result for about 5 minutes. If you haven't tagged any links yet (or the tagged posts aren't published), it shows "No XFN relationships found."
 
 ## Show relationship pills for a specific URL
@@ -60,6 +68,8 @@ The **Relationship Badge** block displays the XFN relationships your site has as
 2. Enter the exact URL you've tagged elsewhere on the site (it must match the link's `href` exactly).
 3. Optionally toggle **Show URL** (default on) to show or hide the linked URL next to the pills.
 4. Publish.
+
+![Relationship Badge block showing a URL with its XFN relationship pills](../../assets/screenshots/frontend-relationship-badge.png)
 
 The badge combines every relationship assigned to that URL across your published posts and pages. If the URL hasn't been tagged anywhere, it shows "No XFN relationships found for [URL]."
 
@@ -74,6 +84,8 @@ The **Relationship Directory** block renders a searchable, filterable list of ev
    - **Limit** — maximum number of links (default 50).
 3. Publish.
 
+![Relationship Directory block with a search box, relationship filter buttons, and a filtered list of links](../../assets/screenshots/frontend-relationship-directory.png)
+
 Each entry shows the URL, which post it came from, and its relationship pills. Visitors can type in the search box or click a relationship pill to narrow the list. Like the other blocks, it reads from a scan of published posts and pages cached for about 5 minutes — so it needs existing XFN-tagged links to show anything.
 
 ## Confirm relationships on the frontend
@@ -81,6 +93,8 @@ Each entry shows the URL, which post it came from, and its relationship pills. V
 1. View the published post.
 2. Right-click the tagged link and choose Inspect.
 3. Check the anchor's `rel` attribute — for example `rel="friend met"`. Embed blocks without an internal anchor carry the values as `data-xfn-rel` on the figure element instead.
+
+![Browser developer tools showing an anchor element with XFN values in its rel attribute](../../assets/screenshots/frontend-rel-devtools.png)
 
 The repo also ships `xfn-checker.js`, a snippet you can paste into the browser console to list every XFN link on the page, and `xfn-test-page-content.html`, ready-made test content. Full instructions: [XFN testing guide](https://github.com/courtneyr-dev/link-extension-for-xfn/blob/main/docs/XFN-TESTING-GUIDE.md).
 

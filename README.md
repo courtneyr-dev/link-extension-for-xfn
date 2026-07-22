@@ -68,11 +68,19 @@ The plugin provides XFN controls in two convenient locations:
 - **Button groups** for easy relationship selection with mutual exclusivity support
 - **Real-time validation** preventing invalid relationship combinations
 
-## Screenshot
+## Screenshots
 
 ![Link Extension for XFN interface showing collapsible sections, relationship selection buttons organized by category, and visual relationship pills displaying active selections](.wordpress-org/screenshot-1.png)
 
 _The XFN interface in action: Collapsible relationship categories with button groups for easy selection, and visual pills showing active relationships at a glance._
+
+![Link popover Advanced section showing the collapsible XFN area with a count badge and relationship button groups](docs/src/assets/screenshots/editor-link-advanced-xfn.png)
+
+_Tag an inline link without leaving the popover._
+
+![XFN Relationships sidebar panel showing radio and checkbox groups with selected relationship pills](docs/src/assets/screenshots/editor-inspector-controls-button.png)
+
+_Block-level links get a full sidebar panel._
 
 ## Documentation
 

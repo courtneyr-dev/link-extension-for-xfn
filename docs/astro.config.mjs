@@ -45,7 +45,7 @@ export default defineConfig({
 				},
 				{
 					label: 'Using XFN links',
-					items: ['settings', 'common-tasks'],
+					items: ['settings', 'common-tasks', 'works-together'],
 				},
 				{
 					label: 'Reference',

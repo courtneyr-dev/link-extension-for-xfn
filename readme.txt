@@ -400,3 +400,8 @@ Full user documentation — installation, settings, common tasks, blocks, troubl
 
 1. Live demo in WordPress Playground showing XFN in action - interactive buttons and embedded content with relationship attributes, plus comprehensive testing instructions and examples
 2. The settings page (Settings → Link Extension for XFN) with the Inspector Controls option and the always-on Advanced panel note
+3. Link popover Advanced section with the collapsible XFN area - tag an inline link without leaving the popover, with a count badge and relationship button groups
+4. XFN Relationships sidebar panel for block-level links like Buttons, with radio and checkbox groups and selected relationship pills
+5. XFN Blogroll block grouping every tagged link on the site under relationship headings with counts
+6. Relationship Badge block showing one URL with its XFN relationship pills
+7. Relationship Directory block with a search box, relationship filter buttons, and a filtered list of links
