@@ -11,14 +11,13 @@
  */
 class XFN_Core_Abilities {
 
-	private const EXCLUSIVITY_GROUPS = [
-		'friendship'   => [ 'contact', 'acquaintance', 'friend' ],
-		'geographical' => [ 'co-resident', 'neighbor' ],
-		'family'       => [ 'child', 'parent', 'sibling', 'spouse', 'kin' ],
-	];
-
 	/**
 	 * Register all meta-based XFN abilities.
+	 *
+	 * Names carry a `-meta` qualifier because XFN_Content_Abilities registers
+	 * the same verbs against post_content. The two are separate storage
+	 * backends, not duplicates, and a shared name would mean core rejects
+	 * whichever one registers second.
 	 */
 	public function register(): void {
 		if ( ! function_exists( 'wp_register_ability' ) ) {
@@ -29,15 +28,14 @@ class XFN_Core_Abilities {
 		$this->register_get_relationships();
 		$this->register_add_relationship();
 		$this->register_remove_relationship();
-		$this->register_validate_relationships();
 	}
 
 	/**
-	 * Register the xfn/set_relationships ability.
+	 * Register the xfn/set-meta-relationships ability.
 	 */
 	private function register_set_relationships(): void {
 		wp_register_ability(
-			'xfn/set_relationships',
+			'xfn/set-meta-relationships',
 			[
 				'label'               => __( 'Set XFN Relationships', 'link-extension-for-xfn' ),
 				'description'         => __( 'Set all XFN relationships for a post, replacing any existing ones.', 'link-extension-for-xfn' ),
@@ -89,11 +87,11 @@ class XFN_Core_Abilities {
 	}
 
 	/**
-	 * Register the xfn/get_relationships ability.
+	 * Register the xfn/get-meta-relationships ability.
 	 */
 	private function register_get_relationships(): void {
 		wp_register_ability(
-			'xfn/get_relationships',
+			'xfn/get-meta-relationships',
 			[
 				'label'               => __( 'Get XFN Relationships', 'link-extension-for-xfn' ),
 				'description'         => __( 'Retrieve all XFN relationships for a post.', 'link-extension-for-xfn' ),
@@ -139,11 +137,11 @@ class XFN_Core_Abilities {
 	}
 
 	/**
-	 * Register the xfn/add_relationship ability.
+	 * Register the xfn/add-meta-relationship ability.
 	 */
 	private function register_add_relationship(): void {
 		wp_register_ability(
-			'xfn/add_relationship',
+			'xfn/add-meta-relationship',
 			[
 				'label'               => __( 'Add XFN Relationship', 'link-extension-for-xfn' ),
 				'description'         => __( 'Add an XFN relationship to a post.', 'link-extension-for-xfn' ),
@@ -187,11 +185,11 @@ class XFN_Core_Abilities {
 	}
 
 	/**
-	 * Register the xfn/remove_relationship ability.
+	 * Register the xfn/remove-meta-relationship ability.
 	 */
 	private function register_remove_relationship(): void {
 		wp_register_ability(
-			'xfn/remove_relationship',
+			'xfn/remove-meta-relationship',
 			[
 				'label'               => __( 'Remove XFN Relationship', 'link-extension-for-xfn' ),
 				'description'         => __( 'Remove an XFN relationship from a post by URL.', 'link-extension-for-xfn' ),
@@ -230,50 +228,7 @@ class XFN_Core_Abilities {
 	}
 
 	/**
-	 * Register the xfn/validate_relationships ability.
-	 */
-	private function register_validate_relationships(): void {
-		wp_register_ability(
-			'xfn/validate_relationships',
-			[
-				'label'               => __( 'Validate XFN Relationships', 'link-extension-for-xfn' ),
-				'description'         => __( 'Check if a set of XFN relationships respects exclusivity rules.', 'link-extension-for-xfn' ),
-				'category'            => XFN_Abilities_Manager::CATEGORY_SLUG,
-				'input_schema'        => [
-					'type'       => 'object',
-					'properties' => [
-						'rels' => [
-							'type'        => 'array',
-							'items'       => [ 'type' => 'string' ],
-							'description' => 'Array of XFN relationship values to validate.',
-						],
-					],
-					'required'   => [ 'rels' ],
-				],
-				'output_schema'       => [
-					'type'       => 'object',
-					'properties' => [
-						'valid'    => [ 'type' => 'boolean' ],
-						'warnings' => [
-							'type'  => 'array',
-							'items' => [ 'type' => 'string' ],
-						],
-					],
-				],
-				'execute_callback'    => [ $this, 'execute_validate_relationships' ],
-				'permission_callback' => function () {
-					return current_user_can( 'read' );
-				},
-				'meta'                => [
-					'show_in_rest' => true,
-					'version'      => '1.0.0',
-				],
-			]
-		);
-	}
-
-	/**
-	 * Execute the xfn/set_relationships ability.
+	 * Execute the xfn/set-meta-relationships ability.
 	 *
 	 * @param array $input Validated ability input.
 	 * @return array Ability result.
@@ -308,7 +263,7 @@ class XFN_Core_Abilities {
 	}
 
 	/**
-	 * Execute the xfn/get_relationships ability.
+	 * Execute the xfn/get-meta-relationships ability.
 	 *
 	 * @param array $input Validated ability input.
 	 * @return array Ability result.
@@ -339,7 +294,7 @@ class XFN_Core_Abilities {
 	}
 
 	/**
-	 * Execute the xfn/add_relationship ability.
+	 * Execute the xfn/add-meta-relationship ability.
 	 *
 	 * @param array $input Validated ability input.
 	 * @return array Ability result.
@@ -372,7 +327,7 @@ class XFN_Core_Abilities {
 	}
 
 	/**
-	 * Execute the xfn/remove_relationship ability.
+	 * Execute the xfn/remove-meta-relationship ability.
 	 *
 	 * @param array $input Validated ability input.
 	 * @return array Ability result.
@@ -400,34 +355,6 @@ class XFN_Core_Abilities {
 
 		return [
 			'success' => true,
-		];
-	}
-
-	/**
-	 * Execute the xfn/validate_relationships ability.
-	 *
-	 * @param array $input Validated ability input.
-	 * @return array Ability result.
-	 */
-	public function execute_validate_relationships( array $input ): array {
-		$rels     = (array) $input['rels'];
-		$warnings = [];
-
-		foreach ( self::EXCLUSIVITY_GROUPS as $group_name => $group_values ) {
-			$matches = array_intersect( $rels, $group_values );
-			if ( count( $matches ) > 1 ) {
-				$warnings[] = sprintf(
-					/* translators: 1: group name, 2: conflicting values */
-					__( 'Exclusive group "%1$s" has multiple values: %2$s', 'link-extension-for-xfn' ),
-					$group_name,
-					implode( ', ', $matches )
-				);
-			}
-		}
-
-		return [
-			'valid'    => empty( $warnings ),
-			'warnings' => $warnings,
 		];
 	}
 }

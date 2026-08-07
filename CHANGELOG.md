@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- The meta-backed abilities in `XFN_Core_Abilities` now register. Their names used underscores (`xfn/set_relationships`), and core's `WP_Abilities_Registry::register()` only accepts `/^[a-z0-9-]+\/[a-z0-9-]+$/`, so each was refused with a `_doing_it_wrong()` notice and nothing else — invisible with `WP_DEBUG` off. They are now `xfn/set-meta-relationships`, `xfn/get-meta-relationships`, `xfn/add-meta-relationship`, and `xfn/remove-meta-relationship`. The `-meta` qualifier is load-bearing: `XFN_Content_Abilities` already owns `xfn/get-relationships` and its siblings, and two abilities cannot share a name. No aliases, since the underscored names never registered.
+- The five content abilities passed a top-level `type` property, which is not one of `WP_Ability`'s properties. Core discarded it and emitted a `_doing_it_wrong()` notice on every request that touched the registry. The tool/resource distinction now lives at `meta.mcp.type`, matching Post Formats for Block Themes.
+
+### Removed
+
+- The meta-backed `validate_relationships` ability. It took the same `rels` input as the content-backed `xfn/validate-relationships` and ran a strict subset of its checks, since content validation also rejects values outside the XFN 1.1 vocabulary. Dropped rather than renamed alongside the other four.
+
+### Added
+
+- `AbilitiesRegistrationTest` asserts every declared ability is present in `wp_get_abilities()` after init, that declared names are unique and satisfy core's grammar, and that the declared list and the registry agree in both directions.
+
 ### Planned Features
 
 - User preferences for default collapsible states
