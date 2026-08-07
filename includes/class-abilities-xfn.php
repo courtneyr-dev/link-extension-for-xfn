@@ -62,7 +62,6 @@ class XFN_Content_Abilities {
 				'label'               => __( 'Add XFN Relationship (Content)', 'link-extension-for-xfn' ),
 				'description'         => __( 'Parse post_content, find a matching link by URL, and add XFN rel values.', 'link-extension-for-xfn' ),
 				'category'            => XFN_Abilities_Manager::CATEGORY_SLUG,
-				'type'                => 'tool',
 				'input_schema'        => [
 					'type'       => 'object',
 					'properties' => [
@@ -97,6 +96,7 @@ class XFN_Content_Abilities {
 				'meta'                => [
 					'show_in_rest' => true,
 					'version'      => '1.0.0',
+					'mcp'          => [ 'type' => 'tool' ],
 				],
 			]
 		);
@@ -112,7 +112,6 @@ class XFN_Content_Abilities {
 				'label'               => __( 'Remove XFN Relationship (Content)', 'link-extension-for-xfn' ),
 				'description'         => __( 'Parse post_content, find a matching link by URL, and remove specified XFN rel values.', 'link-extension-for-xfn' ),
 				'category'            => XFN_Abilities_Manager::CATEGORY_SLUG,
-				'type'                => 'tool',
 				'input_schema'        => [
 					'type'       => 'object',
 					'properties' => [
@@ -147,6 +146,7 @@ class XFN_Content_Abilities {
 				'meta'                => [
 					'show_in_rest' => true,
 					'version'      => '1.0.0',
+					'mcp'          => [ 'type' => 'tool' ],
 				],
 			]
 		);
@@ -162,7 +162,6 @@ class XFN_Content_Abilities {
 				'label'               => __( 'Get XFN Relationships (Content)', 'link-extension-for-xfn' ),
 				'description'         => __( 'Scan post_content for links with XFN rel attributes. Optionally filter by post.', 'link-extension-for-xfn' ),
 				'category'            => XFN_Abilities_Manager::CATEGORY_SLUG,
-				'type'                => 'resource',
 				'input_schema'        => [
 					'type'       => 'object',
 					'properties' => [
@@ -198,6 +197,7 @@ class XFN_Content_Abilities {
 				'meta'                => [
 					'show_in_rest' => true,
 					'version'      => '1.0.0',
+					'mcp'          => [ 'type' => 'resource' ],
 				],
 			]
 		);
@@ -213,7 +213,6 @@ class XFN_Content_Abilities {
 				'label'               => __( 'Validate XFN Relationships (Content)', 'link-extension-for-xfn' ),
 				'description'         => __( 'Check if a set of XFN rel values respects XFN 1.1 exclusivity rules.', 'link-extension-for-xfn' ),
 				'category'            => XFN_Abilities_Manager::CATEGORY_SLUG,
-				'type'                => 'resource',
 				'input_schema'        => [
 					'type'       => 'object',
 					'properties' => [
@@ -242,6 +241,7 @@ class XFN_Content_Abilities {
 				'meta'                => [
 					'show_in_rest' => true,
 					'version'      => '1.0.0',
+					'mcp'          => [ 'type' => 'resource' ],
 				],
 			]
 		);
@@ -257,7 +257,6 @@ class XFN_Content_Abilities {
 				'label'               => __( 'Suggest XFN Relationship', 'link-extension-for-xfn' ),
 				'description'         => __( 'Suggest appropriate XFN rel values for a URL using AI or heuristics.', 'link-extension-for-xfn' ),
 				'category'            => XFN_Abilities_Manager::CATEGORY_SLUG,
-				'type'                => 'resource',
 				'input_schema'        => [
 					'type'       => 'object',
 					'properties' => [
@@ -297,6 +296,7 @@ class XFN_Content_Abilities {
 				'meta'                => [
 					'show_in_rest' => true,
 					'version'      => '1.0.0',
+					'mcp'          => [ 'type' => 'resource' ],
 				],
 			]
 		);

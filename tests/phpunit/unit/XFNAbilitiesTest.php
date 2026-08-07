@@ -80,23 +80,10 @@ class XFNAbilitiesTest extends WP_UnitTestCase {
 		$this->assertEmpty( $stored );
 	}
 
-	public function test_execute_validate_relationships_valid(): void {
-		$result = $this->abilities->execute_validate_relationships( array(
-			'rels' => array( 'friend', 'met', 'colleague' ),
-		) );
-
-		$this->assertTrue( $result['valid'] );
-		$this->assertEmpty( $result['warnings'] );
-	}
-
-	public function test_execute_validate_relationships_exclusive_violation(): void {
-		$result = $this->abilities->execute_validate_relationships( array(
-			'rels' => array( 'friend', 'acquaintance' ),
-		) );
-
-		$this->assertFalse( $result['valid'] );
-		$this->assertNotEmpty( $result['warnings'] );
-	}
+	// Exclusivity validation lives on XFN_Content_Abilities now; its coverage is
+	// in ContentAbilitiesTest. The meta-backed duplicate took the same `rels`
+	// input and ran a strict subset of the same checks, so it was removed rather
+	// than renamed alongside the other four.
 
 	public function test_execute_set_relationships_nonexistent_post(): void {
 		$result = $this->abilities->execute_set_relationships( array(

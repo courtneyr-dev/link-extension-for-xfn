@@ -33,12 +33,12 @@ class AbilitiesManagerTest extends WP_UnitTestCase {
 		$this->assertSame( 'xfn-relationships', XFN_Abilities_Manager::CATEGORY_SLUG );
 	}
 
-	public function test_get_ability_names_returns_ten(): void {
+	public function test_get_ability_names_returns_nine(): void {
 		$names = XFN_Abilities_Manager::get_ability_names();
 
-		$this->assertCount( 10, $names );
-		$this->assertContains( 'xfn/set_relationships', $names );
-		$this->assertContains( 'xfn/get_relationships', $names );
+		$this->assertCount( 9, $names );
+		$this->assertContains( 'xfn/set-meta-relationships', $names );
+		$this->assertContains( 'xfn/get-meta-relationships', $names );
 		$this->assertContains( 'xfn/add-relationship', $names );
 		$this->assertContains( 'xfn/suggest-relationship', $names );
 	}
@@ -49,7 +49,7 @@ class AbilitiesManagerTest extends WP_UnitTestCase {
 		$result = XFN_Abilities_Manager::filter_mcp_server_abilities( $existing );
 
 		$this->assertContains( 'other/ability', $result );
-		$this->assertCount( 11, $result ); // 1 existing + 10 XFN.
+		$this->assertCount( 10, $result ); // 1 existing + 9 XFN.
 	}
 
 	public function test_filter_ability_args_adds_mcp_public_to_xfn(): void {

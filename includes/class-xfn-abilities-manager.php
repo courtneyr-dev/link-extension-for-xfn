@@ -101,11 +101,10 @@ final class XFN_Abilities_Manager {
 	public static function get_ability_names(): array {
 		return array_merge(
 			[
-				'xfn/set_relationships',
-				'xfn/get_relationships',
-				'xfn/add_relationship',
-				'xfn/remove_relationship',
-				'xfn/validate_relationships',
+				'xfn/set-meta-relationships',
+				'xfn/get-meta-relationships',
+				'xfn/add-meta-relationship',
+				'xfn/remove-meta-relationship',
 			],
 			XFN_Content_Abilities::get_ability_names()
 		);
