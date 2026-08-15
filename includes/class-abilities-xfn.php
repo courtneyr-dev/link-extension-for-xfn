@@ -197,7 +197,12 @@ class XFN_Content_Abilities {
 				'meta'                => [
 					'show_in_rest' => true,
 					'version'      => '1.0.0',
-					'mcp'          => [ 'type' => 'resource' ],
+					'mcp'          => [
+						'type' => 'resource',
+						// Resource reads carry no ability input, so this URI resolves to
+						// the whole-site scan (the no-post_id branch of the callback).
+						'uri'  => 'xfn://relationships',
+					],
 				],
 			]
 		);
@@ -241,7 +246,7 @@ class XFN_Content_Abilities {
 				'meta'                => [
 					'show_in_rest' => true,
 					'version'      => '1.0.0',
-					'mcp'          => [ 'type' => 'resource' ],
+					'mcp'          => [ 'type' => 'tool' ],
 				],
 			]
 		);
@@ -296,7 +301,7 @@ class XFN_Content_Abilities {
 				'meta'                => [
 					'show_in_rest' => true,
 					'version'      => '1.0.0',
-					'mcp'          => [ 'type' => 'resource' ],
+					'mcp'          => [ 'type' => 'tool' ],
 				],
 			]
 		);
