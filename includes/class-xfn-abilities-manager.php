@@ -121,7 +121,14 @@ final class XFN_Abilities_Manager {
 	}
 
 	/**
-	 * Append XFN abilities to the MCP server abilities list.
+	 * Append registered XFN abilities to the MCP server abilities list.
+	 *
+	 * Only names present in the abilities registry are advertised. A declared
+	 * name can be absent from the registry — core rejects invalid names at
+	 * registration, and callers earlier than init cannot reach the registry
+	 * at all — and each advertised-but-unregistered name makes the
+	 * mcp-adapter log an error when it builds its tool list, so those names
+	 * must stay off the list.
 	 *
 	 * @since 1.0.0
 	 *
@@ -129,7 +136,14 @@ final class XFN_Abilities_Manager {
 	 * @return string[] Modified ability name strings.
 	 */
 	public static function filter_mcp_server_abilities( array $abilities ): array {
-		return array_merge( $abilities, self::get_ability_names() );
+		if ( ! function_exists( 'wp_has_ability' ) || ! did_action( 'init' ) ) {
+			return $abilities;
+		}
+
+		return array_merge(
+			$abilities,
+			array_values( array_filter( self::get_ability_names(), 'wp_has_ability' ) )
+		);
 	}
 
 	/**
