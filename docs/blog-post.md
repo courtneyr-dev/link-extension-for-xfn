@@ -89,7 +89,7 @@ Plus—and I'm just being real here—I was *annoyed*. Annoyed that every conver
 
 ## What I Actually Built
 
-The [Link Extension for XFN](https://github.com/courtneyr-dev/xfn-link-extension) is a WordPress plugin that adds XFN relationship options to the block editor. Every link—in paragraphs, buttons, navigation menus, lists, embeds—gets a collapsible XFN section where you can mark your relationships.
+The [Link Extension for XFN](https://github.com/courtneyr-dev/link-extension-for-xfn) is a WordPress plugin that adds XFN relationship options to the block editor. Every link—in paragraphs, buttons, navigation menus, lists, embeds—gets a collapsible XFN section where you can mark your relationships.
 
 It's designed to be:
 - **Unobtrusive**: Collapsible interface that stays out of your way
@@ -130,7 +130,7 @@ The web has always been better at remembering than we give it credit for. We jus
 
 ## Try It Yourself
 
-If you're running WordPress with the block editor, you can [install the Link Extension for XFN](https://github.com/courtneyr-dev/xfn-link-extension) right now. Add it to your blogroll. Mark your friends. Link to yourself with `rel="me"`. Join the weird little corner of the web that still believes in semantic markup and distributed social graphs.
+If you're running WordPress with the block editor, you can [install the Link Extension for XFN](https://github.com/courtneyr-dev/link-extension-for-xfn) right now. Add it to your blogroll. Mark your friends. Link to yourself with `rel="me"`. Join the weird little corner of the web that still believes in semantic markup and distributed social graphs.
 
 And if you're building something in the fediverse or IndieWeb space—a crawler, an aggregator, a social reader—consider looking for XFN relationships. Let's see what happens when the web finally gets to be social on its own terms.
 

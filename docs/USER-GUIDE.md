@@ -77,8 +77,8 @@ That's it! The plugin works immediately—no configuration needed.
 
 ### From GitHub
 
-1. Download from https://github.com/courtneyr-dev/xfn-link-extension
-2. Extract to `/wp-content/plugins/xfn-link-extension/`
+1. Download from https://github.com/courtneyr-dev/link-extension-for-xfn
+2. Extract to `/wp-content/plugins/link-extension-for-xfn/`
 3. Go to **Plugins** and activate
 
 ---
@@ -457,7 +457,7 @@ The plugin is fully accessible, but follow these tips:
 2. **Refresh Editor**: Reload the page
 3. **Check Plugin Status**: Go to Plugins → ensure plugin is active
 4. **Clear Cache**: Clear browser cache and reload
-5. **Theme Conflict**: Test with a default theme (Twenty Twenty-Four)
+5. **Theme Conflict**: Test with a default theme (Twenty Twenty-Five)
 
 ---
 
@@ -561,10 +561,10 @@ A: It depends on the page builder. Works best with Gutenberg-compatible builders
 ### Compatibility Questions
 
 **Q: What WordPress version do I need?**
-A: WordPress 6.4 or higher.
+A: WordPress 6.9 or higher. The plugin is tested up to WordPress 7.1. Front-end tooltips need WordPress 7.0 or later; on 6.9 your relationships are still saved and published, the hover tooltip just doesn't appear.
 
 **Q: What PHP version is required?**
-A: PHP 7.4 or higher.
+A: PHP 8.2 or higher.
 
 **Q: Does this work with WordPress Multisite?**
 A: Yes, install network-wide or per-site.
@@ -610,7 +610,7 @@ A: No bulk operation is built in. Each link must be edited individually.
 
 ### Getting Help
 
-- **GitHub Issues**: https://github.com/courtneyr-dev/xfn-link-extension/issues
+- **GitHub Issues**: https://github.com/courtneyr-dev/link-extension-for-xfn/issues
 - **WordPress.org Support**: (Coming soon after WordPress.org submission)
 - **Documentation**: This guide and README.md in the plugin
 
@@ -657,6 +657,6 @@ Want to improve this plugin? Contributions are welcome!
 
 ---
 
-**Document Version**: 1.0.0
+**Document Version**: 1.1
 **Last Updated**: 2025-12-02
-**Plugin Version**: 1.0.0
+**Plugin Version**: 1.0.4

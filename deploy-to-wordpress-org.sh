@@ -81,7 +81,7 @@ fi
 
 # Copy assets from .wordpress-org directory
 if [ -d "$OLDPWD/.wordpress-org" ]; then
-    rsync -rc --delete "$OLDPWD/.wordpress-org/" assets/
+    rsync -rc --delete --exclude="*.md" "$OLDPWD/.wordpress-org/" assets/
     echo -e "${GREEN}✓ Assets copied${NC}"
 else
     echo -e "${YELLOW}⚠️  No .wordpress-org directory found, skipping assets${NC}"

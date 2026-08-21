@@ -6,6 +6,13 @@
 **Auditor**: Automated Security Review (WordPress.org Submission Preparation)
 **Status**: ✅ **PASSED** - No critical security issues found
 
+> **Historical record — describes version 1.0.0 (December 2024).** Kept as the audit artifact
+> for that release; its findings are not restated for later versions. Since this audit the
+> plugin's floor moved to WordPress 6.9 / PHP 8.2 (this report cites 6.4), the text domain and
+> main file were renamed to `link-extension-for-xfn`, and the unused `xfn_link_extension` nonce
+> was removed in 1.0.4. Current gates are PHPCS, PHPStan level 5, and `composer audit` in CI —
+> see [PRE-SUBMISSION-CHECKLIST.md](PRE-SUBMISSION-CHECKLIST.md).
+
 ---
 
 ## Executive Summary

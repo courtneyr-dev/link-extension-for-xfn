@@ -5,7 +5,7 @@
 I created an automated setup script for you!
 
 ```bash
-cd /Users/crobertson/Downloads/xfn/xfn-link-extension
+cd /path/to/link-extension-for-xfn
 ./setup-local-test.sh
 ```
 
@@ -134,15 +134,15 @@ wp plugin install plugin-check --activate
 cd ~/Local\ Sites/xfn-test/app/public
 
 # Copy plugin ZIP to plugins directory
-cp /Users/crobertson/Downloads/xfn/xfn-link-extension/xfn-link-extension.zip wp-content/plugins/
+cp /path/to/link-extension-for-xfn/link-extension-for-xfn.zip wp-content/plugins/
 
 # Unzip
 cd wp-content/plugins
-unzip xfn-link-extension.zip
-rm xfn-link-extension.zip
+unzip link-extension-for-xfn.zip
+rm link-extension-for-xfn.zip
 
 # Activate
-wp plugin activate xfn-link-extension
+wp plugin activate link-extension-for-xfn
 ```
 
 **Option B: Via WordPress Admin**
@@ -150,8 +150,8 @@ wp plugin activate xfn-link-extension
 1. Go to Plugins → Add New
 2. Click "Upload Plugin"
 3. Click "Choose File"
-4. Navigate to: `/Users/crobertson/Downloads/xfn/xfn-link-extension/`
-5. Select: `xfn-link-extension.zip`
+4. Navigate to: `/path/to/link-extension-for-xfn/`
+5. Select: `link-extension-for-xfn.zip`
 6. Click "Install Now"
 7. Click "Activate Plugin"
 
@@ -184,30 +184,7 @@ wp plugin activate xfn-link-extension
 
 ## Step 6: Test XFN Plugin (10-15 minutes)
 
-### Test 1: Floating Toolbar
-
-1. **Create New Post**
-   - Posts → Add New
-   - Title: "Test XFN Plugin"
-
-2. **Add Button Block**
-   - Click "+" → Search "Button"
-   - Type button text: "Click Me"
-
-3. **Test XFN Toolbar**
-   - With Button selected, look for "XFN" button in toolbar
-   - Click "XFN" button
-   - Popover should open
-   - Click "XFN" toggle to expand
-   - Select some relationships (e.g., Friend, Met)
-   - Click outside to close
-
-4. **Check Query Monitor**
-   - Look at toolbar badge
-   - Should be green (no errors)
-   - If red/orange, click to see details
-
-### Test 2: Inspector Controls
+### Test 1: Inspector Controls
 
 1. **Keep Button Block Selected**
 2. **Open Inspector** (right sidebar)
@@ -218,7 +195,7 @@ wp plugin activate xfn-link-extension
    - Use checkboxes for multiple selections
 6. **Verify Active Relationships Show**
 
-### Test 3: Link Advanced Panel
+### Test 2: Link Advanced Panel
 
 1. **Add Paragraph Block**
 2. **Type Some Text**: "Visit my website"
@@ -230,7 +207,7 @@ wp plugin activate xfn-link-extension
 8. **Expand and Select Relationships**
 9. **Click "Submit" to Save Link**
 
-### Test 4: Verify Output
+### Test 3: Verify Output
 
 1. **Save Post as Draft**
 2. **Preview Post**
@@ -262,7 +239,7 @@ wp plugin activate xfn-link-extension
 # View debug log
 tail -f ~/Local\ Sites/xfn-test/app/public/wp-content/debug.log
 
-# Should see no errors related to xfn-link-extension
+# Should see no errors related to link-extension-for-xfn
 # Press Ctrl+C to stop watching
 ```
 
@@ -270,13 +247,11 @@ tail -f ~/Local\ Sites/xfn-test/app/public/wp-content/debug.log
 
 1. **Open Browser DevTools** (F12 or Cmd+Option+I)
 2. **Go to Console Tab**
-3. **Should See**:
-   ```
-   XFN Link Extension loaded successfully! XFN controls will appear:
-   1. In the floating toolbar...
-   2. In Inspector Controls...
-   3. In a collapsible XFN section...
-   ```
+3. **Should See**: nothing from the plugin. Its logging runs through an `xfnLog` helper
+   gated on `XFN_DEBUG`, which is hardcoded `false` in `src/index.js`, so a normal build is
+   silent. Silence here is the pass condition — it does not mean the plugin failed to load.
+   (Confirm loading by selecting a link and checking that the XFN section appears, or by
+   running `wp plugin list` and seeing `link-extension-for-xfn` active.)
 4. **Should NOT See**:
    - Red error messages
    - Failed module imports
@@ -304,8 +279,8 @@ tail -f ~/Local\ Sites/xfn-test/app/public/wp-content/debug.log
 Complete this checklist during testing:
 
 ### Functionality
-- [ ] XFN toolbar button appears on link blocks
-- [ ] Floating toolbar popover opens and closes
+- [ ] XFN section appears in the Link Advanced panel
+- [ ] XFN Relationships panel appears in Inspector Controls
 - [ ] XFN collapsible section expands/collapses
 - [ ] Relationship selection works (radio buttons)
 - [ ] Relationship selection works (checkboxes)
@@ -335,7 +310,7 @@ Complete this checklist during testing:
 - [ ] Safari works
 
 ### Theme Tests
-- [ ] Twenty Twenty-Four works (default)
+- [ ] Twenty Twenty-Five works (default)
 - [ ] Current active theme works
 
 ---
@@ -352,16 +327,16 @@ wp plugin list | grep xfn
 
 **Should show**:
 ```
-xfn-link-extension    1.0.0    active
+link-extension-for-xfn    1.0.4    active
 ```
 
 **If not listed**:
 ```bash
 # Verify files exist
-ls -la wp-content/plugins/xfn-link-extension/
+ls -la wp-content/plugins/link-extension-for-xfn/
 
 # Re-activate
-wp plugin activate xfn-link-extension
+wp plugin activate link-extension-for-xfn
 ```
 
 ### XFN Button Doesn't Show
@@ -376,7 +351,7 @@ wp plugin activate xfn-link-extension
 2. Check Query Monitor → Scripts tab
 3. Verify build files exist:
    ```bash
-   ls -la ~/Local\ Sites/xfn-test/app/public/wp-content/plugins/xfn-link-extension/build/
+   ls -la ~/Local\ Sites/xfn-test/app/public/wp-content/plugins/link-extension-for-xfn/build/
    ```
 
 ### Query Monitor Shows Errors
@@ -390,7 +365,7 @@ wp plugin activate xfn-link-extension
 
 **Orange Badge - Warnings**:
 1. Usually safe to ignore if minor
-2. Check if related to xfn-link-extension
+2. Check if related to link-extension-for-xfn
 3. Review code if XFN-related
 
 ### Debug Log Shows Errors
@@ -422,8 +397,8 @@ wp option get siteurl
 tail -f wp-content/debug.log
 
 # Deactivate/reactivate plugin
-wp plugin deactivate xfn-link-extension
-wp plugin activate xfn-link-extension
+wp plugin deactivate link-extension-for-xfn
+wp plugin activate link-extension-for-xfn
 
 # Clear cache
 wp cache flush
@@ -484,7 +459,7 @@ After successful testing:
    - Icon and banners
 
 3. ✅ **Submit to WordPress.org**
-   - Upload: xfn-link-extension.zip
+   - Upload: link-extension-for-xfn.zip
    - URL: https://wordpress.org/plugins/developers/add/
 
 **You're ready! 🚀**

@@ -186,7 +186,7 @@ If XFN attributes aren't appearing on the front end:
 
 1. Check the browser console for JavaScript errors
 2. Verify the plugin is activated
-3. Test with a default WordPress theme (Twenty Twenty-Four)
+3. Test with a default WordPress theme (Twenty Twenty-Five)
 4. Disable other plugins to check for conflicts
 
 ---
