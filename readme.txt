@@ -3,7 +3,7 @@
 Contributors:      courane01
 Tags:              xfn, links, relationships, accessibility, gutenberg
 Tested up to:      7.1
-Stable tag:        1.0.4
+Stable tag:        1.0.5
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 6.9
@@ -318,6 +318,17 @@ Frontend relationship tooltips require WordPress 7.0 or later. On WordPress 6.9 
 4. **Update screen reader**: Ensure you're using a current version of your screen reader
 
 ## Changelog
+
+= 1.0.5 =
+**Compatibility with WordPress 7.1, and the Abilities API integration actually registers.**
+
+* Changed: tested up to WordPress 7.1. Verified on 7.1 with PHP 8.2 — the test suite, static analysis and coding standards all pass, every ability registers, the blocks and editor scripts load with their dependencies resolved, and no notices or deprecations are raised. The minimum is still WordPress 6.9.
+* Fixed: the four meta-backed XFN abilities never registered. Their names used underscores, which WordPress core rejects, so each was silently refused unless you had WP_DEBUG on. They are now xfn/set-meta-relationships, xfn/get-meta-relationships, xfn/add-meta-relationship and xfn/remove-meta-relationship.
+* Fixed: the five content abilities passed a property WordPress core does not recognise, which made core log a warning on every request that touched the abilities registry.
+* Fixed: three abilities were exposed to MCP clients as resources without the address a resource needs, so every page load logged three errors. Two of them need input a resource read cannot carry and are now tools; the third resolves at xfn://relationships.
+* Fixed: the MCP integration advertised abilities that had failed to register, producing one error per name in the adapter's logs. It now advertises only what is actually registered.
+* Changed: the activation check now requires PHP 8.2, matching what the plugin has declared since 1.0.4. It previously checked for 7.4 and would show you the wrong version in its error message.
+* Removed: a duplicate meta-backed validate_relationships ability. Use xfn/validate-relationships, which runs the same checks.
 
 = 1.0.4 =
 
