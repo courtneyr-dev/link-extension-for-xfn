@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- The activation gate now enforces **PHP 8.2**, matching the `Requires PHP` header and the
+  `>=8.2` composer constraint. It previously checked for 7.4 and would not have blocked PHP 8.0
+  or 8.1 on its own. In practice WordPress reads the 8.2 header and refuses activation below it,
+  so the weaker guard was masked rather than harmful — but the two disagreed in source, and the
+  guard's error message advertised the wrong floor. Verified at the boundary: 8.1.31 is blocked,
+  8.2.0 is allowed.
+- **Tested up to WordPress 7.1.** Verified against WordPress 7.1 final on PHP 8.2.32 with `WP_DEBUG` and `SCRIPT_DEBUG` enabled: the PHPUnit suite passes (86 tests: 22 unit, 64 integration), PHPStan level 5 and PHPCS report no errors, all nine `xfn/*` abilities register under core's name grammar, the three blocks and four editor scripts register with every dependency resolving, and the Interactivity tooltip module and stylesheet both serve. No PHP notices or deprecations were raised. The supported floor stays at 6.9. The Interactivity tooltip gate stays at 7.0 and up — 7.1 satisfies it, so tooltips are on.
+
 ### Fixed
 
 - The meta-backed abilities in `XFN_Core_Abilities` now register. Their names used underscores (`xfn/set_relationships`), and core's `WP_Abilities_Registry::register()` only accepts `/^[a-z0-9-]+\/[a-z0-9-]+$/`, so each was refused with a `_doing_it_wrong()` notice and nothing else — invisible with `WP_DEBUG` off. They are now `xfn/set-meta-relationships`, `xfn/get-meta-relationships`, `xfn/add-meta-relationship`, and `xfn/remove-meta-relationship`. The `-meta` qualifier is load-bearing: `XFN_Content_Abilities` already owns `xfn/get-relationships` and its siblings, and two abilities cannot share a name. No aliases, since the underscored names never registered.
