@@ -59,8 +59,8 @@ Set up at least 3 test environments:
 
 #### Environment 1: Fresh WordPress Install
 - **Purpose**: Clean slate testing
-- **Setup**: Fresh WordPress 6.4+ install
-- **Theme**: Twenty Twenty-Four
+- **Setup**: Fresh WordPress 6.9+ install
+- **Theme**: Twenty Twenty-Five
 - **Plugins**: Only XFN Link Extension
 
 #### Environment 2: Common Plugin Stack
@@ -83,8 +83,8 @@ Set up at least 3 test environments:
 
 | Software | Version | Notes |
 |----------|---------|-------|
-| WordPress | 6.4+ | Test on 6.4, 6.5, 6.6, latest |
-| PHP | 7.4+ | Test on 7.4, 8.0, 8.1, 8.2 |
+| WordPress | 6.9+ | Test on 6.9, 7.0, 7.1, trunk |
+| PHP | 8.2+ | Test on 8.2, 8.3, 8.4 (CI matrix) |
 | MySQL | 5.7+ or MariaDB 10.3+ | Standard |
 | Node.js | 18+ | For development testing |
 | npm | 9+ | For development testing |
@@ -113,8 +113,8 @@ Set up at least 3 test environments:
 Before starting tests, verify:
 
 - [ ] Plugin installed and activated successfully
-- [ ] WordPress version meets minimum (6.4+)
-- [ ] PHP version meets minimum (7.4+)
+- [ ] WordPress version meets minimum (6.9+)
+- [ ] PHP version meets minimum (8.2+)
 - [ ] No PHP errors in debug.log
 - [ ] No JavaScript console errors
 - [ ] Test content prepared (posts, pages, links)
@@ -285,34 +285,7 @@ Before starting tests, verify:
 
 ### Test Suite 2: Interface Location Testing
 
-#### Test Case 2.1: Floating Toolbar Interface
-**Priority**: Critical
-
-**Test Blocks**: Button, Navigation
-
-**Steps**:
-1. Add Button block
-2. Add button text and URL
-3. Click XFN button in toolbar
-4. Verify popover appears
-5. Expand XFN section
-6. Select relationships
-7. Verify summary updates
-8. Save
-
-**Expected Result**:
-- Popover appears below toolbar
-- XFN section expands/collapses
-- Relationships selectable
-- Summary pills appear
-- Count badge updates
-- Changes save on close
-
-**Pass/Fail**: ___________
-
----
-
-#### Test Case 2.2: Inspector Controls Interface
+#### Test Case 2.1: Inspector Controls Interface
 **Priority**: High
 
 **Test Blocks**: Button, Navigation, Paragraph (with link)
@@ -338,7 +311,7 @@ Before starting tests, verify:
 
 ---
 
-#### Test Case 2.3: Link Advanced Panel Interface
+#### Test Case 2.2: Link Advanced Panel Interface
 **Priority**: High
 
 **Test Blocks**: Paragraph (inline link), List (inline link)
@@ -365,27 +338,27 @@ Before starting tests, verify:
 
 ---
 
-#### Test Case 2.4: Panel Synchronization (Critical)
+#### Test Case 2.3: Panel Synchronization (Critical)
 **Priority**: Critical
 
 **Test Blocks**: Button, Image (block-level links)
 
-**Purpose**: Verify that Inspector sidebar and floating toolbar panels display the same XFN values
+**Purpose**: Verify that the Inspector sidebar and the Link Advanced panel display the same XFN values
 
 **Steps**:
-1. Add a Button block
-2. Add URL: "https://example.com"
+1. Add a Paragraph block and type some text
+2. Select part of the text and press Cmd/Ctrl+K, then enter "https://example.com"
 3. Open Inspector sidebar → XFN Relationships panel
 4. Select "Friend" and "Met"
 5. Verify values are selected
-6. Click the floating toolbar "XFN" button
+6. Reopen the link popover and expand **Advanced** → XFN section
 7. Verify the same values ("Friend" and "Met") appear selected
-8. Change to "Colleague" in the floating toolbar
-9. Close and reopen Inspector sidebar
+8. Change to "Colleague" in the Link Advanced panel
+9. Close and reopen the Inspector sidebar
 10. Verify "Colleague" is now selected there
 
 **Expected Result**:
-- Inspector sidebar and floating toolbar show identical XFN values
+- Inspector sidebar and Link Advanced panel show identical XFN values
 - Changes in one panel immediately reflect in the other
 - Both panels read from the same block attribute source
 - No mismatched states between panels
@@ -781,11 +754,11 @@ Before starting tests, verify:
 
 ### Test Suite 6: WordPress Version Compatibility
 
-#### Test Case 6.1: WordPress 6.4
-**Priority**: Critical (minimum version)
+#### Test Case 6.1: WordPress 6.9
+**Priority**: Critical (minimum supported version)
 
 **Steps**:
-1. Install WordPress 6.4
+1. Install WordPress 6.9
 2. Install plugin
 3. Run basic functionality tests
 4. Check for errors
@@ -799,8 +772,20 @@ Before starting tests, verify:
 
 ---
 
-#### Test Case 6.2: WordPress 6.5
+#### Test Case 6.2: WordPress 7.0
 **Priority**: High
+
+[Same steps as 6.1]
+
+Note: front-end tooltips first become available here. On 6.9 the `interactivity` feature
+flag holds them off by design — relationships still save and publish.
+
+**Pass/Fail**: ___________
+
+---
+
+#### Test Case 6.3: WordPress 7.1
+**Priority**: Critical (current "Tested up to" ceiling)
 
 [Same steps as 6.1]
 
@@ -808,19 +793,23 @@ Before starting tests, verify:
 
 ---
 
-#### Test Case 6.3: WordPress 6.6+
-**Priority**: High
-
-[Same steps as 6.1]
-
-**Pass/Fail**: ___________
-
----
-
-#### Test Case 6.4: WordPress Latest
+#### Test Case 6.4: WordPress trunk / nightly
 **Priority**: Critical
 
-[Same steps as 6.1, test with very latest version]
+[Same steps as 6.1, against the current nightly build]
+
+---
+
+#### Test Case 6.5: Below minimum (WordPress 6.8)
+**Priority**: Critical (negative test)
+
+**Steps**:
+1. Install WordPress 6.8
+2. Attempt to activate the plugin
+
+**Expected Result**:
+- Activation is refused with "Link Extension for XFN requires WordPress 6.9 or higher."
+- The plugin deactivates itself and does not fatal
 
 **Pass/Fail**: ___________
 
@@ -828,11 +817,11 @@ Before starting tests, verify:
 
 ### Test Suite 7: PHP Version Compatibility
 
-#### Test Case 7.1: PHP 7.4
-**Priority**: Critical (minimum version)
+#### Test Case 7.1: PHP 8.2
+**Priority**: Critical (minimum supported version)
 
 **Steps**:
-1. Configure server with PHP 7.4
+1. Configure server with PHP 8.2
 2. Install plugin
 3. Test activation and basic features
 4. Check PHP logs for errors
@@ -846,7 +835,7 @@ Before starting tests, verify:
 
 ---
 
-#### Test Case 7.2: PHP 8.0
+#### Test Case 7.2: PHP 8.3
 **Priority**: High
 
 [Same steps as 7.1]
@@ -855,7 +844,7 @@ Before starting tests, verify:
 
 ---
 
-#### Test Case 7.3: PHP 8.1
+#### Test Case 7.3: PHP 8.4
 **Priority**: High
 
 [Same steps as 7.1]
@@ -864,10 +853,20 @@ Before starting tests, verify:
 
 ---
 
-#### Test Case 7.4: PHP 8.2
-**Priority**: High
+#### Test Case 7.4: Below minimum (PHP 8.1)
+**Priority**: High (negative test)
 
-[Same steps as 7.1]
+**Steps**:
+1. Configure a server with PHP 8.1
+2. Attempt to activate the plugin
+
+**Expected Result**:
+- WordPress refuses activation, reading `Requires PHP: 8.2` from the plugin header
+- If activation is forced past that, the plugin's own gate refuses with
+  "Link Extension for XFN requires PHP 8.2 or higher." and deactivates itself
+
+Both checks agree on 8.2 as of 1.0.4. The gate previously checked 7.4 and would not have
+blocked 8.0 or 8.1 on its own; if you see the old message, you are testing a stale build.
 
 **Pass/Fail**: ___________
 
@@ -875,11 +874,11 @@ Before starting tests, verify:
 
 ### Test Suite 8: Theme Compatibility
 
-#### Test Case 8.1: Twenty Twenty-Four
+#### Test Case 8.1: Twenty Twenty-Five
 **Priority**: Critical
 
 **Steps**:
-1. Activate Twenty Twenty-Four theme
+1. Activate Twenty Twenty-Five theme (the WordPress 7.1 default)
 2. Test all XFN interfaces
 3. Check styling
 4. Verify no conflicts
@@ -1583,16 +1582,16 @@ Before starting tests, verify:
 **Priority**: High
 
 **Steps**:
-1. Check for nonce usage in any AJAX
-2. Verify nonce validation
-3. Test without nonce
+1. Confirm there is no AJAX or form endpoint requiring a nonce
+2. Confirm no unused nonce is localized to the editor scripts
+3. If a REST validation endpoint is ever added, verify it mints and checks its own nonce
 4. Ensure protection present
 
 **Expected Result**:
 - Nonces used where needed
 - Validation enforced
 - CSRF protected
-- (Note: Plugin has minimal need for nonces)
+- (Note: the plugin has no AJAX or form endpoints. An unused `xfn_link_extension` nonce was localized in earlier versions and was removed in 1.0.4 — there should be no nonce in the editor payload.)
 
 **Pass/Fail**: ___________
 
@@ -1897,6 +1896,6 @@ Before marking release as ready:
 
 ---
 
-**Document Version**: 1.0.0
+**Document Version**: 1.1
 **Last Updated**: 2025-12-02
-**Plugin Version**: 1.0.0
+**Plugin Version**: 1.0.4

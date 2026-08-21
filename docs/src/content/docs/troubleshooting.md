@@ -30,7 +30,7 @@ Symptoms, likely causes, and fixes for common problems. When nothing here helps,
 
 ## I remember a "Floating Toolbar Button" setting — where did it go?
 
-**Cause:** removed in 1.1.1. The setting existed in 1.0.x–1.1.0 but the toolbar button it promised was never implemented, so the checkbox did nothing.
+**Cause:** removed in 1.0.4. The setting existed in 1.0.0–1.0.3 but the toolbar button it promised was never implemented, so the checkbox did nothing.
 
 **Fix:** nothing to do — the two working interfaces cover the same relationships: the link popover's Advanced panel (inline links, always on) and the Inspector Controls panel (block-level links, enable in Settings). See [Settings](/link-extension-for-xfn/settings/).
 
@@ -38,7 +38,7 @@ Symptoms, likely causes, and fixes for common problems. When nothing here helps,
 
 **Likely cause:** frontend tooltips are gated to WordPress 7.0 or later by a feature flag. On WordPress 6.9 and earlier they do not appear at all.
 
-**Fix:** none needed — your relationships are still saved and present in the `rel` attribute (verify with browser developer tools). Tooltips will activate on WordPress 7.0+. Note: version 1.1.0 also fixed a packaging bug where the tooltip script was missing entirely in 1.0.3, so update if you're on an older version.
+**Fix:** none needed — your relationships are still saved and present in the `rel` attribute (verify with browser developer tools). Tooltips will activate on WordPress 7.0+. Note: version 1.0.4 also fixed a packaging bug where the tooltip script was missing entirely in 1.0.3, so update if you're on an older version.
 
 ## The Blogroll, Badge, or Directory block says "No XFN relationships found"
 
@@ -55,9 +55,9 @@ On very large sites, note the scan covers the 500 most recent published posts an
 
 ## Relationships disappear after saving
 
-**Likely cause:** versions before 1.1.0 could drop relationships when saving while offline or when linking to hosts that don't resolve.
+**Likely cause:** versions before 1.0.4 could drop relationships when saving while offline or when linking to hosts that don't resolve.
 
-**Fix:** update to 1.1.0 or later, where this was fixed, then re-apply the lost relationships.
+**Fix:** update to 1.0.4 or later, where this was fixed, then re-apply the lost relationships.
 
 ## Settings don't seem to take effect
 
@@ -68,5 +68,5 @@ On very large sites, note the scan covers the 500 most recent published posts an
 If you've worked through the steps above:
 
 1. Check the FAQ in the plugin readme and search existing reports.
-2. Test with a default theme (such as Twenty Twenty-Four) and no other plugins active.
+2. Test with a default theme (such as Twenty Twenty-Five) and no other plugins active.
 3. Report bugs on [GitHub Issues](https://github.com/courtneyr-dev/link-extension-for-xfn/issues), or ask usage questions on the [WordPress.org support forum](https://wordpress.org/support/plugin/link-extension-for-xfn/). Include your WordPress and PHP versions and any browser console errors — see [SUPPORT.md](https://github.com/courtneyr-dev/link-extension-for-xfn/blob/main/SUPPORT.md) for the full checklist.

@@ -6,6 +6,13 @@
 **Review Date**: December 1, 2024
 **Status**: ✅ **READY FOR TRANSLATION**
 
+> **Historical record — describes version 1.0.0 (December 2024).** Kept as the review artifact
+> for that release. **The text domain named throughout this report is out of date:** it is now
+> `link-extension-for-xfn`, matching the plugin slug as WordPress.org requires. Strings quoted
+> below also cite the old WordPress 6.4 / PHP 7.4 floors, which are now 6.9 and 8.2. The plugin
+> ships no `/languages` directory and does not call `load_plugin_textdomain()` — translations
+> come from WordPress.org. See [README-NOTES.md](README-NOTES.md) for current details.
+
 ---
 
 ## Executive Summary

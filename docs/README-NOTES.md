@@ -1,147 +1,110 @@
-# Important Notes for WordPress.org Submission
+# WordPress.org listing notes
 
-## CRITICAL: readme.txt Contributors Field
+Reference notes for the Link Extension for XFN listing on WordPress.org. The original
+submission is complete — the plugin has been live since the 1.0.0 release, and this file now
+records the current listing facts and the checks worth repeating at each release.
 
-**Current Issue**: The `Contributors` field in readme.txt currently says "WordPress Telex" which is NOT a valid format.
+For the deployment procedure itself see [SVN-DEPLOYMENT-GUIDE.md](SVN-DEPLOYMENT-GUIDE.md).
+For the per-release checklist see [PRE-SUBMISSION-CHECKLIST.md](PRE-SUBMISSION-CHECKLIST.md).
 
-**Required Action**: Update line 3 of readme.txt with your actual WordPress.org username(s):
+## Plugin information
 
-```
-Contributors: your-wporg-username
-```
+| Field | Value |
+|---|---|
+| Plugin name | Link Extension for XFN |
+| Slug | `link-extension-for-xfn` |
+| Main file | `link-extension-for-xfn.php` |
+| Text domain | `link-extension-for-xfn` (matches the slug) |
+| Version / Stable tag | 1.0.4 |
+| Requires at least | 6.9 |
+| Tested up to | 7.1 |
+| Requires PHP | 8.2 |
+| Contributors | `courane01` |
+| Author | Courtney Robertson |
+| License | GPLv2 or later |
 
-**Important**:
-- Contributors MUST be actual WordPress.org usernames (lowercase, hyphens only)
-- You need to create a WordPress.org account first if you don't have one
-- Go to https://login.wordpress.org/register to create an account
-- Multiple contributors are comma-separated: `contributor1, contributor2, contributor3`
+Listing: https://wordpress.org/plugins/link-extension-for-xfn/
 
-**Example**:
-```
-Contributors: john-doe, jane-smith
-```
+**Released tags:** 1.0.0, 1.0.1, 1.0.3, 1.0.4. There is no 1.0.2 tag on SVN despite a 1.0.2
+entry in the changelog, and 1.1.0 was a GitHub-only tag that never reached WordPress.org.
+Public numbering continues from 1.0.4 — don't cite 1.1.0 or 1.1.1 as released versions.
 
-## Other Pre-Submission Checklist
+## Checks worth repeating each release
 
-### Required Before Submission
+- [ ] `Tested up to` reflects the newest WordPress actually tested against, not the newest released
+- [ ] Stable tag matches the version in `link-extension-for-xfn.php`, its `XFN_LINK_EXTENSION_VERSION`
+      constant, and `package.json`
+- [ ] `npm run build` output is committed to Git, not merely built locally — every git-based
+      install ships whatever `build/` contains
+- [ ] `composer phpcs`, `composer phpstan`, and `composer test` all pass
+- [ ] `composer audit` reports no advisories
+- [ ] Tested against a clean install with `WP_DEBUG` on and no notices in `debug.log`
+- [ ] Screenshot captions in `readme.txt` still match the files in `.wordpress-org/`
 
-- [ ] Update Contributors field in readme.txt with actual WordPress.org username(s)
-- [ ] Create WordPress.org assets (icon, banners, screenshots)
-- [ ] Test plugin with Query Monitor active (zero errors/warnings)
-- [ ] Test with default theme (Twenty Twenty-Four)
-- [ ] Verify "Tested up to" is current WordPress version
-- [ ] Ensure "Stable tag" matches plugin version (currently 1.0.0)
-- [ ] Run through accessibility testing checklist
-- [ ] Test on multiple browsers (Chrome, Firefox, Safari)
-- [ ] Verify no trademark violations in plugin name
+## Tags
 
-### Security Checklist
+Current tags: `xfn`, `links`, `relationships`, `accessibility`, `gutenberg`.
 
-- [ ] All user input is sanitized
-- [ ] All output is escaped
-- [ ] Nonces are verified (check if plugin has forms/AJAX)
-- [ ] Proper capability checks
-- [ ] No direct file access (checked - plugin has ABSPATH check)
+Five is the maximum WordPress.org allows, and these five are already at that limit:
 
-### Code Quality
+- `xfn` — primary feature, exact match
+- `links` — core functionality
+- `relationships` — describes the purpose in plain words
+- `accessibility` — a real differentiator; the plugin targets WCAG 2.2 AA
+- `gutenberg` — platform integration
 
-- [ ] Run PHP CodeSniffer with WordPress standards
-- [ ] Run ESLint on JavaScript files
-- [ ] Check for deprecated WordPress functions
-- [ ] Verify no minified code without source maps
-- [ ] Test deactivation/reactivation
+Changing one means dropping another. Don't add a sixth; WordPress.org silently ignores the overflow.
 
-## Plugin Information
+## Assets
 
-- **Plugin Slug**: xfn-link-extension
-- **Version**: 1.0.0
-- **Requires at least**: 6.4
-- **Tested up to**: 6.8
-- **Requires PHP**: 7.4
-- **License**: GPLv2 or later
+Assets live in `.wordpress-org/` and are deployed to the SVN `assets/` directory, not to `trunk/`.
+All of the required images exist:
 
-## WordPress.org Submission Process
+- `icon-256x256.png`, `icon-128x128.png`, `icon.svg`
+- `banner-772x250.png`, `banner-1544x500.png`
+- `screenshot-1.png` through `screenshot-7.png`
 
-1. **Before Submission**
-   - Complete all items in checklist above
-   - Build final ZIP file: `npm run plugin-zip`
-   - Test the ZIP in a fresh WordPress install
-   - Verify ZIP excludes development files (.wordpress-org, src, node_modules)
+Each must stay under 1MB. Specifications and capture instructions are in
+`.wordpress-org/DESIGN-PROMPT.md`, `.wordpress-org/ASSETS-CHECKLIST.md`, and
+`.wordpress-org/SCREENSHOT-CAPTURE-GUIDE.md`.
 
-2. **Submit to WordPress.org**
-   - Go to https://wordpress.org/plugins/developers/add/
-   - Upload plugin ZIP file
-   - Wait for automated checks
-   - Plugin enters manual review queue (can take 2-14 days)
+Note: the deploy currently rsyncs the whole `.wordpress-org/` directory, so those markdown
+files are published to SVN alongside the images. Harmless, but they don't belong there.
 
-3. **After Approval**
-   - Checkout SVN repository
-   - Commit plugin files to trunk
-   - Tag release version (1.0.0)
-   - Upload assets to SVN /assets directory separately
-
-## Asset Requirements
-
-See `.wordpress-org/DESIGN-PROMPT.md` and `.wordpress-org/ASSETS-CHECKLIST.md` for detailed requirements.
-
-**Required Assets**:
-- icon-256x256.png (transparent background)
-- banner-772x250.png
-- banner-1544x500.png (retina banner)
-- screenshot-1.png through screenshot-8.png (1390×864px recommended)
-
-All assets must be under 1MB each.
-
-## Tags Strategy
-
-Current tags in readme.txt:
-- xfn
-- links
-- relationships
-- accessibility
-- gutenberg
-
-These are well-chosen:
-- `xfn` - Primary feature (exact match)
-- `links` - Core functionality
-- `relationships` - Descriptive of purpose
-- `accessibility` - Key differentiator (WCAG 2.2 AA)
-- `gutenberg` - Platform integration
-
-Maximum 5 tags allowed - current tags are optimal.
-
-## Author Information to Update
-
-Current placeholder information that needs to be updated:
-
-1. **Author**: WordPress Telex (verify if this is correct)
-2. **Author URI**: (currently not set in main plugin file line 10)
-3. **Plugin URI**: Currently set to https://github.com/courtneyr-dev/xfn-link-extension
-4. **Contributors in readme.txt**: Change from "WordPress Telex" to actual WordPress.org username
-
-## Build Verification
-
-Before creating final ZIP:
+## Build verification
 
 ```bash
 # Install dependencies
 npm install
+composer install --prefer-dist --no-progress
 
-# Build production version
+# Build production output
 npm run build
 
-# Verify build directory exists and contains:
+# Verify build directory contents
 ls -la build/
-# Should show: index.js, index.css, editor.css, view.js, block.json
+# index.js, index.css, index-rtl.css, view.js, *.asset.php,
+# blocks/{blogroll,relationship-badge,relationship-directory}/, interactivity/
 
 # Create plugin ZIP
 npm run plugin-zip
 
-# Verify ZIP contents (should NOT include):
-unzip -l xfn-link-extension.zip | grep -E "(node_modules|src/|.wordpress-org|.git)"
-# Should return nothing
+# Verify the ZIP excludes development files
+unzip -l link-extension-for-xfn.zip | grep -E "(node_modules|src/|\.wordpress-org|\.git)"
+# Should return nothing — /src is excluded by .distignore
 
-# Verify ZIP DOES include:
-unzip -l xfn-link-extension.zip | grep -E "(build/|readme.txt|xfn-link-extension.php)"
-# Should show these files
+# Verify the ZIP includes what it should
+unzip -l link-extension-for-xfn.zip | grep -E "(build/|includes/|readme\.txt|link-extension-for-xfn\.php)"
 ```
+
+## Translations
+
+There is no `/languages` directory in the repository and no `Domain Path` header. The plugin does
+not call `load_plugin_textdomain()`, which is correct — WordPress loads translations for
+WordPress.org-hosted plugins automatically from the text domain.
+
+`wp_set_script_translations()` (in `link-extension-for-xfn.php`) passes
+`XFN_LINK_EXTENSION_PLUGIN_PATH . 'languages'` as its path argument, and that directory does not
+exist. That is not an error: with no local JSON files present, WordPress falls back to the
+translations shipped from WordPress.org. Only add a `languages/` directory (and a matching
+`Domain Path` header) if you decide to bundle translation files with the plugin.

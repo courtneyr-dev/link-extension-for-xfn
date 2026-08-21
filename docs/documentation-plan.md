@@ -4,7 +4,7 @@ Plan and status for the Link Extension for XFN user documentation, including ope
 
 ## Plugin summary
 
-Link Extension for XFN (version 1.1.0, WordPress 6.9+, PHP 8.2 per plugin header) adds XFN relationship options to the block editor's link tools. Relationships — 18 values in 7 categories from the XFN 1.1 spec — are stored in the standard HTML `rel` attribute of links in post content and mirrored to `_xfn_relationships` post meta. It ships three frontend blocks (XFN Blogroll, Relationship Badge, Relationship Directory) that build lists from a site-wide scan of published content, frontend tooltips gated to WordPress 7.0+, an automatic bridge for the Outpost plugin's Micropub XFN data, and Abilities API integration for automation. It does not use the classic Link Manager and makes no external requests.
+Link Extension for XFN (version 1.0.4, WordPress 6.9+, PHP 8.2 per plugin header) adds XFN relationship options to the block editor's link tools. Relationships — 18 values in 7 categories from the XFN 1.1 spec — are stored in the standard HTML `rel` attribute of links in post content and mirrored to `_xfn_relationships` post meta. It ships three frontend blocks (XFN Blogroll, Relationship Badge, Relationship Directory) that build lists from a site-wide scan of published content, frontend tooltips gated to WordPress 7.0+, an automatic bridge for the Outpost plugin's Micropub XFN data, and Abilities API integration for automation. It does not use the classic Link Manager and makes no external requests.
 
 ## Audience
 
@@ -34,7 +34,7 @@ GitHub Pages from `/docs` on the main branch, plain Markdown with the Primer Jek
 ## Validation checklist
 
 - [ ] Every claim traceable to the repo (plugin source, readme.txt, CHANGELOG, audit).
-- [ ] Version/compat statements cite the plugin header (1.1.0, WP 6.9+, PHP 8.2).
+- [ ] Version/compat statements cite the plugin header (1.0.4, WP 6.9+, PHP 8.2, tested to 7.1).
 - [x] Floating toolbar button removed from the plugin and from all user docs (historical reports excepted).
 - [ ] Tooltip mentions always carry the WordPress 7.0+ caveat.
 - [ ] Block docs state the published-content scan and ~5 minute cache.
@@ -50,12 +50,12 @@ GitHub Pages from `/docs` on the main branch, plain Markdown with the Primer Jek
 
 ## Needs maintainer review
 
-1. **Floating Toolbar Button — resolved 2026-07-10: removed.** The setting and its copy were removed in the 1.1.1 cycle (the button was advertised in 1.0.x–1.1.0 but never implemented). The pre-existing guides have been updated; historical QA/report documents still mention it as a matter of record.
-2. **PHP requirement mismatch.** Header and readme.txt say Requires PHP 8.2; the activation gate only enforces PHP 7.4; CHANGELOG still says "PHP 7.4+ required"; composer requires >=8.2. Docs follow the header (8.2). Confirm the true floor and align all files.
-3. **Tooltips gated to WordPress 7.0+** — with the supported floor now at 6.9 and "Tested up to" at 7.0 (2026-07-09 audit), only sites still on 6.9 lack tooltips. readme.txt and these docs state the gate; no further action unless the flag's timing changes.
+1. **Floating Toolbar Button — resolved 2026-07-10: removed.** The setting and its copy were removed in 1.0.4 (the button was advertised in 1.0.0–1.0.3 but never implemented). The pre-existing guides have been updated; historical QA/report documents still mention it as a matter of record.
+2. **PHP requirement mismatch — resolved 2026-08-20: aligned to the header.** The floor is 8.2. The activation gate and its error message in `link-extension-for-xfn.php` now check for PHP 8.2, matching the `Requires PHP` header, readme.txt, and the `>=8.2` composer constraint. Verified at the boundary: 8.1.31 blocked, 8.2.0 allowed, and the whole CI matrix (8.2/8.3/8.4) allowed. The CHANGELOG no longer claims "PHP 7.4+ required". Note for future audits that PHPCS runs `testVersion 8.2-`, which checks 8.2 *and above* and so can never confirm the code would run below the floor.
+3. **Tooltips gated to WordPress 7.0+** — the supported floor is 6.9 and "Tested up to" is now 7.1 (2026-08-20 compatibility pass), so only sites still on 6.9 lack tooltips. Verified on WordPress 7.1: `XFN_Feature_Flags::has_interactivity()` returns true, the `xfn-links/tooltip` script module and its stylesheet both register and serve, and a negative control at 6.9 correctly returns false. readme.txt and these docs state the gate; no further action unless the flag's timing changes.
 4. **The three blocks were undocumented** in readme.txt, README.md, and prior docs. They're now documented here from source; confirm they're intended for release (they sit behind a default-on `blocks` feature flag) and add them to readme.txt.
-5. **Two divergent Playground blueprints** (root `blueprint.json` draft-on-post-new vs `assets/blueprints/blueprint.json` published `/xfn-demo/`). Confirm which drives the wp.org live preview.
-6. **Stale deploy/test artifacts:** `deploy-to-wordpress-org.sh` hardcodes version 1.0.3 with a 1.0.1-era commit message; `setup-local-test.sh` and `screenshots/README.md` reference the old `xfn-link-extension` slug/paths; `npm run sync` points to a missing `sync-to-local.sh`.
+5. **Three divergent Playground blueprints — still open, recounted 2026-08-20.** Root `blueprint.json` (draft-on-post-new), `assets/blueprints/blueprint.json` (published `/xfn-demo/`), and `assets/blueprints/blueprint-improved.json`. Only `assets/blueprints/` is deployed to SVN. Confirm which one drives the wp.org live preview and delete the others.
+6. **Stale deploy/test artifacts — resolved, verified 2026-08-20.** `deploy-to-wordpress-org.sh` now derives `PLUGIN_VERSION` from the readme.txt Stable tag (line 17) instead of hardcoding it, and its commit and tag messages interpolate that value. `setup-local-test.sh` and `screenshots/README.md` no longer reference the old `xfn-link-extension` slug, and `package.json` no longer declares a `sync` script.
 7. **WCAG 2.2 AA and screen reader testing claims are self-asserted** — no audit artifact in the repo. Docs describe rather than certify; consider an external audit or softer readme wording.
 8. **Nonce without a verifier — resolved 2026-07-10: removed.** The unused `xfn_link_extension` nonce is no longer localized; if the planned REST validation endpoint ships later, mint a purpose-named nonce with it.
 9. **`_xfn_relationships` meta is REST-visible to users who can edit posts** — confirm this exposure is intended and consider noting it in readme.txt's privacy-adjacent text.

@@ -5,6 +5,12 @@
 **Review Date**: December 1, 2024
 **Standards**: [WordPress PHP Coding Standards](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/php/)
 
+> **Historical record — describes version 1.0.0 (December 2024).** Kept as the review artifact
+> for that release. File paths below refer to `xfn-link-extension.php`, which is now
+> `link-extension-for-xfn.php`, and the code has since been reorganised into `includes/`.
+> Standards compliance is now enforced continuously by `composer phpcs` (WordPress ruleset plus
+> PHPCompatibilityWP at `testVersion 8.2-`) and `composer phpstan` at level 5, both gating CI.
+
 ---
 
 ## Executive Summary

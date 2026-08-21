@@ -1,7 +1,7 @@
 # Query Monitor Testing Guide - XFN Link Extension
 
 **Plugin**: XFN Relationship Link Extension
-**Version**: 1.0.0
+**Version**: 1.0.4
 **Testing Date**: December 1, 2024
 **Purpose**: Verify plugin passes Query Monitor checks before WordPress.org submission
 
@@ -53,8 +53,8 @@ Test every plugin feature while Query Monitor is active:
 
 #### Test 1: Plugin Activation
 ```bash
-wp plugin deactivate xfn-link-extension
-wp plugin activate xfn-link-extension
+wp plugin deactivate link-extension-for-xfn
+wp plugin activate link-extension-for-xfn
 ```
 
 **Check Query Monitor for**:
@@ -67,13 +67,17 @@ wp plugin activate xfn-link-extension
 
 ---
 
-#### Test 2: Block Editor - Floating Toolbar
+#### Test 2: Block Editor - Link Advanced Panel
+
+The "Floating Toolbar Button" was removed in 1.0.4 — it was advertised in 1.0.0–1.0.3 but
+never implemented. Test the Link Advanced panel instead.
 
 1. Create new post/page
-2. Add a Button block
-3. Click the "XFN" button in toolbar
-4. Select various relationships
-5. Save post
+2. Add a Paragraph block and type some text
+3. Select part of the text and press Cmd/Ctrl+K to add a link
+4. Enter a URL, open **Advanced**, and expand the XFN section
+5. Select various relationships
+6. Save post
 
 **Check Query Monitor for**:
 - ❌ JavaScript errors (Console tab)
@@ -159,8 +163,8 @@ Test XFN with various block types:
 
 Test with multiple themes:
 
-1. **Twenty Twenty-Four** (default block theme)
-2. **Twenty Twenty-Three** (previous block theme)
+1. **Twenty Twenty-Five** (default block theme as of WordPress 7.1)
+2. **Twenty Twenty-Four** (previous block theme)
 3. **Popular theme** (Kadence, Blocksy, or GeneratePress)
 
 **Check Query Monitor**:
@@ -205,7 +209,7 @@ Test with popular plugins:
 
 **Check**:
 - Line numbers point to your plugin files
-- No references to `xfn-link-extension.php` or `src/index.js` (compiled)
+- No references to `src/index.js` — the editor loads compiled `build/` output
 
 ### Scripts & Styles Tab
 
@@ -217,11 +221,19 @@ Test with popular plugins:
 
 **Expected**:
 ```
-✅ xfn-link-extension-editor (editor.css) - ONLY in editor
-✅ xfn-link-extension (index.js) - ONLY in editor
-✅ Dependencies: wp-blocks, wp-element, wp-components, etc.
-✅ NO assets loaded on frontend (verify by viewing published post)
+✅ link-extension-for-xfn (build/index.js + build/index.css) - editor only
+✅ xfn-blogroll-editor-script            (build/blocks/blogroll/index.js)
+✅ xfn-relationship-badge-editor-script  (build/blocks/relationship-badge/index.js)
+✅ xfn-relationship-directory-editor-script (build/blocks/relationship-directory/index.js)
+✅ Dependencies of the main script: react-jsx-runtime, wp-block-editor, wp-components,
+   wp-compose, wp-data, wp-element, wp-hooks, wp-i18n — all must resolve
 ```
+
+The plugin **does** load front-end assets — the guide previously claimed otherwise. On the
+front end expect the `xfn-tooltip` stylesheet and the `xfn-links/tooltip` script module
+(registered on `wp_enqueue_scripts`, enqueued lazily by `render_block` only when a page
+actually contains XFN links), plus the Relationship Directory block's view module. Tooltips
+are gated to WordPress 7.0+ via the `interactivity` feature flag, so on 6.9 none of it loads.
 
 ### Hooks & Actions Tab
 
@@ -259,10 +271,10 @@ Test with popular plugins:
 
 **Expected Console Logs** (informational only):
 ```
-XFN Link Extension loaded successfully! XFN controls will appear:
-1. In the floating toolbar for link blocks (Button, Navigation, etc.)
-2. In Inspector Controls for link blocks
-3. In a collapsible XFN section in link popovers for inline links
+(nothing — see below)
+The plugin logs through an `xfnLog` helper gated on `XFN_DEBUG`, which is hardcoded
+`false` in `src/index.js`. A shipped build prints nothing to the console, and silence
+is the pass condition rather than a sign the plugin failed to load.
 ```
 
 **Note**: These console.log statements are informational and safe, but could be removed for production.
@@ -285,7 +297,7 @@ the wp_enqueue_scripts, admin_enqueue_scripts, or login_enqueue_scripts hooks.
 
 **Verification**:
 ```php
-// xfn-link-extension.php:67
+// link-extension-for-xfn.php:67
 add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ) );
 ```
 
@@ -297,7 +309,7 @@ add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_a
 
 **Example**:
 ```
-Warning: Undefined array key 'rel' in xfn-link-extension.php on line 133
+Warning: Undefined array key 'rel' in link-extension-for-xfn.php on line 133
 ```
 
 **Cause**: Accessing array key without checking if it exists
@@ -360,11 +372,12 @@ Notice: Missing text domain in translation function
 
 **Verification**:
 ```javascript
-__( 'Friendship', 'xfn-link-extension' ) // ✅ Correct
+__( 'Friendship', 'link-extension-for-xfn' ) // ✅ Correct
 __( 'Friendship' ) // ❌ Missing text domain
 ```
 
-✅ This plugin consistently uses `'xfn-link-extension'` text domain.
+✅ This plugin consistently uses the `'link-extension-for-xfn'` text domain, which matches
+the plugin slug as WordPress.org requires.
 
 ---
 
@@ -388,7 +401,7 @@ grep "@wordpress/scripts" package.json
 ls -la build/
 
 # Verify compiled files
-ls -la build/index.js build/editor.css
+ls -la build/index.js build/index.css
 ```
 
 ✅ XFN plugin has correct build setup.
@@ -426,7 +439,7 @@ Before submitting to WordPress.org, verify:
 
 ### Translation Checks
 - [ ] ✅ All strings use translation functions
-- [ ] ✅ Text domain is consistent (`xfn-link-extension`)
+- [ ] ✅ Text domain is consistent (`link-extension-for-xfn`)
 - [ ] ✅ `wp_set_script_translations()` used for JS translations
 
 ---
@@ -461,13 +474,13 @@ fi
 
 echo ""
 echo "3. Deactivating and reactivating plugin..."
-wp plugin deactivate xfn-link-extension
-wp plugin activate xfn-link-extension
+wp plugin deactivate link-extension-for-xfn
+wp plugin activate link-extension-for-xfn
 echo "✅ Check Query Monitor for activation errors"
 
 echo ""
 echo "4. Checking for deprecated functions..."
-cd xfn-link-extension
+cd link-extension-for-xfn
 grep -r "get_settings\|wp_make_link_relative" . --exclude-dir=node_modules --exclude-dir=vendor
 if [ $? -ne 0 ]; then
     echo "✅ No deprecated functions found"
@@ -475,7 +488,7 @@ fi
 
 echo ""
 echo "5. Checking build files exist..."
-if [ -f "build/index.js" ] && [ -f "build/editor.css" ]; then
+if [ -f "build/index.js" ] && [ -f "build/index.css" ]; then
     echo "✅ Build files exist"
 else
     echo "❌ Build files missing. Run: npm run build"
@@ -510,7 +523,7 @@ Monitor `wp-content/debug.log` during testing:
 tail -f wp-content/debug.log
 
 # Search for plugin errors
-grep "xfn-link-extension" wp-content/debug.log
+grep "link-extension-for-xfn" wp-content/debug.log
 
 # Search for specific error types
 grep "Fatal error\|Warning\|Notice" wp-content/debug.log | grep xfn
@@ -575,6 +588,6 @@ The XFN Link Extension plugin follows WordPress best practices and should pass Q
 ---
 
 **Guide Version**: 1.0
-**Plugin Version**: 1.0.0
+**Plugin Version**: 1.0.4
 **Last Updated**: December 1, 2024
 **Ready for Testing**: YES

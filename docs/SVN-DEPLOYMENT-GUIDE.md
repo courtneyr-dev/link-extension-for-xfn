@@ -2,12 +2,20 @@
 
 Quick reference for deploying Link Extension for XFN to WordPress.org.
 
+The plugin is live at https://wordpress.org/plugins/link-extension-for-xfn/. Released tags
+are `1.0.0`, `1.0.1`, `1.0.3`, and `1.0.4` — `1.0.4` is the current stable tag. Examples below
+use `1.0.4`; substitute the version you are shipping.
+
+Deployment is manual. Nothing in `.github/workflows/ci.yml` publishes to WordPress.org — CI
+runs lint, PHPStan, tests, and `composer audit` only. A merged pull request or a version bump
+does not put anything on WordPress.org until someone runs the script below.
+
 ## Prerequisites
 
-- ✅ SVN installed (already verified)
+- ✅ SVN installed
 - ✅ WordPress.org account with commit access to the plugin
-- ✅ Plugin approved by WordPress.org team
-- ✅ All files committed to Git
+- ✅ A generated WordPress.org SVN password (your account password will not authenticate)
+- ✅ All files committed to Git, and `npm run build` output committed
 
 ## One-Command Deployment
 
@@ -24,25 +32,35 @@ The script will:
 4. ✅ Add new files and remove deleted files automatically
 5. ✅ Show you what will be committed for review
 6. ✅ Commit to trunk with your approval
-7. ✅ Create version tag (1.0.0)
+7. ✅ Create version tag (for example `1.0.4`)
 8. ✅ Clean up temporary files
 
 ## What Gets Deployed
 
 ### Plugin Files (to trunk/)
+Verified against the deployed `trunk/` on 2026-08-20:
+
 - ✅ `link-extension-for-xfn.php` - Main plugin file
 - ✅ `readme.txt` - WordPress.org readme
 - ✅ `/build/` - Compiled JavaScript and CSS
-- ✅ `/src/` - Source files (WordPress.org requirement)
+- ✅ `/includes/` - PHP classes
+- ✅ `/assets/blueprints/` - Playground blueprint
+- ✅ `blueprint.json`, `LICENSE`
+- ❌ `/src/` - **Excluded** via `.distignore`. The distributed plugin ships compiled
+  `build/` output only; uncompiled source lives in the GitHub repository
 - ❌ `/node_modules/` - Excluded
 - ❌ `.git/`, `.github/` - Excluded
 - ❌ Development docs (CHANGELOG.md, CONTRIBUTING.md, etc.) - Excluded
 
 ### Assets (to assets/)
-- ✅ `screenshot-1.png` - Main screenshot
+- ✅ `screenshot-1.png` through `screenshot-7.png`
 - ✅ `banner-772x250.png` - Small banner
 - ✅ `banner-1544x500.png` - Large banner
-- ✅ `icon-256x256.png` - Plugin icon
+- ✅ `icon-256x256.png`, `icon-128x128.png`, `icon.svg` - Plugin icons
+
+Note: the deploy rsyncs all of `.wordpress-org/` into `assets/`, so the eight design and
+checklist markdown files in that directory are currently published to SVN alongside the
+images. Harmless, but they do not belong there — exclude them if you tidy the deploy script.
 
 ## Manual Deployment (If Needed)
 
@@ -94,14 +112,14 @@ svn diff | less
 ### 7. Commit to Trunk
 
 ```bash
-svn ci -m "Deploy version 1.0.0 to trunk"
+svn ci -m "Deploy version 1.0.4 to trunk"
 ```
 
 ### 8. Create Tag
 
 ```bash
-svn cp trunk tags/1.0.0
-svn ci tags/1.0.0 -m "Tagging version 1.0.0"
+svn cp trunk tags/1.0.4
+svn ci tags/1.0.4 -m "Tagging version 1.0.4"
 ```
 
 ## After Deployment
@@ -115,9 +133,9 @@ svn ci tags/1.0.0 -m "Tagging version 1.0.0"
 
 - ✅ Screenshots appear correctly
 - ✅ Banner and icon display properly
-- ✅ Version number shows 1.0.0
+- ✅ Version number matches the tag you just pushed (currently 1.0.4)
 - ✅ Download button works
-- ✅ "Tested up to" shows WordPress 6.9
+- ✅ "Tested up to" shows WordPress 7.1
 - ✅ Installation instructions are clear
 
 ## Troubleshooting
@@ -145,12 +163,12 @@ svn --username your-wordpress-username co https://plugins.svn.wordpress.org/link
 
 ```bash
 # Delete a tag if needed
-svn rm https://plugins.svn.wordpress.org/link-extension-for-xfn/tags/1.0.0 -m "Remove incorrect tag"
+svn rm https://plugins.svn.wordpress.org/link-extension-for-xfn/tags/1.0.4 -m "Remove incorrect tag"
 
 # Then recreate it
 svn cp https://plugins.svn.wordpress.org/link-extension-for-xfn/trunk \
-       https://plugins.svn.wordpress.org/link-extension-for-xfn/tags/1.0.0 \
-       -m "Tagging version 1.0.0"
+       https://plugins.svn.wordpress.org/link-extension-for-xfn/tags/1.0.4 \
+       -m "Tagging version 1.0.4"
 ```
 
 ## Important Notes
@@ -165,28 +183,37 @@ svn cp https://plugins.svn.wordpress.org/link-extension-for-xfn/trunk \
 
 ### Do Commit These
 
-- ✅ `/src/` directory (WordPress.org requirement for compiled code)
-- ✅ `/build/` directory (compiled assets)
+- ✅ `/build/` directory (compiled assets — these must be committed to Git, not just built locally)
+- ✅ `/includes/` directory (PHP classes)
 - ✅ `readme.txt` (WordPress.org format)
 - ✅ Main plugin PHP file
 - ✅ Assets directory with screenshots/banners
 
 ### Version Numbers
 
-- Version in `link-extension-for-xfn.php`: `1.0.0`
-- Version in `readme.txt`: `1.0.0`
-- SVN tag: `tags/1.0.0`
+For the current release these are all `1.0.4`:
 
-**These must all match!**
+- Version in `link-extension-for-xfn.php` (header **and** the `XFN_LINK_EXTENSION_VERSION` constant)
+- Stable tag in `readme.txt`
+- Version in `package.json`
+- SVN tag: `tags/1.0.4`
+
+**These must all match.** They have drifted before: `package.json` sat at `1.1.0` after the
+`1.1.1 → 1.0.4` renumber until it was corrected. Check all four.
+
+Public numbering runs 1.0.0 → 1.0.1 → 1.0.3 → 1.0.4. There is no 1.0.2 tag on SVN, and
+1.1.0 was a GitHub-only tag that never reached WordPress.org — do not cite either as a
+released version.
 
 ## Future Updates
 
-For version 1.0.1 and beyond:
+For each subsequent release:
 
 1. Update version numbers in:
-   - `link-extension-for-xfn.php` (header and constant)
+   - `link-extension-for-xfn.php` (header and `XFN_LINK_EXTENSION_VERSION` constant)
    - `readme.txt` (Stable tag)
    - `package.json` (for consistency)
+   - Confirm `Tested up to:` reflects the newest WordPress you have actually tested against
 
 2. Run the deployment script again:
    ```bash
