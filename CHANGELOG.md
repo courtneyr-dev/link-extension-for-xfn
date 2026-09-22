@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- `xfn/suggest-relationship` required only `read`, so any authenticated user — not just someone who could edit content — could trigger the AI provider call behind it, with no cap on how often. The permission callback now requires `edit_posts`, matching the other content abilities in this file. The execute callback also caps callers at 20 requests per hour via a per-user transient, returning a `WP_Error` with `status => 429` once the cap is hit. The `url` and `context` inputs are now sanitized with `esc_url_raw()` and `wp_strip_all_tags()` before they reach the AI prompt, and `context` has its quote marks and line breaks stripped and is capped at 500 characters, closing a prompt-injection path where an unescaped quote in either input could break out of the quoted prompt string.
+
 ## [1.0.5] - 2026-08-20
 
 ### Changed
