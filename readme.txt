@@ -3,7 +3,7 @@
 Contributors:      courane01
 Tags:              xfn, links, relationships, accessibility, gutenberg
 Tested up to:      7.1
-Stable tag:        1.0.5
+Stable tag:        1.0.6
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 6.9
@@ -318,6 +318,11 @@ Frontend relationship tooltips require WordPress 7.0 or later. On WordPress 6.9 
 4. **Update screen reader**: Ensure you're using a current version of your screen reader
 
 ## Changelog
+
+= 1.0.6 =
+* Fixed: `xfn/suggest-relationship` required only `read`, so any authenticated user could trigger the AI provider call behind it. It now requires `edit_posts`, matching the plugin's other content abilities.
+* Fixed: `xfn/suggest-relationship` now caps callers at 20 requests per hour per user, returning a 429 error once the limit is hit.
+* Fixed: the `url` and `context` inputs reaching the AI prompt are now sanitized, and `context` is capped at 500 characters with quote marks and line breaks stripped, closing a prompt-injection path.
 
 = 1.0.5 =
 **Compatibility with WordPress 7.1, and the Abilities API integration actually registers.**

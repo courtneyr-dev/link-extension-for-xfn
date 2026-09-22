@@ -296,7 +296,7 @@ class XFN_Content_Abilities {
 				],
 				'execute_callback'    => [ $this, 'execute_suggest_relationship' ],
 				'permission_callback' => function () {
-					return current_user_can( 'read' );
+					return current_user_can( 'edit_posts' );
 				},
 				'meta'                => [
 					'show_in_rest' => true,
@@ -506,11 +506,20 @@ class XFN_Content_Abilities {
 	 * @since 1.0.0
 	 *
 	 * @param array $input Input parameters.
-	 * @return array Suggestions with confidence and source.
+	 * @return array|\WP_Error Suggestions with confidence and source, or a
+	 *                         WP_Error when the caller is rate limited.
 	 */
-	public function execute_suggest_relationship( array $input ): array {
-		$url     = (string) $input['url'];
-		$context = isset( $input['context'] ) ? (string) $input['context'] : '';
+	public function execute_suggest_relationship( array $input ) {
+		$user_id = get_current_user_id();
+		$key     = 'xfn_suggest_rl_' . $user_id;
+		$hits    = (int) get_transient( $key );
+		if ( $hits >= 20 ) {
+			return new \WP_Error( 'xfn_rate_limited', __( 'Too many suggestions requested; try again in an hour.', 'link-extension-for-xfn' ), [ 'status' => 429 ] );
+		}
+		set_transient( $key, $hits + 1, HOUR_IN_SECONDS );
+		$url     = esc_url_raw( (string) $input['url'] );
+		$context = isset( $input['context'] ) ? wp_strip_all_tags( (string) $input['context'] ) : '';
+		$context = preg_replace( '/[\r\n"]+/', ' ', substr( $context, 0, 500 ) );
 
 		// Try AI client first.
 		if ( function_exists( 'wp_ai_client' ) ) {

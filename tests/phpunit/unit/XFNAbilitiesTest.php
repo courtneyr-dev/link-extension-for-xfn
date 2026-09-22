@@ -103,4 +103,24 @@ class XFNAbilitiesTest extends WP_UnitTestCase {
 		$this->assertEmpty( $result['relationships'] );
 		$this->assertArrayHasKey( 'error', $result );
 	}
+
+	public function test_suggest_relationship_requires_edit_posts() {
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'subscriber' ) ) );
+		$ability = wp_get_ability( 'xfn/suggest-relationship' );
+		$this->assertNotNull( $ability );
+		$this->assertFalse( $ability->check_permissions( array( 'url' => 'https://example.test/' ) ) );
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'author' ) ) );
+		$this->assertTrue( $ability->check_permissions( array( 'url' => 'https://example.test/' ) ) );
+	}
+
+	public function test_suggest_relationship_is_rate_limited_per_user() {
+		$user = self::factory()->user->create( array( 'role' => 'author' ) );
+		wp_set_current_user( $user );
+		$ability = wp_get_ability( 'xfn/suggest-relationship' );
+		for ( $i = 0; $i < 20; $i++ ) {
+			$ability->execute( array( 'url' => 'https://example.test/' . $i ) );
+		}
+		$result = $ability->execute( array( 'url' => 'https://example.test/21' ) );
+		$this->assertInstanceOf( 'WP_Error', $result );
+	}
 }
