@@ -3,7 +3,7 @@
 Contributors:      courane01
 Tags:              xfn, links, relationships, accessibility, gutenberg
 Tested up to:      7.1
-Stable tag:        1.0.6
+Stable tag:        1.0.7
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 6.9
@@ -318,6 +318,11 @@ Frontend relationship tooltips require WordPress 7.0 or later. On WordPress 6.9 
 4. **Update screen reader**: Ensure you're using a current version of your screen reader
 
 ## Changelog
+
+= 1.0.7 =
+* Fixed: the 1.0.6 throttle on `xfn/suggest-relationship` incremented its counter before checking whether an AI client was available, so it also capped the free local heuristics. It now increments only inside the AI branch, immediately before the provider call — heuristic-only suggestions are never counted or limited. That branch only runs on a site that supplies a `wp_ai_client()` function; WordPress core does not ship one (core ships `wp_ai_client_prompt()`), so this throttle and the prompt quoting below are defense in depth for sites that add that integration themselves, not a fix for a live exposure.
+* Fixed: the per-user cap used a sliding window that reset on every request, so a caller who kept requesting could never actually be capped for a full hour. It now uses an hour-bucket key, capping at 20 requests per clock hour.
+* Fixed: the `context` input reaching the AI prompt was truncated with `substr()`, which counts bytes and could cut a multi-byte character in half. It now uses `mb_substr()`, truncating by character instead.
 
 = 1.0.6 =
 * Fixed: `xfn/suggest-relationship` required only `read`, so any authenticated user could trigger the AI provider call behind it. It now requires `edit_posts`, matching the plugin's other content abilities.

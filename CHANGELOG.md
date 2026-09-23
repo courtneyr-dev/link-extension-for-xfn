@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.7] - 2026-09-22
+
+### Fixed
+
+- The 1.0.6 throttle on `xfn/suggest-relationship` incremented its per-user counter (`get_transient`/`set_transient`) before checking `function_exists( 'wp_ai_client' )`, so it also counted and capped calls that never reached a provider and fell straight through to the free local heuristics. The increment now happens only inside the AI branch, immediately before the provider call, so heuristic-only calls are never counted or limited. That branch is reachable only on a site that supplies its own `wp_ai_client()` function — WordPress core does not ship one; core ships `wp_ai_client_prompt()`. The throttle and the prompt quoting below are defense in depth for sites that add that integration, not a fix for a live exposure on courtneyr.dev or any stock WordPress install.
+- The rate-limit key was a sliding window: `set_transient()` refreshed the expiry on every hit, so a caller who kept requesting at least once per hour would never actually be capped for a clock hour. The key is now bucketed by hour (`'xfn_suggest_rl_' . $user_id . '_' . floor( time() / HOUR_IN_SECONDS )`) with a `HOUR_IN_SECONDS` TTL, so the cap is 20 requests per clock hour.
+- `context` was truncated with `substr( $context, 0, 500 )`, which counts bytes; a multi-byte character straddling the cutoff could be cut in half. It now uses `mb_substr( $context, 0, 500 )`, truncating by character.
+- `execute_suggest_relationship()` had no native return type despite its docblock already declaring `@return array|\WP_Error`; it is now declared `array|\WP_Error` to match.
+
 ## [1.0.6] - 2026-09-22
 
 ### Fixed
