@@ -517,7 +517,7 @@ class XFN_Content_Abilities {
 		$context = preg_replace( '/[\r\n"]+/', ' ', mb_substr( $context, 0, 500 ) );
 
 		// Try AI client first.
-		if ( function_exists( 'wp_ai_client' ) ) {
+		if ( $this->ai_client_available() ) {
 			$user_id = get_current_user_id();
 			$key     = 'xfn_suggest_rl_' . $user_id . '_' . floor( time() / HOUR_IN_SECONDS );
 			$hits    = (int) get_transient( $key );
@@ -540,6 +540,24 @@ class XFN_Content_Abilities {
 			'suggestions' => $this->suggest_with_heuristics( $url, $context ),
 			'source'      => 'heuristics',
 		];
+	}
+
+	/**
+	 * Whether an AI client is available to handle suggest-relationship.
+	 *
+	 * A separate, overridable method rather than an inline
+	 * `function_exists( 'wp_ai_client' )` check so tests can exercise the
+	 * no-AI-client (heuristics-only, unthrottled) branch by subclassing:
+	 * once a test process defines its own `wp_ai_client()` stub,
+	 * `function_exists()` stays true for every test in that process, with
+	 * no way to "undefine" it per test.
+	 *
+	 * @since 1.0.7
+	 *
+	 * @return bool
+	 */
+	protected function ai_client_available(): bool {
+		return function_exists( 'wp_ai_client' );
 	}
 
 	// ── Helpers ──────────────────────────────────────────────────────────

@@ -16,6 +16,15 @@ class XFNAbilitiesTest extends WP_UnitTestCase {
 		\XFN_Test_AI_Client_Stub::reset();
 	}
 
+	public function tear_down(): void {
+		// Belt and suspenders alongside the set_up() reset above: makes sure
+		// this class never leaves canned AI-stub state (e.g. a JSON
+		// response set by an AI-branch test) behind for whatever test class
+		// runs next in the same process under --order-by=random.
+		\XFN_Test_AI_Client_Stub::reset();
+		parent::tear_down();
+	}
+
 	public function test_execute_set_relationships(): void {
 		$post_id = self::factory()->post->create( array(
 			'post_content' => '<p><a href="https://alice.example.com">Alice</a></p>',
@@ -138,6 +147,31 @@ class XFNAbilitiesTest extends WP_UnitTestCase {
 		$this->assertIsArray( $other_result, "a second user's calls should not be throttled by the first user's cap" );
 	}
 
+	public function test_suggest_relationship_skips_throttle_when_no_ai_client() {
+		$user = self::factory()->user->create( array( 'role' => 'author' ) );
+		wp_set_current_user( $user );
+
+		// The bootstrap defines a global wp_ai_client() stub so the AI
+		// branch is reachable at all in tests (see tests/phpunit/bootstrap.php);
+		// that makes function_exists( 'wp_ai_client' ) true for every test in
+		// this process, with no way to "undefine" it per test. To exercise the
+		// real no-AI-client path — a stock WordPress install, which does not
+		// ship wp_ai_client() — override the overridable check instead of the
+		// function.
+		$abilities = new class() extends \XFN_Content_Abilities {
+			protected function ai_client_available(): bool {
+				return false;
+			}
+		};
+
+		$key    = 'xfn_suggest_rl_' . $user . '_' . floor( time() / HOUR_IN_SECONDS );
+		$result = $abilities->execute_suggest_relationship( array( 'url' => 'https://example.test/' ) );
+
+		$this->assertIsArray( $result );
+		$this->assertSame( 'heuristics', $result['source'] );
+		$this->assertFalse( get_transient( $key ), 'a heuristic-only call must never touch the rate-limit transient' );
+	}
+
 	public function test_suggest_relationship_uses_ai_source_when_client_returns_suggestions() {
 		$user = self::factory()->user->create( array( 'role' => 'author' ) );
 		wp_set_current_user( $user );
@@ -183,12 +217,13 @@ class XFNAbilitiesTest extends WP_UnitTestCase {
 		wp_set_current_user( $user );
 		$ability = wp_get_ability( 'xfn/suggest-relationship' );
 
-		// 300 copies of a 3-byte character: 900 bytes but only 300
-		// characters. A byte-based substr( $context, 0, 500 ) would cut this
-		// well before the 300th character (mid-character, since 500 is not
-		// a multiple of 3); mb_substr() must keep it whole, since it is
-		// under the 500-character cap.
-		$context = str_repeat( '日', 300 );
+		// 600 copies of a 3-byte character: 1800 bytes, 600 characters, over
+		// the 500-character cap. A byte-based substr( $context, 0, 500 )
+		// would cut this well before the 167th character (mid-character,
+		// since 500 is not a multiple of 3), corrupting the UTF-8 and
+		// leaving well under 500 characters; mb_substr() must instead keep
+		// exactly the first 500 characters intact.
+		$context = str_repeat( '日', 600 );
 
 		$ability->execute( array(
 			'url'     => 'https://example.test/multibyte',
@@ -196,6 +231,12 @@ class XFNAbilitiesTest extends WP_UnitTestCase {
 		) );
 
 		$prompt = \XFN_Test_AI_Client_Stub::$prompts[0];
-		$this->assertStringContainsString( $context, $prompt );
+		$this->assertMatchesRegularExpression( '/and context "([^"]*)"/', $prompt );
+		preg_match( '/and context "([^"]*)"/', $prompt, $matches );
+		$recorded_context = $matches[1];
+
+		$this->assertTrue( mb_check_encoding( $recorded_context, 'UTF-8' ), 'truncated context must be valid UTF-8, not a split multi-byte character' );
+		$this->assertSame( 500, mb_strlen( $recorded_context ), 'truncation must land on exactly 500 characters, not 500 bytes' );
+		$this->assertSame( mb_substr( $context, 0, 500 ), $recorded_context );
 	}
 }
