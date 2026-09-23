@@ -13,6 +13,7 @@ class XFNAbilitiesTest extends WP_UnitTestCase {
 		parent::set_up();
 		wp_set_current_user( self::factory()->user->create( array( 'role' => 'administrator' ) ) );
 		$this->abilities = new XFN_Core_Abilities();
+		\XFN_Test_AI_Client_Stub::reset();
 	}
 
 	public function test_execute_set_relationships(): void {
@@ -117,10 +118,84 @@ class XFNAbilitiesTest extends WP_UnitTestCase {
 		$user = self::factory()->user->create( array( 'role' => 'author' ) );
 		wp_set_current_user( $user );
 		$ability = wp_get_ability( 'xfn/suggest-relationship' );
-		for ( $i = 0; $i < 20; $i++ ) {
-			$ability->execute( array( 'url' => 'https://example.test/' . $i ) );
+
+		for ( $i = 1; $i <= 20; $i++ ) {
+			$result = $ability->execute( array( 'url' => 'https://example.test/' . $i ) );
+			$this->assertIsArray( $result, "call {$i} of 20 should succeed" );
 		}
+
 		$result = $ability->execute( array( 'url' => 'https://example.test/21' ) );
 		$this->assertInstanceOf( 'WP_Error', $result );
+		$this->assertSame( 'xfn_rate_limited', $result->get_error_code() );
+		$error_data = $result->get_error_data();
+		$this->assertSame( 429, $error_data['status'] );
+
+		// A second user has their own counter and is unaffected by the first
+		// user's cap.
+		$other_user = self::factory()->user->create( array( 'role' => 'author' ) );
+		wp_set_current_user( $other_user );
+		$other_result = $ability->execute( array( 'url' => 'https://example.test/other' ) );
+		$this->assertIsArray( $other_result, "a second user's calls should not be throttled by the first user's cap" );
+	}
+
+	public function test_suggest_relationship_uses_ai_source_when_client_returns_suggestions() {
+		$user = self::factory()->user->create( array( 'role' => 'author' ) );
+		wp_set_current_user( $user );
+		\XFN_Test_AI_Client_Stub::$response = wp_json_encode( array(
+			array(
+				'rel'        => 'friend',
+				'confidence' => 0.9,
+				'reason'     => 'stub',
+			),
+		) );
+
+		$ability = wp_get_ability( 'xfn/suggest-relationship' );
+		$result  = $ability->execute( array( 'url' => 'https://example.test/' ) );
+
+		$this->assertIsArray( $result );
+		$this->assertSame( 'ai', $result['source'] );
+		$this->assertSame( 'friend', $result['suggestions'][0]['rel'] );
+	}
+
+	public function test_suggest_relationship_quotes_url_and_context_in_prompt() {
+		$user = self::factory()->user->create( array( 'role' => 'author' ) );
+		wp_set_current_user( $user );
+		$ability = wp_get_ability( 'xfn/suggest-relationship' );
+
+		$ability->execute( array(
+			'url'     => 'https://example.test/page',
+			'context' => "a quote \" here\r\nand a newline\nand another",
+		) );
+
+		$this->assertNotEmpty( \XFN_Test_AI_Client_Stub::$prompts );
+		$prompt = \XFN_Test_AI_Client_Stub::$prompts[0];
+
+		$this->assertStringNotContainsString( "\r", $prompt );
+		$this->assertStringNotContainsString( "\n", $prompt );
+		$this->assertMatchesRegularExpression(
+			'/Given the URL "https:\/\/example\.test\/page" and context "[^"]*"/',
+			$prompt
+		);
+	}
+
+	public function test_suggest_relationship_context_truncates_by_character_not_byte() {
+		$user = self::factory()->user->create( array( 'role' => 'author' ) );
+		wp_set_current_user( $user );
+		$ability = wp_get_ability( 'xfn/suggest-relationship' );
+
+		// 300 copies of a 3-byte character: 900 bytes but only 300
+		// characters. A byte-based substr( $context, 0, 500 ) would cut this
+		// well before the 300th character (mid-character, since 500 is not
+		// a multiple of 3); mb_substr() must keep it whole, since it is
+		// under the 500-character cap.
+		$context = str_repeat( '日', 300 );
+
+		$ability->execute( array(
+			'url'     => 'https://example.test/multibyte',
+			'context' => $context,
+		) );
+
+		$prompt = \XFN_Test_AI_Client_Stub::$prompts[0];
+		$this->assertStringContainsString( $context, $prompt );
 	}
 }

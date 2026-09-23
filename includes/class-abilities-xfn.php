@@ -501,7 +501,9 @@ class XFN_Content_Abilities {
 	/**
 	 * Suggest XFN relationships for a URL.
 	 *
-	 * Uses WP AI Client when available, falls back to URL heuristics.
+	 * Uses WP AI Client when available, falls back to URL heuristics. The
+	 * rate limit only applies to the AI provider branch: heuristic-only
+	 * calls (no `wp_ai_client()` available) are never counted or limited.
 	 *
 	 * @since 1.0.0
 	 *
@@ -509,20 +511,21 @@ class XFN_Content_Abilities {
 	 * @return array|\WP_Error Suggestions with confidence and source, or a
 	 *                         WP_Error when the caller is rate limited.
 	 */
-	public function execute_suggest_relationship( array $input ) {
-		$user_id = get_current_user_id();
-		$key     = 'xfn_suggest_rl_' . $user_id;
-		$hits    = (int) get_transient( $key );
-		if ( $hits >= 20 ) {
-			return new \WP_Error( 'xfn_rate_limited', __( 'Too many suggestions requested; try again in an hour.', 'link-extension-for-xfn' ), [ 'status' => 429 ] );
-		}
-		set_transient( $key, $hits + 1, HOUR_IN_SECONDS );
+	public function execute_suggest_relationship( array $input ): array|\WP_Error {
 		$url     = esc_url_raw( (string) $input['url'] );
 		$context = isset( $input['context'] ) ? wp_strip_all_tags( (string) $input['context'] ) : '';
-		$context = preg_replace( '/[\r\n"]+/', ' ', substr( $context, 0, 500 ) );
+		$context = preg_replace( '/[\r\n"]+/', ' ', mb_substr( $context, 0, 500 ) );
 
 		// Try AI client first.
 		if ( function_exists( 'wp_ai_client' ) ) {
+			$user_id = get_current_user_id();
+			$key     = 'xfn_suggest_rl_' . $user_id . '_' . floor( time() / HOUR_IN_SECONDS );
+			$hits    = (int) get_transient( $key );
+			if ( $hits >= 20 ) {
+				return new \WP_Error( 'xfn_rate_limited', __( 'Too many suggestions requested; try again in an hour.', 'link-extension-for-xfn' ), [ 'status' => 429 ] );
+			}
+			set_transient( $key, $hits + 1, HOUR_IN_SECONDS );
+
 			$ai_result = $this->suggest_with_ai( $url, $context );
 			if ( ! empty( $ai_result ) ) {
 				return [
