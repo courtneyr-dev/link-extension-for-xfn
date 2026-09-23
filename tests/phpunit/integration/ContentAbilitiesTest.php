@@ -11,6 +11,11 @@ class ContentAbilitiesTest extends WP_UnitTestCase {
 
 	public function set_up(): void {
 		parent::set_up();
+		// Reset regardless of run order: XFNAbilitiesTest's AI-branch tests
+		// set static state on this stub (e.g. a canned AI response), and
+		// under --order-by=random those tests can run before this class's
+		// suggest-relationship tests, which assume the heuristics fallback.
+		\XFN_Test_AI_Client_Stub::reset();
 		$this->abilities = new XFN_Content_Abilities();
 		wp_set_current_user( self::factory()->user->create( array( 'role' => 'editor' ) ) );
 	}
