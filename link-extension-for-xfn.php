@@ -3,7 +3,7 @@
  * Plugin Name:       Link Extension for XFN
  * Plugin URI:        https://github.com/courtneyr-dev/link-extension-for-xfn
  * Description:       Extends the native Gutenberg link interface to include XFN (XHTML Friends Network) relationship options across all blocks that support links. Features Inspector Controls integration and Link Advanced panel support.
- * Version:           1.0.7
+ * Version:           1.0.8
  * Requires at least: 6.9
  * Tested up to:      7.1
  * Requires PHP:      8.2
@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Define plugin constants.
-define( 'XFN_LINK_EXTENSION_VERSION', '1.0.7' );
+define( 'XFN_LINK_EXTENSION_VERSION', '1.0.8' );
 define( 'XFN_LINK_EXTENSION_PLUGIN_FILE', __FILE__ );
 define( 'XFN_LINK_EXTENSION_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'XFN_LINK_EXTENSION_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
@@ -502,6 +502,31 @@ class XFN_Link_Extension {
 		$all_values = array_unique( array_filter( $all_values ) );
 
 		return implode( ' ', $all_values );
+	}
+
+	/**
+	 * Build a readable display string (host + path) for a URL.
+	 *
+	 * Screen readers announce a bare URL character-by-character, which is
+	 * unusable for sighted and blind users alike. Showing the host and path
+	 * instead gives visible text that reads as a sentence while leaving the
+	 * underlying href untouched.
+	 *
+	 * @since 1.0.8
+	 * @param string $url The URL whose visible text should be derived.
+	 * @return string The host and path (e.g. "example.com/about"), or the
+	 *                original URL if it cannot be parsed.
+	 */
+	public static function display_url_text( $url ) {
+		$host = wp_parse_url( $url, PHP_URL_HOST );
+
+		if ( empty( $host ) ) {
+			return $url;
+		}
+
+		$path = wp_parse_url( $url, PHP_URL_PATH );
+
+		return $host . ( $path ? $path : '' );
 	}
 
 	/**

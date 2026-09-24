@@ -16,6 +16,37 @@ const { state } = store("xfn-directory", {
     get allRels() {
       return state.allRels || [];
     },
+    get resultsText() {
+      const context = getContext();
+      const search = (context.searchTerm || "").toLowerCase();
+      const filter = context.activeFilter || "";
+      const links = state.links || [];
+
+      const count = links.filter((link) => {
+        if (search) {
+          const haystack = [link.url, link.postTitle, ...link.rels]
+            .join(" ")
+            .toLowerCase();
+          if (!haystack.includes(search)) {
+            return false;
+          }
+        }
+
+        if (filter && !link.rels.includes(filter)) {
+          return false;
+        }
+
+        return true;
+      }).length;
+
+      const i18n = state.i18n || {};
+      const template =
+        count === 1
+          ? i18n.resultsTextSingular || "%d relationship shown"
+          : i18n.resultsTextPlural || "%d relationships shown";
+
+      return template.replace("%d", count);
+    },
   },
   actions: {
     setSearchTerm(event) {

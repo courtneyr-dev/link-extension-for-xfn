@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.8] - 2026-09-24
+
+### Fixed
+
+- The Relationship Directory block's `<input type="search">` had no associated label, relying on the placeholder alone. A `wp_unique_id()`-generated id now links a `.screen-reader-text` `<label>` to the input via `for`.
+- Frontend XFN tooltips were not associated with their trigger link for assistive tech. Each anchor now carries `aria-describedby` pointing at its tooltip's `wp_unique_id()`-generated id, and the tooltip carries a literal `hidden` attribute alongside the existing `data-wp-bind--hidden`, so it stays hidden before hydration and with JavaScript disabled.
+- Tooltips disappeared the instant the pointer left the anchor to move toward the tooltip itself, and `pointer-events: none` made them unreachable even if a user tried — a WCAG 1.4.13 (hoverable content) failure. The `data-wp-on--mouseenter`/`data-wp-on--mouseleave` directives moved from the anchor to the wrapping `.xfn-tooltip-wrap` span, `pointer-events: none` was removed, and the tooltip now wraps (`max-width: min(20rem, 90vw); white-space: normal;`) instead of forcing `white-space: nowrap`.
+- The family-relationship pills (child, parent, sibling, spouse, kin) rendered `#c75000` text on `#fff4ec` at 11px — 4.24:1 contrast, below the 4.5:1 WCAG AA floor for small text. Color is now `#9a3f00` at `0.75rem`.
+- The Relationship Directory's filter chips didn't expose their pressed state to assistive tech and were smaller than the 24x24px minimum target size. They now bind `aria-pressed` to the active filter, and `min-height`/`min-width: 24px` were added. A screen-reader-only `role="status"` region now announces "N relationships shown" as the search or filter changes, backed by a new `resultsText` derived state in the Interactivity store.
+- Blogroll, Relationship Directory, and Relationship Badge showed the raw URL as link text, which screen readers read out character by character. Visible link text now shows the host and path via `wp_parse_url()` (e.g. `example.com/about`); the underlying `href` is unchanged.
+
 ## [1.0.7] - 2026-09-22
 
 ### Fixed

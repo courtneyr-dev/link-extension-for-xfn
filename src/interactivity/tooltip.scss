@@ -21,8 +21,8 @@
   padding: 8px 12px;
   background: #1e1e1e;
   border-radius: 4px;
-  white-space: nowrap;
-  pointer-events: none;
+  max-width: min(20rem, 90vw);
+  white-space: normal;
 }
 
 .xfn-tooltip__arrow {

@@ -66,7 +66,7 @@ endif;
 <div <?php echo $lexfn_wrapper_attrs; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_block_wrapper_attributes() output is escaped by core. ?>>
 	<?php if ( $lexfn_show_url ) : ?>
 		<a href="<?php echo esc_url( $lexfn_url ); ?>" class="xfn-relationship-badge__link" rel="<?php echo esc_attr( implode( ' ', $lexfn_rels ) ); ?>">
-			<?php echo esc_html( $lexfn_url ); ?>
+			<?php echo esc_html( XFN_Link_Extension::display_url_text( $lexfn_url ) ); ?>
 		</a>
 	<?php endif; ?>
 	<span class="xfn-pills">
