@@ -3,7 +3,7 @@
 Contributors:      courane01
 Tags:              xfn, links, relationships, accessibility, gutenberg
 Tested up to:      7.1
-Stable tag:        1.0.7
+Stable tag:        1.0.8
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 6.9
@@ -318,6 +318,14 @@ Frontend relationship tooltips require WordPress 7.0 or later. On WordPress 6.9 
 4. **Update screen reader**: Ensure you're using a current version of your screen reader
 
 ## Changelog
+
+= 1.0.8 =
+* Improved: the Relationship Directory's search field now has an associated `<label>` instead of relying on the placeholder alone.
+* Improved: frontend tooltips are now linked to their anchor with `aria-describedby`, and stay hidden before hydration and with JavaScript disabled via a literal `hidden` attribute alongside the existing Interactivity binding.
+* Improved: tooltips no longer disappear when the pointer moves from the link onto them — the hover handlers moved to the wrapping element and `pointer-events: none` was removed, and long tooltips now wrap instead of overflowing (WCAG 1.4.13 hoverable content).
+* Improved: the family-relationship pills (child, parent, sibling, spouse, kin) now use a darker orange (#9a3f00) and a larger 0.75rem size, bringing their contrast up to WCAG AA for small text.
+* Improved: the Relationship Directory's filter chips now report their pressed state via `aria-pressed`, meet the 24x24px minimum target size, and a screen-reader-only status region announces how many relationships are shown as filters change.
+* Improved: links whose visible text was a bare URL (Blogroll, Relationship Directory, Relationship Badge) now show the host and path instead, while the underlying `href` is unchanged.
 
 = 1.0.7 =
 * Fixed: the 1.0.6 throttle on `xfn/suggest-relationship` incremented its counter before checking whether an AI client was available, so it also capped the free local heuristics. It now increments only inside the AI branch, immediately before the provider call — heuristic-only suggestions are never counted or limited. That branch only runs on a site that supplies a `wp_ai_client()` function; WordPress core does not ship one (core ships `wp_ai_client_prompt()`), so this throttle and the prompt quoting below are defense in depth for sites that add that integration themselves, not a fix for a live exposure.
