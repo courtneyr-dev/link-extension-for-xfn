@@ -73,9 +73,16 @@ $lexfn_wrapper_attrs = get_block_wrapper_attributes(
 	data-wp-interactive="xfn-directory"
 	data-wp-context='<?php echo esc_attr( $lexfn_context ); ?>'
 >
-	<?php if ( $lexfn_show_search ) : ?>
+	<?php
+	if ( $lexfn_show_search ) :
+		$lexfn_search_id = wp_unique_id( 'xfn-directory-search-' );
+		?>
 		<div class="xfn-directory__search">
+			<label class="screen-reader-text" for="<?php echo esc_attr( $lexfn_search_id ); ?>">
+				<?php esc_html_e( 'Search relationships', 'link-extension-for-xfn' ); ?>
+			</label>
 			<input
+				id="<?php echo esc_attr( $lexfn_search_id ); ?>"
 				type="search"
 				class="xfn-directory__search-input"
 				placeholder="<?php esc_attr_e( 'Search relationships…', 'link-extension-for-xfn' ); ?>"
