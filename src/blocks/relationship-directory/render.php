@@ -59,6 +59,12 @@ wp_interactivity_state(
 	[
 		'links'   => $lexfn_link_data,
 		'allRels' => $lexfn_all_rels,
+		'i18n'    => [
+			/* translators: %d: number of relationships currently shown. */
+			'resultsTextSingular' => __( '%d relationship shown', 'link-extension-for-xfn' ),
+			/* translators: %d: number of relationships currently shown. */
+			'resultsTextPlural'   => __( '%d relationships shown', 'link-extension-for-xfn' ),
+		],
 	]
 );
 
@@ -99,6 +105,7 @@ $lexfn_wrapper_attrs = get_block_wrapper_attributes(
 				class="xfn-pill xfn-directory__filter-btn"
 				data-wp-on--click="actions.clearFilter"
 				data-wp-class--xfn-pill--active="!context.activeFilter"
+				data-wp-bind--aria-pressed="!context.activeFilter"
 			>
 				<?php esc_html_e( 'All', 'link-extension-for-xfn' ); ?>
 			</button>
@@ -109,11 +116,13 @@ $lexfn_wrapper_attrs = get_block_wrapper_attributes(
 					data-rel="<?php echo esc_attr( $lexfn_rel ); ?>"
 					data-wp-on--click="actions.toggleFilter"
 					data-wp-class--xfn-pill--active="<?php echo esc_attr( 'state.isActiveFilter_' . $lexfn_rel ); ?>"
+					data-wp-bind--aria-pressed="<?php echo esc_attr( 'state.isActiveFilter_' . $lexfn_rel ); ?>"
 				>
 					<?php echo esc_html( $lexfn_rel ); ?>
 				</button>
 			<?php endforeach; ?>
 		</div>
+		<p class="screen-reader-text" role="status" data-wp-text="state.resultsText"></p>
 	<?php endif; ?>
 
 	<ul class="xfn-directory__list" role="list">

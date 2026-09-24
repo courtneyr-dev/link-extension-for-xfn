@@ -4,6 +4,20 @@
 
 @import "../../styles/pills";
 
+/* Fallback for themes that don't already define this WordPress core utility class. */
+.xfn-directory .screen-reader-text {
+  border: 0;
+  clip: rect(1px, 1px, 1px, 1px);
+  clip-path: inset(50%);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute !important;
+  width: 1px;
+  word-wrap: normal !important;
+}
+
 .xfn-directory {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
@@ -37,6 +51,8 @@
   cursor: pointer;
   border: 1px solid #ddd;
   background: #f0f0f0;
+  min-height: 24px;
+  min-width: 24px;
   transition: background-color 0.15s ease;
 }
 
