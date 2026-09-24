@@ -1,3 +1,4 @@
+import './style.scss';
 /**
  * Relationship Directory block registration.
  *
