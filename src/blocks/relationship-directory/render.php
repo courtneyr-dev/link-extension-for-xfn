@@ -137,7 +137,7 @@ $lexfn_wrapper_attrs = get_block_wrapper_attributes(
 					class="xfn-directory__link"
 					rel="<?php echo esc_attr( implode( ' ', $lexfn_link['rels'] ) ); ?>"
 				>
-					<?php echo esc_html( $lexfn_link['url'] ); ?>
+					<?php echo esc_html( XFN_Link_Extension::display_url_text( $lexfn_link['url'] ) ); ?>
 				</a>
 				<span class="xfn-directory__meta">
 					<?php

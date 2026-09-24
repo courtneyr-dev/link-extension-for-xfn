@@ -505,6 +505,31 @@ class XFN_Link_Extension {
 	}
 
 	/**
+	 * Build a readable display string (host + path) for a URL.
+	 *
+	 * Screen readers announce a bare URL character-by-character, which is
+	 * unusable for sighted and blind users alike. Showing the host and path
+	 * instead gives visible text that reads as a sentence while leaving the
+	 * underlying href untouched.
+	 *
+	 * @since 1.0.8
+	 * @param string $url The URL whose visible text should be derived.
+	 * @return string The host and path (e.g. "example.com/about"), or the
+	 *                original URL if it cannot be parsed.
+	 */
+	public static function display_url_text( $url ) {
+		$host = wp_parse_url( $url, PHP_URL_HOST );
+
+		if ( empty( $host ) ) {
+			return $url;
+		}
+
+		$path = wp_parse_url( $url, PHP_URL_PATH );
+
+		return $host . ( $path ? $path : '' );
+	}
+
+	/**
 	 * Validate XFN relationship combinations
 	 *
 	 * Ensures that selected XFN relationships are valid according to
