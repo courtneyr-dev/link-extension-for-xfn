@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-10-21
+
+Version note: v1.1.0 was released on GitHub only on 2026-07-03; 1.0.6 to 1.0.8 followed it. 1.1.1 sits above every published version.
+
 ### Changed
 
 - MCP exposure no longer depends on WP Pinch. The three read abilities (`xfn/get-relationships`, `xfn/validate-relationships`, `xfn/get-meta-relationships`) are public on the MCP Adapter's default server on every site; the writes and `xfn/suggest-relationship` (it can call an AI provider) carry an explicit `mcp.public: false`. Before, every XFN ability became public when WP Pinch was active, writes included, and none was public otherwise.
