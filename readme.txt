@@ -3,7 +3,7 @@
 Contributors:      courane01
 Tags:              xfn, links, relationships, accessibility, gutenberg
 Tested up to:      7.1
-Stable tag:        1.0.8
+Stable tag:        1.1.1
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 6.9
@@ -318,6 +318,11 @@ Frontend relationship tooltips require WordPress 7.0 or later. On WordPress 6.9 
 4. **Update screen reader**: Ensure you're using a current version of your screen reader
 
 ## Changelog
+
+= 1.1.1 =
+* Changed: the three read abilities (`xfn/get-relationships`, `xfn/validate-relationships`, `xfn/get-meta-relationships`) are now available to MCP clients through the MCP Adapter's default server on every site. Writes and `xfn/suggest-relationship` (which can call an AI provider) are explicitly kept off MCP.
+* Removed: the WP Pinch integration. Before, every XFN ability, writes included, became MCP-public when WP Pinch was active, and none was public otherwise.
+* Versioning: 1.1.1 follows the GitHub-only v1.1.0 release of 2026-07-03; releases 1.0.6 to 1.0.8 came after it, so this release moves the version above every published one.
 
 = 1.0.8 =
 * Improved: the Relationship Directory's search field now has an associated `<label>` instead of relying on the placeholder alone.
