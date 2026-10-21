@@ -9,7 +9,6 @@ class AbilitiesManagerTest extends WP_UnitTestCase {
 	public function tear_down(): void {
 		XFN_Abilities_Manager::reset();
 		remove_all_filters( 'xfn_feature_flag_abilities_api' );
-		remove_all_filters( 'wp_pinch_mcp_server_abilities' );
 		remove_all_filters( 'wp_register_ability_args' );
 		$this->reset_abilities_registry();
 		parent::tear_down();
@@ -69,94 +68,105 @@ class AbilitiesManagerTest extends WP_UnitTestCase {
 		$this->assertContains( 'xfn/suggest-relationship', $names );
 	}
 
-	public function test_filter_mcp_server_abilities_appends_xfn(): void {
-		$existing = array( 'other/ability' );
+	/**
+	 * The MCP exposure filter is hooked on every site, not only when WP Pinch
+	 * is installed, and nothing hooks the old WP Pinch server-list filter.
+	 */
+	public function test_ability_args_filter_hooked_without_wp_pinch(): void {
+		$this->skip_without_abilities_api();
+		$this->assertFalse( class_exists( 'WP_Pinch\\Abilities' ) );
 
-		$result = XFN_Abilities_Manager::filter_mcp_server_abilities( $existing );
+		remove_all_filters( 'wp_register_ability_args' );
+		XFN_Abilities_Manager::reset();
+		XFN_Abilities_Manager::instance();
 
-		$this->assertContains( 'other/ability', $result );
-		$this->assertCount( 10, $result ); // 1 existing + 9 XFN.
+		$this->assertSame( 10, has_filter( 'wp_register_ability_args', array( XFN_Abilities_Manager::class, 'filter_ability_args' ) ) );
+		$this->assertFalse( has_filter( 'wp_pinch_mcp_server_abilities' ) );
 	}
 
 	/**
-	 * Regression for issue #19: the filter advertised every declared name
-	 * whether or not it was in the abilities registry, and the mcp-adapter
-	 * logs one "ability does not exist" error per advertised-but-missing
-	 * name when it builds its tool list (on staging, the names had failed
-	 * registration outright). With no registered XFN abilities, the filter
-	 * must return the incoming list untouched.
+	 * Read-only abilities are public on the MCP Adapter's default server.
+	 *
+	 * @dataProvider read_ability_names
 	 */
-	public function test_filter_advertises_nothing_when_no_xfn_abilities_registered(): void {
-		$this->skip_without_abilities_api();
+	public function test_filter_ability_args_makes_read_abilities_public( string $name ): void {
+		$result = XFN_Abilities_Manager::filter_ability_args( array( 'label' => 'Test' ), $name );
 
-		$this->reset_abilities_registry();
-		remove_all_actions( 'wp_abilities_api_init' );
+		$this->assertTrue( $result['meta']['mcp']['public'] );
+	}
 
-		$result = XFN_Abilities_Manager::filter_mcp_server_abilities( array() );
-
-		$this->assertSame( array(), $result );
+	public static function read_ability_names(): array {
+		return array(
+			'get-relationships'      => array( 'xfn/get-relationships' ),
+			'validate-relationships' => array( 'xfn/validate-relationships' ),
+			'get-meta-relationships' => array( 'xfn/get-meta-relationships' ),
+		);
 	}
 
 	/**
-	 * Existing non-XFN entries pass through unchanged when the XFN abilities
-	 * never registered.
+	 * Writes, and suggest-relationship (it can call an AI provider), stay off
+	 * the default server. The value is an explicit false so MCP Adapter 0.6+
+	 * can't fall back to a top-level meta.public flag.
+	 *
+	 * @dataProvider private_ability_names
 	 */
-	public function test_filter_preserves_existing_entries_when_no_xfn_abilities_registered(): void {
-		$this->skip_without_abilities_api();
+	public function test_filter_ability_args_keeps_writes_and_suggest_private( string $name ): void {
+		$result = XFN_Abilities_Manager::filter_ability_args( array( 'label' => 'Test' ), $name );
 
-		$this->reset_abilities_registry();
-		remove_all_actions( 'wp_abilities_api_init' );
+		$this->assertFalse( $result['meta']['mcp']['public'] );
+	}
 
-		$result = XFN_Abilities_Manager::filter_mcp_server_abilities( array( 'other/ability' ) );
-
-		$this->assertSame( array( 'other/ability' ), $result );
+	public static function private_ability_names(): array {
+		return array(
+			'add-relationship'         => array( 'xfn/add-relationship' ),
+			'remove-relationship'      => array( 'xfn/remove-relationship' ),
+			'suggest-relationship'     => array( 'xfn/suggest-relationship' ),
+			'set-meta-relationships'   => array( 'xfn/set-meta-relationships' ),
+			'add-meta-relationship'    => array( 'xfn/add-meta-relationship' ),
+			'remove-meta-relationship' => array( 'xfn/remove-meta-relationship' ),
+		);
 	}
 
 	/**
-	 * Once the registry initializes and the plugin's wp_abilities_api_init
-	 * listener registers the abilities, the filter advertises all of them.
+	 * An explicit public flag on the ability is overridden, so a write can't be
+	 * opened up by registration args alone.
 	 */
-	public function test_filter_advertises_registered_abilities(): void {
-		$this->skip_without_abilities_api();
-
-		$this->reset_abilities_registry();
-
-		$result = XFN_Abilities_Manager::filter_mcp_server_abilities( array( 'other/ability' ) );
-
-		$this->assertContains( 'other/ability', $result );
-		foreach ( XFN_Abilities_Manager::get_ability_names() as $name ) {
-			$this->assertContains( $name, $result );
-			$this->assertTrue( wp_has_ability( $name ), sprintf( 'Ability "%s" should be registered.', $name ) );
-		}
-	}
-
-	/**
-	 * When only part of the declared set is registered, the filter advertises
-	 * exactly that registered subset.
-	 */
-	public function test_filter_advertises_only_registered_subset(): void {
-		$this->skip_without_abilities_api();
-
-		$this->reset_abilities_registry();
-		wp_get_abilities(); // Force lazy registry init so the XFN abilities register.
-
-		$missing = array( 'xfn/set-meta-relationships', 'xfn/suggest-relationship' );
-		foreach ( $missing as $name ) {
-			wp_unregister_ability( $name );
-		}
-
-		$result = XFN_Abilities_Manager::filter_mcp_server_abilities( array() );
-
-		$expected = array_values( array_diff( XFN_Abilities_Manager::get_ability_names(), $missing ) );
-		$this->assertSame( $expected, $result );
-	}
-
-	public function test_filter_ability_args_adds_mcp_public_to_xfn(): void {
-		$args = array( 'label' => 'Test' );
+	public function test_filter_ability_args_overrides_public_flag_on_writes(): void {
+		$args = array(
+			'label' => 'Test',
+			'meta'  => array( 'mcp' => array( 'public' => true, 'type' => 'tool' ) ),
+		);
 
 		$result = XFN_Abilities_Manager::filter_ability_args( $args, 'xfn/add-relationship' );
 
-		$this->assertTrue( $result['meta']['mcp']['public'] );
+		$this->assertFalse( $result['meta']['mcp']['public'] );
+		$this->assertSame( 'tool', $result['meta']['mcp']['type'] );
+	}
+
+	/**
+	 * End to end: the registered abilities carry the exposure the filter set.
+	 */
+	public function test_registered_abilities_carry_mcp_exposure(): void {
+		$this->skip_without_abilities_api();
+
+		// The plugin's own instance hooked the filter at load; rebuild only the registry.
+		$this->reset_abilities_registry();
+		wp_get_abilities();
+
+		$public = array();
+		foreach ( XFN_Abilities_Manager::get_ability_names() as $name ) {
+			$ability = wp_get_ability( $name );
+			$this->assertNotNull( $ability, sprintf( 'Ability "%s" should be registered.', $name ) );
+			if ( true === ( $ability->get_meta()['mcp']['public'] ?? null ) ) {
+				$public[] = $name;
+			}
+		}
+		sort( $public );
+
+		$this->assertSame(
+			array( 'xfn/get-meta-relationships', 'xfn/get-relationships', 'xfn/validate-relationships' ),
+			$public
+		);
 	}
 
 	public function test_filter_ability_args_skips_non_xfn(): void {
