@@ -10,6 +10,17 @@ final class XFN_Abilities_Manager {
 	public const CATEGORY_SLUG = 'xfn-relationships';
 
 	/**
+	 * Read-only abilities exposed on the MCP Adapter's default server.
+	 *
+	 * @var string[]
+	 */
+	public const MCP_PUBLIC_ABILITIES = [
+		'xfn/get-relationships',
+		'xfn/validate-relationships',
+		'xfn/get-meta-relationships',
+	];
+
+	/**
 	 * Singleton instance.
 	 *
 	 * @var self|null
@@ -38,10 +49,7 @@ final class XFN_Abilities_Manager {
 
 		add_action( 'wp_abilities_api_categories_init', [ $this, 'register_category' ] );
 		add_action( 'wp_abilities_api_init', [ $this, 'register_abilities' ] );
-
-		if ( class_exists( 'WP_Pinch\\Abilities' ) ) {
-			self::register_mcp_hooks();
-		}
+		add_filter( 'wp_register_ability_args', [ self::class, 'filter_ability_args' ], 10, 2 );
 	}
 
 	/**
@@ -111,43 +119,13 @@ final class XFN_Abilities_Manager {
 	}
 
 	/**
-	 * Register WP Pinch MCP server integration hooks.
+	 * Set each XFN ability's exposure on the MCP Adapter's default server.
 	 *
-	 * @since 1.0.0
-	 */
-	public static function register_mcp_hooks(): void {
-		add_filter( 'wp_pinch_mcp_server_abilities', [ self::class, 'filter_mcp_server_abilities' ] );
-		add_filter( 'wp_register_ability_args', [ self::class, 'filter_ability_args' ], 10, 2 );
-	}
-
-	/**
-	 * Append registered XFN abilities to the MCP server abilities list.
-	 *
-	 * Only names present in the abilities registry are advertised. A declared
-	 * name can be absent from the registry — core rejects invalid names at
-	 * registration, and callers earlier than init cannot reach the registry
-	 * at all — and each advertised-but-unregistered name makes the
-	 * mcp-adapter log an error when it builds its tool list, so those names
-	 * must stay off the list.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param string[] $abilities Existing ability name strings.
-	 * @return string[] Modified ability name strings.
-	 */
-	public static function filter_mcp_server_abilities( array $abilities ): array {
-		if ( ! function_exists( 'wp_has_ability' ) || ! did_action( 'init' ) ) {
-			return $abilities;
-		}
-
-		return array_merge(
-			$abilities,
-			array_values( array_filter( self::get_ability_names(), 'wp_has_ability' ) )
-		);
-	}
-
-	/**
-	 * Add MCP public meta to XFN abilities.
+	 * Read abilities in MCP_PUBLIC_ABILITIES are public. Every other XFN
+	 * ability gets an explicit false: the writes, and suggest-relationship,
+	 * which can call an AI provider. An explicit value also stops MCP
+	 * Adapter 0.6+ from falling back to a top-level meta.public flag.
+	 * Permission callbacks still apply to every call.
 	 *
 	 * @since 1.0.0
 	 *
@@ -163,10 +141,10 @@ final class XFN_Abilities_Manager {
 		if ( ! isset( $args['meta'] ) ) {
 			$args['meta'] = [];
 		}
-		if ( ! isset( $args['meta']['mcp'] ) ) {
+		if ( ! isset( $args['meta']['mcp'] ) || ! is_array( $args['meta']['mcp'] ) ) {
 			$args['meta']['mcp'] = [];
 		}
-		$args['meta']['mcp']['public'] = true;
+		$args['meta']['mcp']['public'] = in_array( $name, self::MCP_PUBLIC_ABILITIES, true );
 
 		return $args;
 	}
