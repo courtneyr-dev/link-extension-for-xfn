@@ -3,7 +3,7 @@
 Contributors:      courane01
 Tags:              xfn, links, relationships, accessibility, gutenberg
 Tested up to:      7.1
-Stable tag:        1.1.1
+Stable tag:        1.1.2
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 6.9
@@ -332,6 +332,12 @@ Frontend relationship tooltips require WordPress 7.0 or later. On WordPress 6.9 
 
 ## Changelog
 
+= 1.1.2 =
+* Documentation: the readme now covers the three blocks, tooltips, the Outpost integration and the MCP abilities, and corrects two statements that were wrong: tooltip assets load on public pages (WordPress 7.0+), and the plugin keeps a `_xfn_relationships` post meta mirror.
+* Documentation: the README, CONTRIBUTING and SUPPORT files now state WordPress 6.9+, PHP 8.2+ and Node.js 18.12+.
+* Screenshots: new screenshots 1, 5, 6 and 7 show the current demo page, Blogroll, Relationship Badge and Relationship Directory.
+* Versioning: this is the first WordPress.org release since 1.0.5, so it also delivers everything in 1.1.0 (GitHub only) through 1.1.1. No code changes.
+
 = 1.1.1 =
 * Changed: the three read abilities (`xfn/get-relationships`, `xfn/validate-relationships`, `xfn/get-meta-relationships`) are now available to MCP clients through the MCP Adapter's default server on every site. Writes and `xfn/suggest-relationship` (which can call an AI provider) are explicitly kept off MCP.
 * Removed: the WP Pinch integration. Before, every XFN ability, writes included, became MCP-public when WP Pinch was active, and none was public otherwise.
@@ -433,6 +439,11 @@ Frontend relationship tooltips require WordPress 7.0 or later. On WordPress 6.9 
 ## Documentation
 
 Full user documentation — installation, settings, common tasks, blocks, troubleshooting, privacy — lives at [courtneyr-dev.github.io/link-extension-for-xfn](https://courtneyr-dev.github.io/link-extension-for-xfn/).
+
+== Upgrade Notice ==
+
+= 1.1.2 =
+Documentation and screenshots only. Sites coming from 1.0.x also get 1.1.1, which makes three read-only XFN abilities public on the MCP Adapter's default server and removes the WP Pinch integration.
 
 == Installation ==
 
