@@ -20,7 +20,7 @@ For bug reports and feature requests:
 2. Search existing [GitHub issues](https://github.com/courtneyr-dev/link-extension-for-xfn/issues) and [support topics](https://wordpress.org/support/plugin/link-extension-for-xfn/)
 3. Test with a default WordPress theme (Twenty Twenty-Four) and no other plugins active
 4. Check the browser console for JavaScript errors
-5. Verify you're running WordPress 6.4+ and PHP 8.2+
+5. Verify you're running WordPress 6.9+ and PHP 8.2+
 
 ## What to Include
 

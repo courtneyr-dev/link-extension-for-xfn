@@ -47,8 +47,8 @@ Use the [Documentation template](.github/ISSUE_TEMPLATE/documentation.md).
 
 ### Prerequisites
 
-- **WordPress 6.4+**
-- **PHP 7.4+**
+- **WordPress 6.9+**
+- **PHP 8.2+**
 - **Node.js 18+** and npm
 - **Git**
 - Local WordPress environment (Local, MAMP, Docker, etc.)

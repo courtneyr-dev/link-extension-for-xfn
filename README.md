@@ -2,7 +2,7 @@
 
 Extends the native WordPress block editor link interface to include XFN (XHTML Friends Network) relationship options across all blocks that support links.
 
-[![WordPress](https://img.shields.io/badge/WordPress-6.4%2B-blue.svg)](https://wordpress.org/)
+[![WordPress](https://img.shields.io/badge/WordPress-6.9%2B-blue.svg)](https://wordpress.org/)
 [![PHP](https://img.shields.io/badge/PHP-8.2%2B-purple.svg)](https://php.net/)
 [![License](https://img.shields.io/badge/license-GPL--2.0%2B-red.svg)](https://www.gnu.org/licenses/gpl-2.0.html)
 
@@ -95,7 +95,7 @@ Comprehensive user guides are available in the [`docs/`](docs/) directory:
 
 ## Requirements
 
-- **WordPress**: 6.4 or higher
+- **WordPress**: 6.9 or higher
 - **PHP**: 8.2 or higher
 - **Modern browser** with ES6 support
 
@@ -293,15 +293,14 @@ The plugin intelligently manages the HTML `rel` attribute:
 ### Data Persistence
 
 - Relationships are stored in the standard HTML `rel` attribute
-- No custom database tables or meta fields required
+- No custom database tables; a `_xfn_relationships` post meta mirror backs the abilities and the Outpost integration
 - Compatible with all WordPress import/export tools
 - Relationships survive theme changes and plugin deactivation
 
 ### Performance
 
-- Lightweight JavaScript bundle under 15KB gzipped
-- Only loads in the block editor (no frontend impact)
-- Lazy-loaded collapsible sections
+- Editor script under 5KB gzipped
+- Frontend: on WordPress 7.0+, the tooltip module and CSS load only on pages with XFN links
 - Uses WordPress core components for consistency
 - Smooth CSS animations without performance penalties
 
@@ -317,11 +316,10 @@ The plugin intelligently manages the HTML `rel` attribute:
 
 ### Manual Testing
 
-1. Activate the plugin in a WordPress 6.4+ installation
+1. Activate the plugin in a WordPress 6.9+ installation
 2. Create a new post or edit an existing one
 3. Add blocks with links (Paragraph, Button, Navigation, List, etc.)
-4. Test XFN controls in all three interfaces:
-   - Floating toolbar
+4. Test XFN controls in both interfaces:
    - Inspector controls
    - Link advanced panel
 5. Verify relationships appear in published HTML `rel` attribute
