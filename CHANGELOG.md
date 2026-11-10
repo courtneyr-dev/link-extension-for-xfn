@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.2] - 2026-11-10
+
+This is the first WordPress.org release since 1.0.5, so it also delivers 1.1.0 (GitHub only) through 1.1.1. No code changes.
+
+### Changed
+
+- readme.txt covers the three blocks, tooltips, the Outpost integration and the MCP abilities. It no longer says the plugin has no meta fields or loads no JavaScript on public pages: the `_xfn_relationships` post meta mirror and the tooltip script module and stylesheet (WordPress 7.0+) both exist.
+- README.md, CONTRIBUTING.md and SUPPORT.md state WordPress 6.9+ (they said 6.4+); CONTRIBUTING.md states PHP 8.2+ (it said 7.4+); readme.txt states Node.js 18.12+ (it said 14+).
+- README.md drops the removed floating toolbar and the lazy-loading claim.
+- Screenshots 1, 5, 6 and 7 replaced with captures from WordPress 7.1.4.
+
 ## [1.1.1] - 2026-10-21
 
 Version note: v1.1.0 was released on GitHub only on 2026-07-03; 1.0.6 to 1.0.8 followed it. 1.1.1 sits above every published version.

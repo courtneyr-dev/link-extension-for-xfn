@@ -3,7 +3,7 @@
 Contributors:      courane01
 Tags:              xfn, links, relationships, accessibility, gutenberg
 Tested up to:      7.1
-Stable tag:        1.1.1
+Stable tag:        1.1.2
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 6.9
@@ -34,7 +34,20 @@ This plugin implements the full XFN 1.1 specification with all relationship cate
 The plugin provides XFN controls in two convenient locations, both featuring a clean collapsible interface:
 
 * **Link Advanced Panel** (Always enabled): Collapsible XFN section in link popovers for inline links - works immediately after installation
-* **Inspector Controls** (Optional): Panel in the block sidebar for Button, Image, Navigation, and Embed blocks - enable in Settings → Link Extension for XFN
+* **Inspector Controls** (Optional): Panel in the block sidebar for Button, Image, Navigation Link, Site Logo, Post Title, Query Title, and Embed blocks, plus other blocks with a link URL attribute - enable in Settings → Link Extension for XFN
+
+### Blocks and frontend display
+
+* **XFN Blogroll**: lists every XFN-tagged link on the site, grouped by relationship or domain.
+* **Relationship Badge**: shows the relationships for one URL as pills.
+* **Relationship Directory**: a searchable list with relationship filters.
+* **Tooltips** (WordPress 7.0+): hover or focus an XFN link to see its relationships.
+
+### For developers and AI clients
+
+* Nine `xfn/*` abilities register with the Abilities API. Three read abilities (`xfn/get-relationships`, `xfn/validate-relationships`, `xfn/get-meta-relationships`) are public on the MCP Adapter's default server. The writes and `xfn/suggest-relationship` are not.
+* `xfn/suggest-relationship` calls an AI provider only if the site provides `wp_ai_client()`, and caps each user at 20 requests per hour.
+* Outpost's Micropub `mp-xfn` property becomes XFN relationships on the matching link.
 
 ### Seamless Integration with WordPress
 The plugin extends the existing link interfaces without disrupting your workflow:
@@ -64,7 +77,7 @@ The relationship selection interface is designed for optimal usability with mode
 
 After installation, XFN options are immediately available for inline links (links within paragraphs, headings, lists).
 
-To use XFN with Button, Image, Navigation, and Embed blocks, go to **Settings → Link Extension for XFN** and enable **Inspector Controls**.
+To use XFN with block-level links (Button, Image, Navigation Link, Site Logo, Post Title, Query Title, Embed), go to **Settings → Link Extension for XFN** and enable **Inspector Controls**.
 
 ### Method 1: Using Link Advanced Panel (Always Available)
 1. Create or edit an inline link in any block (Paragraph, List, etc.)
@@ -76,7 +89,7 @@ To use XFN with Button, Image, Navigation, and Embed blocks, go to **Settings �
 
 ### Method 2: Using Inspector Controls (Enable in Settings)
 1. Go to Settings → Link Extension for XFN and enable Inspector Controls
-2. Select a Button, Image, Navigation, or Embed block
+2. Select a Button, Image, Navigation Link, or Embed block (or another block with a link URL)
 3. Look in the right sidebar - "XFN Relationships" panel opens by default
 4. Select relationships using radio buttons and checkboxes organized by category
 5. Relationships save automatically as you select them
@@ -136,7 +149,7 @@ For inline links within paragraph content, use the collapsible XFN section in th
 Build relationship-rich link lists using the Link Advanced Panel for inline links or Inspector Controls for block-level links. The collapsible sections make it easy to manage multiple relationships across list items.
 
 ### Cover Block and Media & Text Block
-Add relationship context to overlay links and media-associated links using the Link Advanced Panel for inline links or Inspector Controls for block-level elements.
+Use the Link Advanced Panel to add relationship context to links inside their text.
 
 ## Technical Implementation
 
@@ -157,7 +170,7 @@ All uncompiled, human-readable source code is publicly available in the `src/` d
 
 **Build tools:**
 * Build system: WordPress Scripts (webpack-based)
-* Required: Node.js 14+ and npm
+* Required: Node.js 18.12+ and npm
 * Build command: `npm run build`
 * Development mode: `npm start` (watches for file changes)
 
@@ -179,15 +192,15 @@ The plugin intelligently manages the HTML rel attribute:
 * Validates relationship combinations to prevent conflicts
 
 ### Data Persistence
-* Relationships are stored in the standard HTML rel attribute
-* No custom database tables or meta fields required
+* Relationships live in the standard HTML rel attribute of each link
+* The plugin also keeps a `_xfn_relationships` post meta mirror, which its abilities and the Outpost integration use
+* No custom database tables
 * Compatible with all WordPress import/export tools
 * Relationships survive theme changes and plugin deactivation
 
 ### Performance Optimized
-* Lightweight JavaScript bundle under 12KB gzipped
-* Lazy-loaded collapsible sections only when accessed
-* No impact on frontend performance
+* Editor script under 5KB gzipped
+* On WordPress 7.0+, a small tooltip script module and stylesheet load only on pages that contain XFN links
 * Uses WordPress core components for consistency
 * Smooth animations without performance penalties
 
@@ -195,7 +208,7 @@ The plugin intelligently manages the HTML rel attribute:
 
 If you're migrating from another XFN plugin:
 
-1. **Classic Editor plugins**: Existing XFN data in post meta will be preserved
+1. **Classic Editor plugins**: Existing rel attributes in saved content are kept; this plugin does not import other plugins' post meta
 2. **Custom rel attributes**: Any existing rel values are maintained
 3. **Manual XFN**: Manually entered XFN relationships in rel attributes work immediately
 
@@ -205,7 +218,7 @@ If you're migrating from another XFN plugin:
 
 XFN controls are available in two locations, both featuring collapsible interfaces:
 1. **Link Advanced Panel** (Always available): In the Advanced section of inline link popovers as a collapsible "XFN" section
-2. **Inspector Controls** (Enable in Settings): In the block settings sidebar under "XFN Relationships" panel for Button, Image, Navigation, and Embed blocks
+2. **Inspector Controls** (Enable in Settings): In the block settings sidebar under "XFN Relationships" panel for Button, Image, Navigation Link, Site Logo, Post Title, Query Title, and Embed blocks, plus other blocks with a link URL attribute
 
 ### Why use a collapsible interface?
 
@@ -231,11 +244,11 @@ No, the collapsible interface enhances accessibility by:
 
 ### Does this affect my SEO or page speed?
 
-No negative impact on either. The plugin adds standard HTML rel attributes that search engines understand. The JavaScript only loads in the WordPress editor, not on your public pages. The collapsible interface has no impact on frontend performance.
+No negative impact on either. The plugin adds standard HTML rel attributes that search engines understand. The editing interface loads only in the block editor. On WordPress 7.0 and later, pages that contain XFN links also load a small tooltip script module and stylesheet. Turn tooltips off with `add_filter( 'xfn_feature_flag_interactivity', '__return_false' );`.
 
 ### Can I use this with Classic Editor?
 
-This plugin is designed for the Gutenberg block editor (WordPress 5.0+). For Classic Editor, you would need a different XFN plugin or manually add rel attributes to your links.
+This plugin is designed for the Gutenberg block editor (WordPress 6.9+). For Classic Editor, you would need a different XFN plugin or manually add rel attributes to your links.
 
 ### What happens if I deactivate the plugin?
 
@@ -318,6 +331,12 @@ Frontend relationship tooltips require WordPress 7.0 or later. On WordPress 6.9 
 4. **Update screen reader**: Ensure you're using a current version of your screen reader
 
 ## Changelog
+
+= 1.1.2 =
+* Documentation: the readme now covers the three blocks, tooltips, the Outpost integration and the MCP abilities, and corrects two statements that were wrong: tooltip assets load on public pages (WordPress 7.0+), and the plugin keeps a `_xfn_relationships` post meta mirror.
+* Documentation: the README, CONTRIBUTING and SUPPORT files now state WordPress 6.9+, PHP 8.2+ and Node.js 18.12+.
+* Screenshots: new screenshots 1, 5, 6 and 7 show the current demo page, Blogroll, Relationship Badge and Relationship Directory.
+* Versioning: this is the first WordPress.org release since 1.0.5, so it also delivers everything in 1.1.0 (GitHub only) through 1.1.1. No code changes.
 
 = 1.1.1 =
 * Changed: the three read abilities (`xfn/get-relationships`, `xfn/validate-relationships`, `xfn/get-meta-relationships`) are now available to MCP clients through the MCP Adapter's default server on every site. Writes and `xfn/suggest-relationship` (which can call an AI provider) are explicitly kept off MCP.
@@ -421,18 +440,23 @@ Frontend relationship tooltips require WordPress 7.0 or later. On WordPress 6.9 
 
 Full user documentation — installation, settings, common tasks, blocks, troubleshooting, privacy — lives at [courtneyr-dev.github.io/link-extension-for-xfn](https://courtneyr-dev.github.io/link-extension-for-xfn/).
 
+== Upgrade Notice ==
+
+= 1.1.2 =
+Documentation and screenshots only. Sites coming from 1.0.x also get 1.1.1, which makes three read-only XFN abilities public on the MCP Adapter's default server and removes the WP Pinch integration.
+
 == Installation ==
 
 1. Upload the plugin files to the `/wp-content/plugins/link-extension-for-xfn` directory, or install the plugin through the WordPress plugins screen directly.
 2. Activate the plugin through the 'Plugins' screen in WordPress
 3. No configuration required - XFN options will immediately appear in:
    - **Link Advanced Panel** (Always available): Collapsible XFN section in the Advanced area of link popovers for inline links
-   - **Inspector Controls** (Optional): Panel in the block sidebar for Button, Image, Navigation, and Embed blocks - enable in Settings → Link Extension for XFN
+   - **Inspector Controls** (Optional): Panel in the block sidebar for Button, Image, Navigation Link, Site Logo, Post Title, Query Title, and Embed blocks, plus other blocks with a link URL attribute - enable in Settings → Link Extension for XFN
 4. Start adding relationship context to your links using the intuitive collapsible interface
 
 == Screenshots ==
 
-1. Live demo in WordPress Playground showing XFN in action - interactive buttons and embedded content with relationship attributes, plus comprehensive testing instructions and examples
+1. The demo page from the WordPress Playground blueprint, with a tooltip showing the relationships on an XFN link
 2. The settings page (Settings → Link Extension for XFN) with the Inspector Controls option and the always-on Advanced panel note
 3. Link popover Advanced section with the collapsible XFN area - tag an inline link without leaving the popover, with a count badge and relationship button groups
 4. XFN Relationships sidebar panel for block-level links like Buttons, with radio and checkbox groups and selected relationship pills
