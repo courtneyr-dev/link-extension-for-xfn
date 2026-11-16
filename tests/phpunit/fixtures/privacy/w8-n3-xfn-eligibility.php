@@ -252,6 +252,11 @@ if ( 0 === $ineligible_post_id ) {
 	}
 
 	foreach ( [ 'xfn/get-meta-relationships', 'xfn/get-relationships' ] as $ability_name ) {
+		if ( ! function_exists( 'wp_has_ability' ) || ! wp_has_ability( $ability_name ) ) {
+			$finish( 'ability_missing' );
+			return;
+		}
+
 		$ability = wp_get_ability( $ability_name );
 		if ( null === $ability ) {
 			$finish( 'ability_missing' );

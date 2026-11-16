@@ -157,8 +157,32 @@ final class XFN_Content_Scanner {
 		$transient_key = self::TRANSIENT_PREFIX . 'all';
 		$cached        = get_transient( $transient_key );
 
-		if ( false !== $cached ) {
-			return $cached;
+		if ( false !== $cached && is_array( $cached ) ) {
+			$post_ids = [];
+			foreach ( $cached as $relationship ) {
+				if ( is_array( $relationship ) && isset( $relationship['post_id'] ) ) {
+					$post_ids[] = (int) $relationship['post_id'];
+				}
+			}
+			$post_ids = array_values( array_unique( $post_ids ) );
+			_prime_post_caches( $post_ids, false, false );
+
+			$eligible = array_filter(
+				$cached,
+				static function ( $relationship ): bool {
+					$post = is_array( $relationship ) && isset( $relationship['post_id'] )
+						? get_post( (int) $relationship['post_id'] )
+						: null;
+
+					return $post instanceof \WP_Post && self::is_eligible( $post );
+				}
+			);
+
+			if ( count( $eligible ) !== count( $cached ) ) {
+				self::invalidate_cache();
+			}
+
+			return array_values( $eligible );
 		}
 
 		global $wpdb;
