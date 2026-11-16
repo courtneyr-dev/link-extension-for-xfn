@@ -33,4 +33,11 @@ jobs:
         run: npm run build
 
       - name: Check committed build/ matches the sources
-        run: git diff --exit-code -- build/
+        run: |
+          git diff --exit-code -- build/
+          untracked="$(git ls-files --others --exclude-standard -- build/)"
+          if [ -n "$untracked" ]; then
+            echo "Built files not committed:"
+            echo "$untracked"
+            exit 1
+          fi
