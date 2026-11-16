@@ -4,6 +4,7 @@ namespace LinkExtensionForXFN\Tests\Integration;
 use WP_UnitTestCase;
 use XFN_Content_Abilities;
 use XFN_Content_Scanner;
+use XFN_Core_Abilities;
 
 class ContentAbilitiesTest extends WP_UnitTestCase {
 
@@ -171,6 +172,36 @@ class ContentAbilitiesTest extends WP_UnitTestCase {
 
 		$this->assertEmpty( $result['relationships'] );
 		$this->assertArrayHasKey( 'error', $result );
+	}
+
+	public function test_get_meta_relationships_refuses_password_protected_post_for_administrator(): void {
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'administrator' ) ) );
+		$post_id = self::factory()->post->create(
+			array(
+				'post_status'   => 'publish',
+				'post_password' => 'sentinel',
+			)
+		);
+		update_post_meta(
+			$post_id,
+			'_xfn_relationships',
+			array(
+				array(
+					'url'  => 'https://n3-meta-password.example/',
+					'rels' => array( 'friend' ),
+				),
+			)
+		);
+
+		$result = ( new XFN_Core_Abilities() )->execute_get_relationships( array( 'post_id' => $post_id ) );
+
+		$this->assertSame(
+			array(
+				'relationships' => array(),
+				'error'         => 'Insufficient permissions for this post.',
+			),
+			$result
+		);
 	}
 
 	// ── validate-relationships ──────────────────────────────────────

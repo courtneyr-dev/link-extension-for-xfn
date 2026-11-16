@@ -78,6 +78,7 @@ class XFN_Link_Extension {
 		require_once XFN_LINK_EXTENSION_PLUGIN_PATH . 'includes/class-xfn-interactivity.php';
 		require_once XFN_LINK_EXTENSION_PLUGIN_PATH . 'includes/class-xfn-block-registrar.php';
 		require_once XFN_LINK_EXTENSION_PLUGIN_PATH . 'includes/class-xfn-outpost-adapter.php';
+		XFN_Content_Scanner::register_hooks();
 
 		// Initialize meta mirror and its Outpost consumer.
 		if ( XFN_Feature_Flags::has_meta_mirror() ) {

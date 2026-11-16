@@ -97,6 +97,56 @@ final class XFN_Content_Scanner {
 	}
 
 	/**
+	 * Determine whether a post may expose its XFN relationships publicly.
+	 *
+	 * @since 1.1.3
+	 *
+	 * @param \WP_Post $post Post to check.
+	 * @return bool Whether the post is publicly eligible.
+	 */
+	public static function is_eligible( \WP_Post $post ): bool {
+		return 'publish' === $post->post_status
+			&& '' === (string) $post->post_password
+			&& is_post_publicly_viewable( $post );
+	}
+
+	/**
+	 * Keep only posts whose XFN relationships may be exposed publicly.
+	 *
+	 * @since 1.1.3
+	 *
+	 * @param \WP_Post[] $posts Posts to filter.
+	 * @return \WP_Post[] Eligible posts in their original order.
+	 */
+	public static function filter_eligible( array $posts ): array {
+		return array_values( array_filter( $posts, [ self::class, 'is_eligible' ] ) );
+	}
+
+	/**
+	 * Determine whether the current REST user may read relationship meta.
+	 *
+	 * @since 1.1.3
+	 *
+	 * @param \WP_Post $post Post to check.
+	 * @return bool Whether relationship meta may be read.
+	 */
+	public static function can_read_relationships( \WP_Post $post ): bool {
+		return self::is_eligible( $post ) || current_user_can( 'edit_post', $post->ID );
+	}
+
+	/**
+	 * Determine whether an ability may return a post's relationships.
+	 *
+	 * @since 1.1.3
+	 *
+	 * @param \WP_Post $post Post to check.
+	 * @return bool Whether an ability may return the relationships.
+	 */
+	public static function ability_can_read( \WP_Post $post ): bool {
+		return self::is_eligible( $post );
+	}
+
+	/**
 	 * Scan all published posts for XFN links with transient caching.
 	 *
 	 * @since 1.0.0
@@ -119,17 +169,24 @@ final class XFN_Content_Scanner {
 			"SELECT ID FROM {$wpdb->posts}
 			 WHERE post_status = 'publish'
 			   AND post_type IN ('post', 'page')
+			   AND post_password = ''
 			   AND post_content LIKE '%rel=%'
 			 ORDER BY ID DESC
 			 LIMIT 500"
 		);
 
-		$relationships = [];
+		$posts = [];
 		foreach ( $post_ids as $pid ) {
 			$post = get_post( (int) $pid );
-			if ( $post ) {
-				$relationships = array_merge( $relationships, self::extract_xfn_links_from_post( $post ) );
+			if ( $post instanceof \WP_Post ) {
+				$posts[] = $post;
 			}
+		}
+		$posts = self::filter_eligible( $posts );
+
+		$relationships = [];
+		foreach ( $posts as $post ) {
+			$relationships = array_merge( $relationships, self::extract_xfn_links_from_post( $post ) );
 		}
 
 		set_transient( $transient_key, $relationships, self::TRANSIENT_TTL );
@@ -144,5 +201,16 @@ final class XFN_Content_Scanner {
 	 */
 	public static function invalidate_cache(): void {
 		delete_transient( self::TRANSIENT_PREFIX . 'all' );
+	}
+
+	/**
+	 * Register cache invalidation hooks for post lifecycle changes.
+	 *
+	 * @since 1.1.3
+	 */
+	public static function register_hooks(): void {
+		foreach ( [ 'save_post', 'transition_post_status', 'trashed_post', 'untrashed_post', 'deleted_post' ] as $hook ) {
+			add_action( $hook, [ self::class, 'invalidate_cache' ] );
+		}
 	}
 }

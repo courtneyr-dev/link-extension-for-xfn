@@ -446,6 +446,13 @@ class XFN_Content_Abilities {
 				];
 			}
 
+			if ( ! XFN_Content_Scanner::ability_can_read( $post ) ) {
+				return [
+					'relationships' => [],
+					'error'         => 'Insufficient permissions for this post.',
+				];
+			}
+
 			return [
 				'relationships' => XFN_Content_Scanner::extract_xfn_links_from_post( $post ),
 			];

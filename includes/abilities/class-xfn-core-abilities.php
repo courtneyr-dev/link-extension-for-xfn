@@ -286,6 +286,13 @@ class XFN_Core_Abilities {
 			];
 		}
 
+		if ( ! XFN_Content_Scanner::ability_can_read( $post ) ) {
+			return [
+				'relationships' => [],
+				'error'         => 'Insufficient permissions for this post.',
+			];
+		}
+
 		$relationships = XFN_Meta_Mirror::get_relationships( $post_id );
 
 		return [
