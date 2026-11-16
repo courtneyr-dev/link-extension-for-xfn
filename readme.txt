@@ -162,10 +162,10 @@ All uncompiled, human-readable source code is publicly available in the `src/` d
 **Source files (uncompiled):**
 * JavaScript: `src/index.js` (main plugin logic)
 * Styles: `src/editor.scss` (editor styles)
-* Additional: `src/view.js`, `src/edit.js`, `src/save.js`
+* Additional: `src/edit.js`, `src/save.js`
 
 **Compiled files (production):**
-* JavaScript: `build/index.js`, `build/view.js`
+* JavaScript: `build/index.js`
 * Styles: `build/index.css`, `build/index-rtl.css`
 
 **Build tools:**
