@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.3] - 2026-11-16
+
+### Added
+
+- Block styles Pills (default) and Plain labels on the XFN Blogroll and Relationship Badge. A Blogroll grouped by relationship prints no pills, so both styles look the same there.
+- CSS custom properties `--xfn-pill-bg`, `--xfn-pill-border` and `--xfn-pill-color` for pill colors, with the previous values as defaults. Override them from a selector that matches `.xfn-pill` with more than one class of specificity, such as `.wp-block-xfn-blogroll .xfn-pill`.
+- Server-rendered editor previews for both blocks, and a forced-colors rule that keeps pill edges visible.
+- A CI job that rebuilds the JavaScript and CSS and fails when `build/` differs from the sources.
+
+### Changed
+
+- The site-wide XFN scan (Blogroll, Badge, Directory, `xfn/get-relationships` without `post_id`) skips password-protected and non-public posts. Its cache clears on post saves, status changes, trash, untrash and delete, and drops any cached row whose post is no longer public.
+- REST responses return `_xfn_relationships` as `[]` for a post that isn't published, password-free and publicly viewable, unless the caller can edit it.
+- `xfn/get-meta-relationships` and per-post `xfn/get-relationships` refuse a non-public post for every caller, administrators included.
+- Block versions are 1.1.3, so the block stylesheets get a new `?ver=`.
+
+### Fixed
+
+- The Relationship Badge is block-level, so it sits in the content column (#31).
+
+### Removed
+
+- `build/view.js`, `src/view.js` and `src/style.scss`: the front-end script was never enqueued.
+
 ## [1.1.2] - 2026-11-10
 
 This is the first WordPress.org release since 1.0.5, so it also delivers 1.1.0 (GitHub only) through 1.1.1. No code changes.

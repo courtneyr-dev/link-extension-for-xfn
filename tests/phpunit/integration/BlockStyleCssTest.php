@@ -5,6 +5,47 @@ use PHPUnit\Framework\TestCase;
 
 class BlockStyleCssTest extends TestCase {
 
+	/**
+	 * Acceptance 6: the block stylesheets carry the release version as ?ver=.
+	 *
+	 * @dataProvider block_style_handles
+	 */
+	public function test_block_style_handle_version_is_the_release_version( string $handle ): void {
+		if ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) {
+			$this->markTestSkipped( 'SCRIPT_DEBUG is true, so core versions block styles by filemtime.' );
+		}
+
+		$registered = wp_styles()->registered;
+
+		$this->assertArrayHasKey( $handle, $registered );
+		$this->assertSame( '1.1.3', $registered[ $handle ]->ver );
+	}
+
+	public function block_style_handles(): array {
+		return array(
+			'blogroll'  => array( 'xfn-blogroll-style' ),
+			'badge'     => array( 'xfn-relationship-badge-style' ),
+			'directory' => array( 'xfn-relationship-directory-style' ),
+		);
+	}
+
+	/**
+	 * @dataProvider built_block_metadata
+	 */
+	public function test_built_block_version_matches_the_plugin_version( string $path ): void {
+		$metadata = json_decode( (string) file_get_contents( dirname( __DIR__, 3 ) . '/' . $path ), true );
+
+		$this->assertSame( XFN_LINK_EXTENSION_VERSION, $metadata['version'] );
+	}
+
+	public function built_block_metadata(): array {
+		return array(
+			'blogroll'  => array( 'build/blocks/blogroll/block.json' ),
+			'badge'     => array( 'build/blocks/relationship-badge/block.json' ),
+			'directory' => array( 'build/blocks/relationship-directory/block.json' ),
+		);
+	}
+
 	public function test_badge_wrapper_is_block_level_flex(): void {
 		$css  = $this->read_css( 'build/blocks/relationship-badge/style-index.css' );
 		$body = $this->get_rule_body( $css, '.xfn-relationship-badge' );
