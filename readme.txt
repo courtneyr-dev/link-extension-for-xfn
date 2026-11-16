@@ -43,6 +43,9 @@ The plugin provides XFN controls in two convenient locations, both featuring a c
 * **Relationship Directory**: a searchable list with relationship filters.
 * **Tooltips** (WordPress 7.0+): hover or focus an XFN link to see its relationships.
 
+The Blogroll and Relationship Badge offer two block styles, Pills (default) and Plain labels; a Blogroll grouped by relationship prints no pills, so it looks the same in both styles.
+Themes can recolor pills with the custom properties `--xfn-pill-bg`, `--xfn-pill-border` and `--xfn-pill-color`, set from a selector more specific than one class that matches `.xfn-pill` (for example `.wp-block-xfn-blogroll .xfn-pill`), because each relationship class sets them on the pill itself.
+
 ### For developers and AI clients
 
 * Nine `xfn/*` abilities register with the Abilities API. Three read abilities (`xfn/get-relationships`, `xfn/validate-relationships`, `xfn/get-meta-relationships`) are public on the MCP Adapter's default server. The writes and `xfn/suggest-relationship` are not.

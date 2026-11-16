@@ -2,7 +2,7 @@
   "$schema": "https://schemas.wp.org/trunk/block.json",
   "apiVersion": 3,
   "name": "xfn/relationship-badge",
-  "version": "1.0.0",
+  "version": "1.1.3",
   "title": "Relationship Badge",
   "category": "widgets",
   "icon": "tag",
@@ -11,6 +11,10 @@
   "supports": {
     "html": false
   },
+  "styles": [
+    { "name": "pills", "label": "Pills", "isDefault": true },
+    { "name": "plain", "label": "Plain labels" }
+  ],
   "attributes": {
     "url": {
       "type": "string",
