@@ -7,10 +7,16 @@
 import { __ } from "@wordpress/i18n";
 import { useBlockProps, InspectorControls } from "@wordpress/block-editor";
 import { PanelBody, TextControl, ToggleControl } from "@wordpress/components";
+import ServerSideRender from "@wordpress/server-side-render";
 
 export default function Edit({ attributes, setAttributes }) {
   const { url, showUrl } = attributes;
   const blockProps = useBlockProps({ className: "xfn-relationship-badge" });
+  const EmptyResponsePlaceholder = () => (
+    <div className="xfn-relationship-badge__placeholder">
+      <p>{url ? url : __("Relationship Badge — enter a URL in the block settings to display its XFN relationships.", "link-extension-for-xfn")}</p>
+    </div>
+  );
 
   return (
     <>
@@ -31,16 +37,7 @@ export default function Edit({ attributes, setAttributes }) {
         </PanelBody>
       </InspectorControls>
       <div {...blockProps}>
-        <div className="xfn-relationship-badge__placeholder">
-          <p>
-            {url
-              ? url
-              : __(
-                  "Relationship Badge — enter a URL in the block settings to display its XFN relationships.",
-                  "link-extension-for-xfn",
-                )}
-          </p>
-        </div>
+        <ServerSideRender block="xfn/relationship-badge" attributes={attributes} EmptyResponsePlaceholder={EmptyResponsePlaceholder} />
       </div>
     </>
   );

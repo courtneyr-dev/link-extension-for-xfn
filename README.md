@@ -175,9 +175,7 @@ link-extension-for-xfn/
 │   ├── index.js           # Main JavaScript entry point
 │   ├── edit.js            # Block edit component
 │   ├── save.js            # Block save component
-│   ├── view.js            # Frontend JavaScript
 │   ├── editor.scss        # Editor styles
-│   ├── style.scss         # Frontend styles
 │   └── block.json         # Block metadata
 │
 ├── build/                 # Compiled assets (in ZIP)

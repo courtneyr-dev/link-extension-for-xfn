@@ -3,7 +3,7 @@
 Contributors:      courane01
 Tags:              xfn, links, relationships, accessibility, gutenberg
 Tested up to:      7.1
-Stable tag:        1.1.2
+Stable tag:        1.1.3
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 6.9
@@ -42,6 +42,9 @@ The plugin provides XFN controls in two convenient locations, both featuring a c
 * **Relationship Badge**: shows the relationships for one URL as pills.
 * **Relationship Directory**: a searchable list with relationship filters.
 * **Tooltips** (WordPress 7.0+): hover or focus an XFN link to see its relationships.
+
+The Blogroll and Relationship Badge offer two block styles, Pills (default) and Plain labels; a Blogroll grouped by relationship prints no pills, so it looks the same in both styles.
+Themes can recolor pills with the custom properties `--xfn-pill-bg`, `--xfn-pill-border` and `--xfn-pill-color`, set from a selector more specific than one class that matches `.xfn-pill` (for example `.wp-block-xfn-blogroll .xfn-pill`), because each relationship class sets them on the pill itself.
 
 ### For developers and AI clients
 
@@ -162,10 +165,10 @@ All uncompiled, human-readable source code is publicly available in the `src/` d
 **Source files (uncompiled):**
 * JavaScript: `src/index.js` (main plugin logic)
 * Styles: `src/editor.scss` (editor styles)
-* Additional: `src/view.js`, `src/edit.js`, `src/save.js`
+* Additional: `src/edit.js`, `src/save.js`
 
 **Compiled files (production):**
-* JavaScript: `build/index.js`, `build/view.js`
+* JavaScript: `build/index.js`
 * Styles: `build/index.css`, `build/index-rtl.css`
 
 **Build tools:**
@@ -332,6 +335,13 @@ Frontend relationship tooltips require WordPress 7.0 or later. On WordPress 6.9 
 
 ## Changelog
 
+= 1.1.3 =
+* New: the XFN Blogroll and Relationship Badge blocks have two block styles, Pills (default, the existing look) and Plain labels (relationships as plain text). A Blogroll grouped by relationship prints no pills, so it looks the same in both styles.
+* New: pill colors are CSS custom properties (`--xfn-pill-bg`, `--xfn-pill-border`, `--xfn-pill-color`) with the same default values. Each relationship class sets them on the pill, so a theme overrides them from a selector such as `.wp-block-xfn-blogroll .xfn-pill`.
+* Fixed: the Relationship Badge sits in the content column instead of at the page edge. Both blocks show a server-rendered preview in the editor.
+* Privacy: the Blogroll, Relationship Badge, Relationship Directory and `xfn/get-relationships` list links only from published, password-free, publicly viewable posts, and stop listing a post as soon as it changes status. The REST API returns `_xfn_relationships` for a password-protected post only to users who can edit it. `xfn/get-meta-relationships` and `xfn/get-relationships` with a `post_id` refuse a non-public post for every caller.
+* Removed: an unused front-end script (`build/view.js`). No page loaded it, because the block that declared it is never registered.
+
 = 1.1.2 =
 * Documentation: the readme now covers the three blocks, tooltips, the Outpost integration and the MCP abilities, and corrects two statements that were wrong: tooltip assets load on public pages (WordPress 7.0+), and the plugin keeps a `_xfn_relationships` post meta mirror.
 * Documentation: the README, CONTRIBUTING and SUPPORT files now state WordPress 6.9+, PHP 8.2+ and Node.js 18.12+.
@@ -441,6 +451,9 @@ Frontend relationship tooltips require WordPress 7.0 or later. On WordPress 6.9 
 Full user documentation — installation, settings, common tasks, blocks, troubleshooting, privacy — lives at [courtneyr-dev.github.io/link-extension-for-xfn](https://courtneyr-dev.github.io/link-extension-for-xfn/).
 
 == Upgrade Notice ==
+
+= 1.1.3 =
+Links from password-protected, private, draft and scheduled posts no longer appear in the XFN blocks or abilities. Adds Pills and Plain labels block styles and fixes the Relationship Badge alignment.
 
 = 1.1.2 =
 Documentation and screenshots only. Sites coming from 1.0.x also get 1.1.1, which makes three read-only XFN abilities public on the MCP Adapter's default server and removes the WP Pinch integration.

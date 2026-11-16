@@ -118,11 +118,15 @@ class ContentScannerTest extends WP_UnitTestCase {
 		$first = XFN_Content_Scanner::scan_all_posts_for_xfn();
 		$this->assertCount( 1, $first );
 
-		// Add another post — cached result should still return 1.
+		// Isolate transient reuse from the lifecycle invalidation hook.
+		foreach ( array( 'save_post', 'transition_post_status', 'trashed_post', 'untrashed_post', 'deleted_post' ) as $hook ) {
+			remove_action( $hook, array( XFN_Content_Scanner::class, 'invalidate_cache' ) );
+		}
 		self::factory()->post->create( array(
 			'post_status'  => 'publish',
 			'post_content' => '<p><a href="https://bob.example.com" rel="colleague">Bob</a></p>',
 		) );
+		XFN_Content_Scanner::register_hooks();
 
 		$cached = XFN_Content_Scanner::scan_all_posts_for_xfn();
 		$this->assertCount( 1, $cached, 'Should return cached result.' );
@@ -131,6 +135,62 @@ class ContentScannerTest extends WP_UnitTestCase {
 		XFN_Content_Scanner::invalidate_cache();
 		$fresh = XFN_Content_Scanner::scan_all_posts_for_xfn();
 		$this->assertCount( 2, $fresh );
+	}
+
+	public function test_filter_eligible_applies_the_public_eligibility_truth_table(): void {
+		$this->assertTrue( method_exists( XFN_Content_Scanner::class, 'filter_eligible' ) );
+
+		register_post_type(
+			'n3_non_public',
+			array(
+				'public'             => false,
+				'publicly_queryable' => false,
+			)
+		);
+
+		$posts = array(
+			self::factory()->post->create_and_get( array( 'post_status' => 'publish' ) ),
+			self::factory()->post->create_and_get( array( 'post_status' => 'private' ) ),
+			self::factory()->post->create_and_get( array( 'post_status' => 'draft' ) ),
+			self::factory()->post->create_and_get(
+				array(
+					'post_status' => 'future',
+					'post_date'   => '2030-01-01 12:00:00',
+				)
+			),
+			self::factory()->post->create_and_get( array( 'post_status' => 'pending' ) ),
+			self::factory()->post->create_and_get( array( 'post_status' => 'trash' ) ),
+			self::factory()->post->create_and_get(
+				array(
+					'post_status'   => 'publish',
+					'post_password' => 'sentinel',
+				)
+			),
+			self::factory()->post->create_and_get(
+				array(
+					'post_status' => 'publish',
+					'post_type'   => 'n3_non_public',
+				)
+			),
+		);
+
+		$eligible = XFN_Content_Scanner::filter_eligible( $posts );
+
+		$this->assertSame( array( $posts[0] ), $eligible );
+		unregister_post_type( 'n3_non_public' );
+	}
+
+	public function test_register_hooks_registers_all_cache_invalidation_hooks(): void {
+		$this->assertTrue( method_exists( XFN_Content_Scanner::class, 'register_hooks' ) );
+
+		XFN_Content_Scanner::register_hooks();
+
+		foreach ( array( 'save_post', 'transition_post_status', 'trashed_post', 'untrashed_post', 'deleted_post' ) as $hook ) {
+			$this->assertNotFalse(
+				has_action( $hook, array( XFN_Content_Scanner::class, 'invalidate_cache' ) ),
+				$hook
+			);
+		}
 	}
 
 	public function test_valid_xfn_constant_has_18_values(): void {

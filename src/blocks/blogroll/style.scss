@@ -4,6 +4,14 @@
 
 @import "../../styles/pills";
 
+.wp-block-xfn-blogroll.is-style-plain .xfn-pill {
+	background: none;
+	border: 0;
+	padding: 0;
+	color: inherit;
+	font-size: inherit;
+}
+
 .xfn-blogroll__list {
   margin: 0;
   padding: 0;

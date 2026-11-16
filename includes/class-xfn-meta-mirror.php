@@ -42,6 +42,45 @@ final class XFN_Meta_Mirror {
 	public static function init(): void {
 		add_action( 'init', [ __CLASS__, 'register_meta' ] );
 		add_action( 'save_post', [ __CLASS__, 'sync_meta_to_content' ], 20, 2 );
+		add_action(
+			'rest_api_init',
+			function () {
+				foreach ( get_post_types( [ 'show_in_rest' => true ] ) as $post_type ) {
+					add_filter( 'rest_prepare_' . $post_type, [ __CLASS__, 'redact_rest' ], 20, 3 );
+				}
+			}
+		);
+	}
+
+	/**
+	 * Redact relationship meta when a REST caller cannot read the post.
+	 *
+	 * @since 1.1.3
+	 *
+	 * @param mixed $response REST response.
+	 * @param mixed $post     Prepared object from the REST controller.
+	 * @param mixed $request  REST request.
+	 * @return mixed REST response, with relationship meta redacted when needed.
+	 */
+	public static function redact_rest( $response, $post, $request ) {
+		unset( $request );
+
+		if ( ! $response instanceof \WP_REST_Response || ! $post instanceof \WP_Post ) {
+			return $response;
+		}
+
+		$data = $response->get_data();
+		if ( ! isset( $data['meta'] )
+			|| ! is_array( $data['meta'] )
+			|| ! array_key_exists( self::META_KEY, $data['meta'] )
+			|| XFN_Content_Scanner::can_read_relationships( $post ) ) {
+			return $response;
+		}
+
+		$data['meta'][ self::META_KEY ] = [];
+		$response->set_data( $data );
+
+		return $response;
 	}
 
 	/**
