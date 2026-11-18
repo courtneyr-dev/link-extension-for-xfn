@@ -63,8 +63,8 @@ if ( function_exists( 'wp_ai_client_prompt' ) && get_option( 'lexfn_enable_ai' )
 ## Release gate: prepare != ship
 
 - Never cut a release, tag, or deploy without Courtney's explicit go-ahead.
-- This repo has **no auto-deploy configured in `.github/workflows/ci.yml`** — CI only runs lint, PHPStan, tests, and a dependency audit. `deploy-to-wordpress-org.sh` is a standalone manual script that checks out the wp.org SVN repo and requires an interactive credential prompt (`read -p "Press Enter to continue..."`); it is not wired into any GitHub Actions workflow and does not run automatically on tag or release.
-- Because deployment is manual, a merged PR or bumped version number does NOT mean the plugin shipped to wp.org — always check `deploy-to-wordpress-org.sh`'s last actual run / wp.org SVN state before assuming a release is live.
+- Publishing a GitHub release `vX.Y.Z` runs `.github/workflows/deploy-wporg.yml`, which waits for approval in the `wordpress-org` environment, refuses a version that doesn't match readme.txt's Stable tag, deploys with 10up's action and polls the WordPress.org API until it serves the new version. `deploy-to-wordpress-org.sh` is the manual fallback.
+- A merged PR or bumped version number still does NOT mean the plugin shipped: only a published release plus an approved, green deploy run does. Check wp.org SVN before assuming a release is live.
 
 ## Commit convention: Emoji-Log
 
