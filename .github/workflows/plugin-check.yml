@@ -1,0 +1,43 @@
+name: Plugin Check
+
+# Runs WordPress.org's Plugin Check against the files a release would ship.
+# deploy-wporg.yml publishes the committed tree (build/ included) through
+# 10up's deploy action, which copies it with rsync --exclude-from=.distignore,
+# so this job builds the same copy and checks that instead of the whole repo.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: plugin-check-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  plugin-check:
+    name: Plugin Check (distribution copy)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Copy the files a release ships
+        run: |
+          # .distignore lists /dist, so the copy never includes itself.
+          mkdir -p dist/link-extension-for-xfn
+          rsync -rc --exclude-from=.distignore ./ dist/link-extension-for-xfn/
+          test -f dist/link-extension-for-xfn/link-extension-for-xfn.php
+          test -f dist/link-extension-for-xfn/readme.txt
+          find dist/link-extension-for-xfn -type f | sort
+
+      - name: Run Plugin Check
+        uses: wordpress/plugin-check-action@10857da14b6c2246d15402b3e69f777edcf8c12e # v1.1.9
+        with:
+          build-dir: dist/link-extension-for-xfn
+          slug: link-extension-for-xfn

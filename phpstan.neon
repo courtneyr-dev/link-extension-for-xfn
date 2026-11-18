@@ -31,6 +31,3 @@ parameters:
 		- '#Function wp_ai_client not found\.#'
 		# Stub is stricter than core: next_tag() accepts a string tag name.
 		- '#Parameter \#1 \$query of method WP_HTML_Tag_Processor::next_tag\(\)#'
-		# Stub is stricter than core: script module deps accept plain
-		# module-ID strings.
-		- '#Parameter \#3 \$deps of function wp_register_script_module#'
