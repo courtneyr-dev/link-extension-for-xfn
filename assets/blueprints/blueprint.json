@@ -15,7 +15,7 @@
 	"steps": [
 		{
 			"step": "installPlugin",
-			"pluginZipFile": {
+			"pluginData": {
 				"resource": "wordpress.org/plugins",
 				"slug": "link-extension-for-xfn"
 			}
