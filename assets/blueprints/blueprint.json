@@ -18,6 +18,9 @@
 			"pluginData": {
 				"resource": "wordpress.org/plugins",
 				"slug": "link-extension-for-xfn"
+			},
+			"options": {
+				"activate": true
 			}
 		},
 		{
