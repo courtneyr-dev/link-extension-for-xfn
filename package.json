@@ -18,12 +18,12 @@
     "screenshots:docs": "node screenshots/capture-docs.js"
   },
   "devDependencies": {
-    "@wordpress/scripts": "^37.1.0",
+    "@wordpress/scripts": "^37.2.0",
     "playwright": "^1.48.0"
   },
   "dependencies": {
     "@wordpress/icons": "^20.0.0",
-    "@wordpress/interactivity": "^8.1.0"
+    "@wordpress/interactivity": "^8.2.0"
   },
   "overrides": {
     "markdownlint-cli": {
