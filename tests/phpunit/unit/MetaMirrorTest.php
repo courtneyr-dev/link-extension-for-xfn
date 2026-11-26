@@ -77,6 +77,31 @@ class MetaMirrorTest extends WP_UnitTestCase {
 		$this->assertStringNotContainsString( 'friend', $result );
 	}
 
+	public function test_apply_to_content_matches_decoded_urls_and_preserves_other_attributes(): void {
+		$url     = 'https://example.com/?one=1&two=2';
+		$content = '<!-- wp:paragraph --><p>'
+			. '<a title="1 > 0" href="https://example.com/?one=1&amp;two=2" rel="nofollow friend">First</a>'
+			. "<a href='$url' rel='noopener'>Second</a>"
+			. '<a href="https://example.com/another" rel="friend">Unmatched</a>'
+			. '</p><!-- /wp:paragraph -->';
+		$rels    = array(
+			array( 'url' => $url, 'rels' => array( 'colleague' ) ),
+		);
+		$updated = XFN_Meta_Mirror::apply_to_content( $content, $rels );
+		$tags    = new \WP_HTML_Tag_Processor( $updated );
+
+		$this->assertTrue( $tags->next_tag( 'A' ) );
+		$this->assertSame( $url, $tags->get_attribute( 'href' ) );
+		$this->assertSame( '1 > 0', $tags->get_attribute( 'title' ) );
+		$this->assertSame( 'nofollow colleague', $tags->get_attribute( 'rel' ) );
+		$this->assertTrue( $tags->next_tag( 'A' ) );
+		$this->assertSame( 'noopener colleague', $tags->get_attribute( 'rel' ) );
+		$this->assertTrue( $tags->next_tag( 'A' ) );
+		$this->assertSame( 'friend', $tags->get_attribute( 'rel' ) );
+		$this->assertSame( 'core/paragraph', parse_blocks( $updated )[0]['blockName'] );
+		$this->assertSame( $updated, XFN_Meta_Mirror::apply_to_content( $updated, $rels ) );
+	}
+
 	public function test_get_and_set_relationships(): void {
 		$post_id = self::factory()->post->create();
 		$rels    = array(

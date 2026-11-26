@@ -1435,6 +1435,7 @@ function startXFNMonitoring() {
 		attributes: true,
 		attributeFilter: [ 'aria-expanded' ],
 	} );
+	injectXFNControls();
 
 	// Also monitor clicks on advanced toggle buttons
 	document.addEventListener( 'click', ( e ) => {
@@ -1543,12 +1544,13 @@ addFilter(
 
 // Start monitoring for inline links
 if ( typeof document !== 'undefined' ) {
-	// Wait for editor to be ready
-	xfnLog( 'Starting XFN monitoring in 1 second...' );
-	setTimeout( () => {
-		xfnLog( 'XFN monitoring started!' );
+	if ( document.body ) {
 		startXFNMonitoring();
-	}, 1000 );
+	} else {
+		document.addEventListener( 'DOMContentLoaded', startXFNMonitoring, {
+			once: true,
+		} );
+	}
 }
 
 xfnLog( 'Link Extension loaded successfully!' );
