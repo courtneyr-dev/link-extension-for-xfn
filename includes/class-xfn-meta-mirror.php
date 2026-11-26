@@ -257,8 +257,7 @@ final class XFN_Meta_Mirror {
 
 		$rels_by_url = [];
 		foreach ( $relationships as $entry ) {
-			$url                 = html_entity_decode( $entry['url'], ENT_QUOTES | ENT_HTML5, 'UTF-8' );
-			$rels_by_url[ $url ] = $entry['rels'];
+			$rels_by_url[ $entry['url'] ] = $entry['rels'];
 		}
 
 		$tags = new \WP_HTML_Tag_Processor( $content );
@@ -303,7 +302,7 @@ final class XFN_Meta_Mirror {
 			wp_update_post(
 				[
 					'ID'           => $post_id,
-					'post_content' => $updated_content,
+					'post_content' => wp_slash( $updated_content ),
 				]
 			);
 			add_action( 'save_post', [ __CLASS__, 'sync_meta_to_content' ], 20, 2 );

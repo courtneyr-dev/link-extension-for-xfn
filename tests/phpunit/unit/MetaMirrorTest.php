@@ -102,6 +102,20 @@ class MetaMirrorTest extends WP_UnitTestCase {
 		$this->assertSame( $updated, XFN_Meta_Mirror::apply_to_content( $updated, $rels ) );
 	}
 
+	public function test_apply_to_content_does_not_decode_stored_urls(): void {
+		$content = '<a href="https://example.com/?one=1&amp;copy;=2" rel="nofollow">Target</a>'
+			. '<a href="https://example.com/?one=1&copy;=2" rel="external">Neighbor</a>';
+		$rels    = array(
+			array( 'url' => 'https://example.com/?one=1&copy;=2', 'rels' => array( 'colleague' ) ),
+		);
+		$tags    = new \WP_HTML_Tag_Processor( XFN_Meta_Mirror::apply_to_content( $content, $rels ) );
+
+		$this->assertTrue( $tags->next_tag( 'A' ) );
+		$this->assertSame( 'nofollow colleague', $tags->get_attribute( 'rel' ) );
+		$this->assertTrue( $tags->next_tag( 'A' ) );
+		$this->assertSame( 'external', $tags->get_attribute( 'rel' ) );
+	}
+
 	public function test_get_and_set_relationships(): void {
 		$post_id = self::factory()->post->create();
 		$rels    = array(
@@ -113,6 +127,26 @@ class MetaMirrorTest extends WP_UnitTestCase {
 
 		$this->assertCount( 1, $result );
 		$this->assertSame( 'https://alice.example.com', $result[0]['url'] );
+	}
+
+	public function test_save_preserves_escaped_block_attributes_when_mirroring_relationships(): void {
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'administrator' ) ) );
+		$content = '<!-- wp:paragraph {"metadata":{"name":"A \u0026 B"}} -->'
+			. '<p><a href="https://example.com/?one=1&amp;two=2" rel="nofollow">Target</a></p>'
+			. '<!-- /wp:paragraph -->';
+		$post_id = self::factory()->post->create( array( 'post_content' => wp_slash( $content ) ) );
+
+		$this->assertSame( 'A & B', parse_blocks( get_post( $post_id )->post_content )[0]['attrs']['metadata']['name'] );
+		XFN_Meta_Mirror::set_relationships(
+			$post_id,
+			array( array( 'url' => 'https://example.com/?one=1&two=2', 'rels' => array( 'colleague' ) ) )
+		);
+		wp_update_post( array( 'ID' => $post_id, 'post_title' => 'Updated draft' ) );
+
+		$saved = get_post( $post_id )->post_content;
+
+		$this->assertStringContainsString( 'rel="nofollow colleague"', $saved );
+		$this->assertSame( 'A & B', parse_blocks( $saved )[0]['attrs']['metadata']['name'] );
 	}
 
 	public function test_add_relationship(): void {
