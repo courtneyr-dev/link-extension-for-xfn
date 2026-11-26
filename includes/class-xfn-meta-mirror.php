@@ -251,39 +251,31 @@ final class XFN_Meta_Mirror {
 	 * @return string Updated content.
 	 */
 	public static function apply_to_content( string $content, array $relationships ): string {
-		foreach ( $relationships as $entry ) {
-			$url      = preg_quote( $entry['url'], '/' );
-			$xfn_rels = $entry['rels'];
-
-			$content = preg_replace_callback(
-				'/<a\s+([^>]*?)href\s*=\s*["\']' . $url . '["\']([^>]*?)>/i',
-				function ( $matches ) use ( $xfn_rels ) {
-					$before = $matches[1];
-					$after  = $matches[2];
-					$tag    = $matches[0];
-
-					// Extract existing rel.
-					$existing_rel = '';
-					if ( preg_match( '/rel=["\']([^"\']*)["\']/', $before . $after, $rel_match ) ) {
-						$existing_rel = $rel_match[1];
-						$tag          = str_replace( $rel_match[0], '', $tag );
-					}
-
-					// Separate non-XFN rels.
-					$parsed     = XFN_Link_Extension::parse_rel_attribute( $existing_rel );
-					$other_rels = $parsed['other'];
-
-					// Combine.
-					$new_rel = XFN_Link_Extension::combine_rel_values( $xfn_rels, $other_rels );
-
-					// Insert rel before closing >.
-					return rtrim( $tag, '>' ) . ' rel="' . esc_attr( $new_rel ) . '">';
-				},
-				$content
-			);
+		if ( empty( $relationships ) ) {
+			return $content;
 		}
 
-		return $content;
+		$rels_by_url = [];
+		foreach ( $relationships as $entry ) {
+			$rels_by_url[ $entry['url'] ] = $entry['rels'];
+		}
+
+		$tags = new \WP_HTML_Tag_Processor( $content );
+		while ( $tags->next_tag( 'A' ) ) {
+			$href = $tags->get_attribute( 'href' );
+			if ( ! is_string( $href ) || ! isset( $rels_by_url[ $href ] ) ) {
+				continue;
+			}
+
+			$rel    = $tags->get_attribute( 'rel' );
+			$parsed = XFN_Link_Extension::parse_rel_attribute( is_string( $rel ) ? $rel : '' );
+			$merged = XFN_Link_Extension::combine_rel_values( $rels_by_url[ $href ], $parsed['other'] );
+			if ( $merged !== $rel ) {
+				$tags->set_attribute( 'rel', $merged );
+			}
+		}
+
+		return $tags->get_updated_html();
 	}
 
 	/**
@@ -310,7 +302,7 @@ final class XFN_Meta_Mirror {
 			wp_update_post(
 				[
 					'ID'           => $post_id,
-					'post_content' => $updated_content,
+					'post_content' => wp_slash( $updated_content ),
 				]
 			);
 			add_action( 'save_post', [ __CLASS__, 'sync_meta_to_content' ], 20, 2 );
