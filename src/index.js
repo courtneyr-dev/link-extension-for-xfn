@@ -20,12 +20,19 @@ import {
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { useState, useEffect } from '@wordpress/element';
 import { useSelect, dispatch } from '@wordpress/data';
+import { getBlockType } from '@wordpress/blocks';
 import { link, linkOff, chevronDown, chevronUp } from '@wordpress/icons';
 
 /**
  * Internal dependencies
  */
 import './editor.scss';
+import {
+	parseRelAttribute,
+	combineRelValues,
+	getBlockRel,
+	setBlockXfn,
+} from './rel';
 
 /**
  * Debug flag - set to true to enable verbose console logging
@@ -190,89 +197,17 @@ const XFN_RELATIONSHIPS = {
 };
 
 /**
- * Parse rel attribute to separate XFN and non-XFN values
+ * Blocks that are a single link as a whole
  */
-function parseRelAttribute( relString ) {
-	if ( ! relString ) {
-		return { xfn: [], other: [] };
-	}
-
-	const xfnValues = [
-		'contact',
-		'acquaintance',
-		'friend',
-		'met',
-		'co-worker',
-		'colleague',
-		'co-resident',
-		'neighbor',
-		'child',
-		'parent',
-		'sibling',
-		'spouse',
-		'kin',
-		'muse',
-		'crush',
-		'date',
-		'sweetheart',
-		'me',
-	];
-
-	const relParts = relString.split( /\s+/ ).filter( Boolean );
-	const xfn = [];
-	const other = [];
-
-	relParts.forEach( ( part ) => {
-		if ( xfnValues.includes( part ) ) {
-			xfn.push( part );
-		} else {
-			other.push( part );
-		}
-	} );
-
-	return { xfn, other };
-}
-
-/**
- * Combine XFN and other rel values
- */
-function combineRelValues( xfnValues, otherValues ) {
-	const allValues = [ ...otherValues, ...xfnValues ].filter( Boolean );
-	return [ ...new Set( allValues ) ].join( ' ' );
-}
-
-/**
- * Get rel attribute from various block types
- */
-function getRelFromBlock( attributes, blockName ) {
-	if ( attributes.rel ) {
-		return attributes.rel;
-	}
-
-	if ( attributes.metadata?.rel ) {
-		return attributes.metadata.rel;
-	}
-
-	return '';
-}
-
-/**
- * Set rel attribute for various block types
- */
-function setRelForBlock( attributes, setAttributes, newRel, blockName ) {
-	if ( attributes.hasOwnProperty( 'rel' ) ) {
-		setAttributes( { rel: newRel || undefined } );
-		return;
-	}
-
-	const metadata = attributes.metadata || {};
-	setAttributes( {
-		metadata: {
-			...metadata,
-			rel: newRel || undefined,
-		},
-	} );
-}
+const BLOCK_LEVEL_LINKS = [
+	'core/button',
+	'core/image',
+	'core/navigation-link',
+	'core/site-logo',
+	'core/post-title',
+	'core/query-title',
+	'core/embed',
+];
 
 /**
  * XFN Collapsible Section Component
@@ -451,13 +386,13 @@ const XFNCollapsibleSection = ( {
  * XFN Inspector Controls Component (for blocks that are entirely links)
  */
 const XFNInspectorControls = ( { attributes, setAttributes, name } ) => {
-	const currentRel = getRelFromBlock( attributes, name );
-	const { xfn: xfnValues, other: otherValues } =
-		parseRelAttribute( currentRel );
+	const blockType = getBlockType( name );
+	const { xfn: xfnValues } = parseRelAttribute(
+		getBlockRel( blockType, attributes )
+	);
 
 	const updateXFNValues = ( newXfnValues ) => {
-		const newRel = combineRelValues( newXfnValues, otherValues );
-		setRelForBlock( attributes, setAttributes, newRel, name );
+		setAttributes( setBlockXfn( blockType, attributes, newXfnValues ) );
 	};
 
 	const updateRelationship = ( category, value, isChecked ) => {
@@ -487,20 +422,10 @@ const XFNInspectorControls = ( { attributes, setAttributes, name } ) => {
 		updateXFNValues( newXfnValues );
 	};
 
-	// Open by default for Button and other block-level links
-	const blockLevelLinks = [
-		'core/button',
-		'core/image',
-		'core/navigation-link',
-		'core/site-logo',
-		'core/post-title',
-		'core/query-title',
-		'core/embed',
-	];
-	// Also open by default for blocks with URL values (so XFN is visible after URL submission)
+	// Open by default for block-level links, and for blocks with URL values (so XFN is visible after URL submission)
 	const hasUrlValue = attributes.url || attributes.href || attributes.eventUrl;
 	const shouldBeOpenByDefault =
-		blockLevelLinks.includes( name ) ||
+		BLOCK_LEVEL_LINKS.includes( name ) ||
 		attributes.hasOwnProperty( 'eventUrl' ) ||
 		hasUrlValue;
 
@@ -756,16 +681,6 @@ function injectXFNControls() {
 
 		// Check if this is a block-level link
 		const selectedBlock = wp.data.select( 'core/block-editor' ).getSelectedBlock();
-		const blockLevelLinks = [
-			'core/button',
-			'core/image',
-			'core/navigation-link',
-			'core/site-logo',
-			'core/post-title',
-			'core/query-title',
-			'core/embed',
-		];
-
 		// Also treat blocks with eventUrl or url values (Post Kinds, Bookmark Card, embeds) as block-level links
 		const hasBlockUrlValue =
 			selectedBlock?.attributes?.url ||
@@ -773,14 +688,17 @@ function injectXFNControls() {
 			selectedBlock?.attributes?.eventUrl;
 
 		const isBlockLevelLink = selectedBlock && (
-			blockLevelLinks.includes( selectedBlock.name ) ||
+			BLOCK_LEVEL_LINKS.includes( selectedBlock.name ) ||
 			selectedBlock.attributes?.hasOwnProperty( 'eventUrl' ) ||
 			hasBlockUrlValue
 		);
 
 		if ( isBlockLevelLink ) {
 			// For block-level links, read directly from block attributes
-			currentRel = getRelFromBlock( selectedBlock.attributes, selectedBlock.name );
+			currentRel = getBlockRel(
+				getBlockType( selectedBlock.name ),
+				selectedBlock.attributes
+			);
 			xfnLog( 'Got rel from block-level link attributes:', currentRel );
 		} else if ( currentLinkValue?.url && selectedBlock?.attributes?.content ) {
 			// For inline links (like in paragraphs), parse the content
@@ -1213,16 +1131,6 @@ function applyXFNToCreatedLink() {
 	xfnLog( 'Block innerBlocks:', selectedBlock.innerBlocks );
 
 	// Check if this is a block-level link (like Button, Image, etc.)
-	const blockLevelLinks = [
-		'core/button',
-		'core/image',
-		'core/navigation-link',
-		'core/site-logo',
-		'core/post-title',
-		'core/query-title',
-		'core/embed',
-	];
-
 	// Also treat blocks with eventUrl or url values (Post Kinds, Bookmark Card, embeds) as block-level links
 	const hasBlockUrlValue =
 		selectedBlock.attributes?.url ||
@@ -1230,47 +1138,28 @@ function applyXFNToCreatedLink() {
 		selectedBlock.attributes?.eventUrl;
 
 	const isBlockLevelLink =
-		blockLevelLinks.includes( selectedBlock.name ) ||
+		BLOCK_LEVEL_LINKS.includes( selectedBlock.name ) ||
 		selectedBlock.attributes?.hasOwnProperty( 'eventUrl' ) ||
 		hasBlockUrlValue;
 
 	if ( isBlockLevelLink ) {
 		xfnLog( 'This is a block-level link, updating rel attribute directly...' );
 
-		// Get existing rel value
-		const existingRel = getRelFromBlock( selectedBlock.attributes, selectedBlock.name );
-		xfnLog( 'Existing rel:', existingRel );
-
-		// Parse and combine with pending XFN values
-		const { other: existingOther } = parseRelAttribute( existingRel );
-		xfnLog( 'Existing other values:', existingOther );
-
 		const { xfn: pendingXFN } = parseRelAttribute( window.pendingXFNRel );
-		xfnLog( 'Pending XFN values:', pendingXFN );
-
-		const newRel = combineRelValues( pendingXFN, existingOther );
-		xfnLog( 'New combined rel:', newRel );
-
-		// Update the block using setRelForBlock pattern
-		if ( selectedBlock.attributes.hasOwnProperty( 'rel' ) ) {
-			wp.data.dispatch( 'core/block-editor' ).updateBlockAttributes(
-				selectedBlock.clientId,
-				{ rel: newRel || undefined }
-			);
-			xfnLog( '✓ Updated rel attribute on block' );
-		} else {
-			const metadata = selectedBlock.attributes.metadata || {};
-			wp.data.dispatch( 'core/block-editor' ).updateBlockAttributes(
-				selectedBlock.clientId,
-				{
-					metadata: {
-						...metadata,
-						rel: newRel || undefined,
-					},
-				}
-			);
-			xfnLog( '✓ Updated metadata.rel attribute on block' );
-		}
+		const blockType = getBlockType( selectedBlock.name );
+		const update = setBlockXfn(
+			blockType,
+			selectedBlock.attributes,
+			pendingXFN
+		);
+		const newRel = getBlockRel( blockType, {
+			...selectedBlock.attributes,
+			...update,
+		} );
+		wp.data
+			.dispatch( 'core/block-editor' )
+			.updateBlockAttributes( selectedBlock.clientId, update );
+		xfnLog( '✓ Updated block rel:', update );
 
 		// Also try to update via onChange if available
 		if ( window.currentLinkOnChange && typeof window.currentLinkOnChange === 'function' ) {
@@ -1461,17 +1350,6 @@ const withXFNControls = createHigherOrderComponent( ( BlockEdit ) => {
 			enable_inspector_controls: false,
 		};
 
-		// List of blocks that support links as the entire block
-		const supportedBlocks = [
-			'core/button',
-			'core/image',
-			'core/navigation-link',
-			'core/site-logo',
-			'core/post-title',
-			'core/query-title',
-			'core/embed',
-		];
-
 		// Check if this block type should have XFN controls in inspector
 		// Supports core blocks plus Post Kinds for IndieWeb blocks (eventUrl for RSVP cards)
 		// Check both attribute existence AND actual URL values for blocks that already have content
@@ -1488,7 +1366,7 @@ const withXFNControls = createHigherOrderComponent( ( BlockEdit ) => {
 			attributes.eventUrl;
 
 		const shouldShowXFN =
-			supportedBlocks.includes( name ) ||
+			BLOCK_LEVEL_LINKS.includes( name ) ||
 			hasUrlAttribute ||
 			hasUrlValue;
 
@@ -1496,12 +1374,6 @@ const withXFNControls = createHigherOrderComponent( ( BlockEdit ) => {
 		if ( ! shouldShowXFN || ! settings.enable_inspector_controls ) {
 			return <BlockEdit { ...props } />;
 		}
-
-		const currentRel = getRelFromBlock( attributes, name );
-
-		const handleXFNUpdate = ( newRel ) => {
-			setRelForBlock( attributes, props.setAttributes, newRel, name );
-		};
 
 		return (
 			<>
