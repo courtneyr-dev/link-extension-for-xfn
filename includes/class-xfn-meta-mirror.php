@@ -280,10 +280,12 @@ final class XFN_Meta_Mirror {
 	}
 
 	/**
-	 * When an update changes content, move an existing mirror to the new markup.
+	 * When an update changes content, move the mirror to the new markup.
 	 *
 	 * A restore rebuilds the mirror from the restored markup and drops any
-	 * pending write. After an ordinary edit, entries for links the change
+	 * pending write. It creates the mirror when a post without one restores
+	 * markup with XFN links. An ordinary edit leaves a post without a mirror
+	 * alone. After an ordinary edit, entries for links the change
 	 * added, removed, or re-related follow the new markup. Entries for links
 	 * it left alone, or that were never in the saved markup, keep their stored
 	 * value, so a pending write still lands through sync_meta_to_content().
@@ -293,14 +295,16 @@ final class XFN_Meta_Mirror {
 	 * @param \WP_Post $post_before Post object before the update.
 	 */
 	public static function sync_content_to_meta( int $post_id, \WP_Post $post_after, \WP_Post $post_before ): void {
-		if ( wp_is_post_revision( $post_id )
-			|| $post_after->post_content === $post_before->post_content
-			|| ! metadata_exists( 'post', $post_id, self::META_KEY ) ) {
+		if ( wp_is_post_revision( $post_id ) || $post_after->post_content === $post_before->post_content ) {
 			return;
 		}
 
 		$after    = array_column( XFN_Content_Scanner::extract_xfn_links_from_post( $post_after ), 'rels', 'url' );
-		$restored = self::is_restore( $post_after );
+		$mirrored = metadata_exists( 'post', $post_id, self::META_KEY );
+		$restored = ( $mirrored || [] !== $after ) && self::is_restore( $post_after );
+		if ( ! $mirrored && ! $restored ) {
+			return;
+		}
 
 		$rels_by_url = [];
 		if ( ! $restored ) {
