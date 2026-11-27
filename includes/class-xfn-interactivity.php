@@ -107,6 +107,11 @@ class XFN_Interactivity {
 			$processor->set_attribute( 'data-wp-on--focus', 'actions.showTooltip' );
 			$processor->set_attribute( 'data-wp-on--blur', 'actions.hideTooltip' );
 			$processor->set_attribute( 'data-wp-on--keydown', 'actions.handleKeydown' );
+			// A hover tooltip must close on Escape wherever focus is
+			// (WCAG 1.4.13 dismissible). The link's own handler runs first
+			// and stops the event when it closes its tooltip, so a
+			// surrounding Navigation overlay stays open.
+			$processor->set_attribute( 'data-wp-on-document--keydown', 'actions.handleKeydown' );
 
 			$xfn_links[ $id ] = [
 				'rels'   => $parsed['xfn'],
