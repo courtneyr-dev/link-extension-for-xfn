@@ -12,6 +12,10 @@ class RevisionParityTest extends WP_UnitTestCase {
 
 	private const FRIEND = '<!-- wp:paragraph --><p><a href="https://example.com/xfn-revision" rel="nofollow friend">Fixture source</a></p><!-- /wp:paragraph -->';
 
+	private const SPACED_FRIEND = '<!-- wp:paragraph --><p><a href="https://example.com/xfn-revision" rel = "nofollow friend">Fixture source</a></p><!-- /wp:paragraph -->';
+
+	private const EDITED_FRIEND = self::FRIEND . '<!-- wp:paragraph --><p>An edit elsewhere.</p><!-- /wp:paragraph -->';
+
 	private const RENDERED_ONLY = array(
 		'url'  => 'https://example.com/rendered-only',
 		'rels' => array( 'met' ),
@@ -60,6 +64,55 @@ class RevisionParityTest extends WP_UnitTestCase {
 		);
 	}
 
+	/**
+	 * @dataProvider restore_paths
+	 */
+	public function test_restore_that_keeps_the_link_discards_a_pending_write( string $path ): void {
+		$post_id  = $this->publish( self::FRIEND );
+		$revision = _wp_put_post_revision( $post_id );
+		wp_update_post( array( 'ID' => $post_id, 'post_content' => self::EDITED_FRIEND ) );
+		XFN_Meta_Mirror::set_relationships( $post_id, array( array( 'url' => self::URL, 'rels' => array( 'met' ) ) ) );
+
+		$this->restore( $path, $post_id, $revision );
+
+		$this->assert_reads_agree_on_friend( $post_id );
+	}
+
+	/**
+	 * @dataProvider restore_paths
+	 */
+	public function test_restore_lists_a_rel_with_spaces_around_the_equals_sign( string $path ): void {
+		$post_id  = $this->publish( self::SPACED_FRIEND );
+		$revision = _wp_put_post_revision( $post_id );
+		update_post_meta( $post_id, XFN_Meta_Mirror::META_KEY, array( array( 'url' => self::URL, 'rels' => array( 'friend' ) ) ) );
+		wp_update_post( array( 'ID' => $post_id, 'post_content' => '<p>Link removed.</p>' ) );
+
+		$this->restore( $path, $post_id, $revision );
+
+		$this->assert_reads_agree_on_friend( $post_id, self::SPACED_FRIEND );
+	}
+
+	/**
+	 * @dataProvider restore_paths
+	 */
+	public function test_restore_creates_the_mirror_for_markup_saved_without_one( string $path ): void {
+		$post_id  = $this->publish( self::FRIEND );
+		$revision = _wp_put_post_revision( $post_id );
+		wp_update_post( array( 'ID' => $post_id, 'post_content' => str_replace( 'nofollow friend', 'nofollow colleague', self::FRIEND ) ) );
+		$this->assertFalse( metadata_exists( 'post', $post_id, XFN_Meta_Mirror::META_KEY ) );
+
+		$this->restore( $path, $post_id, $revision );
+
+		$this->assert_reads_agree_on_friend( $post_id );
+	}
+
+	public static function restore_paths(): array {
+		return array(
+			'wp_restore_post_revision()' => array( 'wp_restore_post_revision' ),
+			'Visual Revisions REST save' => array( 'rest' ),
+		);
+	}
+
 	public function test_title_only_save_keeps_relationships_missing_from_markup(): void {
 		$post_id = $this->publish( self::FRIEND );
 		$mirror  = array( array( 'url' => self::URL, 'rels' => array( 'friend' ) ), self::RENDERED_ONLY );
@@ -89,6 +142,18 @@ class RevisionParityTest extends WP_UnitTestCase {
 		XFN_Meta_Mirror::set_relationships( $post_id, $colleague );
 
 		wp_update_post( array( 'ID' => $post_id, 'post_content' => self::FRIEND . '<p>An edit elsewhere.</p>' ) );
+
+		$this->assertStringContainsString( 'rel="nofollow colleague"', get_post( $post_id )->post_content );
+		$this->assertSame( $colleague, XFN_Meta_Mirror::get_relationships( $post_id ) );
+	}
+
+	public function test_saving_the_autosaved_content_keeps_a_pending_write(): void {
+		$colleague = array( array( 'url' => self::URL, 'rels' => array( 'colleague' ) ) );
+		$post_id   = $this->publish( self::FRIEND );
+		_wp_put_post_revision( array( 'post_content' => self::EDITED_FRIEND ) + get_post( $post_id, ARRAY_A ), true );
+		XFN_Meta_Mirror::set_relationships( $post_id, $colleague );
+
+		wp_update_post( array( 'ID' => $post_id, 'post_content' => self::EDITED_FRIEND ) );
 
 		$this->assertStringContainsString( 'rel="nofollow colleague"', get_post( $post_id )->post_content );
 		$this->assertSame( $colleague, XFN_Meta_Mirror::get_relationships( $post_id ) );
@@ -176,6 +241,17 @@ class RevisionParityTest extends WP_UnitTestCase {
 		return $post_id;
 	}
 
+	private function restore( string $path, int $post_id, int $revision_id ): void {
+		if ( 'wp_restore_post_revision' === $path ) {
+			wp_restore_post_revision( $revision_id );
+			return;
+		}
+
+		$request = new WP_REST_Request( 'POST', '/wp/v2/posts/' . $post_id );
+		$request->set_body_params( array( 'content' => get_post( $revision_id )->post_content ) );
+		$this->assertSame( 200, rest_get_server()->dispatch( $request )->get_status() );
+	}
+
 	private function friend_revision_id( int $post_id ): int {
 		foreach ( wp_get_post_revisions( $post_id ) as $revision ) {
 			if ( self::FRIEND === $revision->post_content ) {
@@ -186,9 +262,11 @@ class RevisionParityTest extends WP_UnitTestCase {
 		$this->fail( 'The friend revision is missing.' );
 	}
 
-	private function assert_reads_agree_on_friend( int $post_id ): void {
-		$this->assertSame( self::FRIEND, get_post( $post_id )->post_content );
-		$this->assertStringContainsString( 'rel="nofollow friend"', apply_filters( 'the_content', get_post( $post_id )->post_content ) );
+	private function assert_reads_agree_on_friend( int $post_id, string $content = self::FRIEND ): void {
+		$this->assertSame( $content, get_post( $post_id )->post_content );
+		$rendered = new \WP_HTML_Tag_Processor( apply_filters( 'the_content', $content ) );
+		$rendered->next_tag( 'A' );
+		$this->assertSame( 'nofollow friend', $rendered->get_attribute( 'rel' ) );
 		$this->assertSame( $this->agreeing( 'friend' ), $this->reads( $post_id ) );
 		$this->assertSame( '', get_post_meta( $post_id, XFN_Meta_Mirror::SOURCE_KEY, true ) );
 		$this->assertSame( array( $post_id ), array_values( array_unique( wp_list_pluck( XFN_Content_Scanner::scan_all_posts_for_xfn(), 'post_id' ) ) ) );
