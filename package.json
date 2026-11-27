@@ -23,7 +23,7 @@
     "playwright": "^1.48.0"
   },
   "dependencies": {
-    "@wordpress/icons": "^20.0.0",
+    "@wordpress/icons": "^21.0.0",
     "@wordpress/interactivity": "^8.1.0"
   },
   "overrides": {
