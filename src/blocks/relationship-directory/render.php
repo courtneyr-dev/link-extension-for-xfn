@@ -70,8 +70,9 @@ wp_interactivity_state(
 // A client-side router that swaps the surrounding region diffs this element
 // against the previous page's. Keying it by request path, query string and
 // position stops one route's directory from reusing another's search and
-// filter state, including routes with no queried object.
-$lexfn_route = isset( $_SERVER['REQUEST_URI'] ) ? esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
+// filter state, including routes with no queried object. The URI is only
+// hashed, never output, so sanitizing it would only merge distinct routes.
+$lexfn_route = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Hashed below, never output.
 $lexfn_key   = wp_unique_id( 'xfn-directory-' . md5( $lexfn_route ) . '-' );
 
 $lexfn_wrapper_attrs = get_block_wrapper_attributes(
