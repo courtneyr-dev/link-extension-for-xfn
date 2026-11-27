@@ -7,6 +7,8 @@ Configure where XFN relationship controls appear in the block editor. There's on
 
 ## Accessing the settings
 
+Use the [XFN relationship test cases](https://github.com/courtneyr-dev/indieweb-test-data/tree/main/cases/xfn) to import synthetic examples on a disposable WordPress site.
+
 1. Log in to wp-admin.
 2. Go to **Settings → Link Extension for XFN**.
 

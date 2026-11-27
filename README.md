@@ -84,6 +84,8 @@ _Block-level links get a full sidebar panel._
 
 ## Documentation
 
+Use the [XFN relationship test cases](https://github.com/courtneyr-dev/indieweb-test-data/tree/main/cases/xfn) to import synthetic examples on a disposable WordPress site.
+
 Comprehensive user guides are available in the [`docs/`](docs/) directory:
 
 - **[Getting Started](docs/README.md)** - Quick start guide and XFN overview

@@ -458,6 +458,8 @@ Links from password-protected, private, draft and scheduled posts no longer appe
 = 1.1.2 =
 Documentation and screenshots only. Sites coming from 1.0.x also get 1.1.1, which makes three read-only XFN abilities public on the MCP Adapter's default server and removes the WP Pinch integration.
 
+*Testing on a disposable site:* Use the [XFN relationship test cases](https://github.com/courtneyr-dev/indieweb-test-data/tree/main/cases/xfn) to import synthetic examples.
+
 == Installation ==
 
 1. Upload the plugin files to the `/wp-content/plugins/link-extension-for-xfn` directory, or install the plugin through the WordPress plugins screen directly.
