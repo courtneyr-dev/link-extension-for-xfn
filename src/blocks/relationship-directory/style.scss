@@ -81,6 +81,10 @@
   border-bottom: 1px solid #f0f0f0;
 }
 
+.xfn-directory__item[hidden] {
+  display: none;
+}
+
 .xfn-directory__item:last-child {
   border-bottom: none;
 }

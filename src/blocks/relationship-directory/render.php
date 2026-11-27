@@ -47,19 +47,20 @@ foreach ( $lexfn_links as $lexfn_i => $lexfn_link ) {
 	];
 }
 
+// Each directory keeps its own links in its context, so two directories
+// with different limits on one page never read each other's list.
 $lexfn_context = wp_json_encode(
 	[
 		'searchTerm'   => '',
 		'activeFilter' => '',
+		'links'        => $lexfn_link_data,
 	]
 );
 
 wp_interactivity_state(
 	'xfn-directory',
 	[
-		'links'   => $lexfn_link_data,
-		'allRels' => $lexfn_all_rels,
-		'i18n'    => [
+		'i18n' => [
 			/* translators: %d: number of relationships currently shown. */
 			'resultsTextSingular' => __( '%d relationship shown', 'link-extension-for-xfn' ),
 			/* translators: %d: number of relationships currently shown. */
@@ -67,6 +68,11 @@ wp_interactivity_state(
 		],
 	]
 );
+
+// A client-side router that swaps the surrounding region diffs this element
+// against the previous page's. Keying it by page and position stops one
+// page's directory from reusing another's search and filter state.
+$lexfn_key = wp_unique_id( 'xfn-directory-' . get_queried_object_id() . '-' );
 
 $lexfn_wrapper_attrs = get_block_wrapper_attributes(
 	[
@@ -77,6 +83,7 @@ $lexfn_wrapper_attrs = get_block_wrapper_attributes(
 <div
 	<?php echo $lexfn_wrapper_attrs; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_block_wrapper_attributes() output is escaped by core. ?>
 	data-wp-interactive="xfn-directory"
+	data-wp-key="<?php echo esc_attr( $lexfn_key ); ?>"
 	data-wp-context='<?php echo esc_attr( $lexfn_context ); ?>'
 >
 	<?php
@@ -113,10 +120,10 @@ $lexfn_wrapper_attrs = get_block_wrapper_attributes(
 				<button
 					type="button"
 					class="xfn-pill xfn-pill-<?php echo esc_attr( $lexfn_rel ); ?> xfn-directory__filter-btn"
-					data-rel="<?php echo esc_attr( $lexfn_rel ); ?>"
+					data-wp-context='<?php echo esc_attr( wp_json_encode( [ 'filterRel' => $lexfn_rel ] ) ); ?>'
 					data-wp-on--click="actions.toggleFilter"
-					data-wp-class--xfn-pill--active="<?php echo esc_attr( 'state.isActiveFilter_' . $lexfn_rel ); ?>"
-					data-wp-bind--aria-pressed="<?php echo esc_attr( 'state.isActiveFilter_' . $lexfn_rel ); ?>"
+					data-wp-class--xfn-pill--active="state.isActiveFilter"
+					data-wp-bind--aria-pressed="state.isActiveFilter"
 				>
 					<?php echo esc_html( $lexfn_rel ); ?>
 				</button>
@@ -129,8 +136,8 @@ $lexfn_wrapper_attrs = get_block_wrapper_attributes(
 		<?php foreach ( $lexfn_link_data as $lexfn_link ) : ?>
 			<li
 				class="xfn-directory__item"
-				data-link-id="<?php echo esc_attr( $lexfn_link['id'] ); ?>"
-				data-wp-bind--hidden="<?php echo esc_attr( 'state.isHidden_' . $lexfn_link['id'] ); ?>"
+				data-wp-context='<?php echo esc_attr( wp_json_encode( [ 'linkIndex' => $lexfn_link['id'] ] ) ); ?>'
+				data-wp-bind--hidden="state.isHidden"
 			>
 				<a
 					href="<?php echo esc_url( $lexfn_link['url'] ); ?>"
