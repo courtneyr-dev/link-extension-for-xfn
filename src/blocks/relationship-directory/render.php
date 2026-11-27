@@ -68,9 +68,11 @@ wp_interactivity_state(
 );
 
 // A client-side router that swaps the surrounding region diffs this element
-// against the previous page's. Keying it by page and position stops one
-// page's directory from reusing another's search and filter state.
-$lexfn_key = wp_unique_id( 'xfn-directory-' . get_queried_object_id() . '-' );
+// against the previous page's. Keying it by request path, query string and
+// position stops one route's directory from reusing another's search and
+// filter state, including routes with no queried object.
+$lexfn_route = isset( $_SERVER['REQUEST_URI'] ) ? esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
+$lexfn_key   = wp_unique_id( 'xfn-directory-' . md5( $lexfn_route ) . '-' );
 
 $lexfn_wrapper_attrs = get_block_wrapper_attributes(
 	[
