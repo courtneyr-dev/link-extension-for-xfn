@@ -56,6 +56,25 @@ class RelationshipDirectoryRenderTest extends WP_UnitTestCase {
 		}
 	}
 
+	public function test_context_parses_when_a_post_title_holds_an_encoded_quote(): void {
+		// An administrator's title skips kses, and sites that turn
+		// texturizing off serve its &quot; unchanged.
+		kses_remove_filters();
+		remove_filter( 'the_title', 'wptexturize' );
+		$post_id = self::factory()->post->create(
+			array(
+				'post_status'  => 'publish',
+				'post_title'   => 'Say &quot;hi&quot;',
+				'post_content' => '<p><a href="https://example.com/quoted" rel="friend">quoted</a></p>',
+			)
+		);
+
+		$directory = $this->directory( $this->render( 50 ) );
+		$titles    = array_column( $directory['context']['links'] ?? array(), 'postTitle', 'postId' );
+
+		$this->assertSame( get_the_title( $post_id ), $titles[ $post_id ] ?? null );
+	}
+
 	private function render( int $limit ): string {
 		return render_block(
 			array(
