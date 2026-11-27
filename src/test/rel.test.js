@@ -57,8 +57,33 @@ test( 'reads a Navigation Link rel from the attribute core renders', () => {
 		'nofollow colleague'
 	);
 	assert.equal(
-		getBlockRel( navigationLink, { metadata: { rel: 'friend' } } ),
-		''
+		getBlockRel( navigationLink, {
+			rel: 'nofollow',
+			metadata: { rel: 'friend' },
+		} ),
+		'nofollow'
+	);
+} );
+
+test( 'reads XFN the old control left in metadata.rel when rel is unset', () => {
+	assert.equal(
+		getBlockRel( navigationLink, { metadata: { rel: 'nofollow friend' } } ),
+		'nofollow friend'
+	);
+} );
+
+test( 'moves metadata.rel into rel on the first edit', () => {
+	assert.deepEqual(
+		setBlockXfn(
+			navigationLink,
+			{ metadata: { name: 'Ada', rel: 'nofollow friend' } },
+			[ 'friend', 'colleague' ]
+		),
+		{ rel: 'nofollow friend colleague', metadata: { name: 'Ada' } }
+	);
+	assert.deepEqual(
+		setBlockXfn( navigationSubmenu, { metadata: { rel: 'friend' } }, [] ),
+		{ rel: undefined, metadata: undefined }
 	);
 } );
 
