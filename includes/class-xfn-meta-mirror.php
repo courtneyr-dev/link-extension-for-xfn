@@ -371,6 +371,8 @@ final class XFN_Meta_Mirror {
 
 		$updated_content = self::apply_to_content( $post->post_content, $relationships );
 		if ( $updated_content !== $post->post_content ) {
+			// The writeback can reproduce historical markup, which must not read as a restore.
+			remove_action( 'post_updated', [ __CLASS__, 'sync_content_to_meta' ], 10 );
 			remove_action( 'save_post', [ __CLASS__, 'sync_meta_to_content' ], 20 );
 			wp_update_post(
 				[
@@ -379,6 +381,7 @@ final class XFN_Meta_Mirror {
 				]
 			);
 			add_action( 'save_post', [ __CLASS__, 'sync_meta_to_content' ], 20, 2 );
+			add_action( 'post_updated', [ __CLASS__, 'sync_content_to_meta' ], 10, 3 );
 		}
 
 		// Reset source flag.

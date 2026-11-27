@@ -186,14 +186,14 @@ final class XFN_Content_Scanner {
 
 		global $wpdb;
 
-		// extract_xfn_links_from_post() decides which posts hold a rel attribute, so this only drops posts without "rel".
+		// extract_xfn_links_from_post() decides which posts hold XFN links; this only drops posts with no rel attribute, spaced or not.
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Static LIKE prefilter on core columns with no WP_Query equivalent; result set is cached in a transient above.
 		$post_ids = $wpdb->get_col(
 			"SELECT ID FROM {$wpdb->posts}
 			 WHERE post_status = 'publish'
 			   AND post_type IN ('post', 'page')
 			   AND post_password = ''
-			   AND post_content LIKE '%rel%'
+			   AND ( post_content LIKE '%rel=%' OR post_content LIKE '%rel =%' )
 			 ORDER BY ID DESC
 			 LIMIT 500"
 		);

@@ -210,6 +210,29 @@ class RevisionParityTest extends WP_UnitTestCase {
 		$this->assertSame( 'meta', get_post_meta( $post_id, XFN_Meta_Mirror::SOURCE_KEY, true ) );
 	}
 
+	public function test_writeback_that_reproduces_older_markup_keeps_rendered_only_entries(): void {
+		$colleague_markup = str_replace( 'nofollow friend', 'nofollow colleague', self::FRIEND );
+		$post_id          = $this->publish( $colleague_markup );
+		_wp_put_post_revision( $post_id );
+		wp_update_post( array( 'ID' => $post_id, 'post_content' => self::FRIEND ) );
+		$pending = array( array( 'url' => self::URL, 'rels' => array( 'colleague' ) ), self::RENDERED_ONLY );
+		XFN_Meta_Mirror::set_relationships( $post_id, $pending );
+
+		wp_update_post( array( 'ID' => $post_id, 'post_title' => 'Title-only edit' ) );
+
+		$this->assertSame( $colleague_markup, get_post( $post_id )->post_content );
+		$this->assertContains( self::RENDERED_ONLY, XFN_Meta_Mirror::get_relationships( $post_id ) );
+	}
+
+	public function test_directory_skips_posts_that_only_mention_relationships(): void {
+		$xfn_post = $this->publish( self::FRIEND );
+		for ( $i = 0; $i < 3; $i++ ) {
+			$this->publish( '<p>A relationship post.</p>' );
+		}
+		$ids = array_unique( array_column( XFN_Content_Scanner::scan_all_posts_for_xfn(), 'post_id' ) );
+		$this->assertSame( array( $xfn_post ), array_values( $ids ) );
+	}
+
 	private function publish( string $content ): int {
 		return self::factory()->post->create(
 			array(
