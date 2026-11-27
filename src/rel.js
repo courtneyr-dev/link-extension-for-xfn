@@ -77,15 +77,18 @@ const hasRelAttribute = ( blockType ) => Boolean( blockType?.attributes?.rel );
 /**
  * Read a block's current rel value.
  *
+ * A block with its own `rel` attribute falls back to `metadata.rel` while
+ * `rel` is unset, because the old control saved Navigation Link XFN there.
+ *
  * @param {Object} blockType  Registered block type.
  * @param {Object} attributes Block attributes.
  * @return {string} The block's rel value.
  */
 export function getBlockRel( blockType, attributes ) {
 	return (
-		( hasRelAttribute( blockType )
-			? attributes.rel
-			: attributes.metadata?.rel ) || ''
+		( hasRelAttribute( blockType ) && attributes.rel ) ||
+		attributes.metadata?.rel ||
+		''
 	);
 }
 
@@ -102,7 +105,18 @@ export function setBlockXfn( blockType, attributes, xfnValues ) {
 	const { other } = parseRelAttribute( getBlockRel( blockType, attributes ) );
 	const rel = combineRelValues( xfnValues, other ) || undefined;
 
-	return hasRelAttribute( blockType )
-		? { rel }
-		: { metadata: { ...attributes.metadata, rel } };
+	if ( ! hasRelAttribute( blockType ) ) {
+		return { metadata: { ...attributes.metadata, rel } };
+	}
+	if ( attributes.metadata?.rel === undefined ) {
+		return { rel };
+	}
+
+	// Clear the old control's metadata.rel in the same update that writes rel.
+	const metadata = { ...attributes.metadata };
+	delete metadata.rel;
+	return {
+		rel,
+		metadata: Object.keys( metadata ).length ? metadata : undefined,
+	};
 }
