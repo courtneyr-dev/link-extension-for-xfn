@@ -1,6 +1,7 @@
 <?php
 namespace LinkExtensionForXFN\Tests\Integration;
 
+use WP_HTML_Processor;
 use WP_UnitTestCase;
 use XFN_Interactivity;
 
@@ -18,7 +19,6 @@ class InteractivityTest extends WP_UnitTestCase {
 
 		$result = $this->interactivity->process_block( $content, array() );
 
-		$this->assertStringContainsString( 'xfn-tooltip-wrap', $result );
 		$this->assertStringContainsString( 'data-wp-interactive="xfn-links"', $result );
 		$this->assertStringContainsString( 'xfn-tooltip', $result );
 		$this->assertStringContainsString( 'role="tooltip"', $result );
@@ -56,11 +56,8 @@ class InteractivityTest extends WP_UnitTestCase {
 		$once  = $this->interactivity->process_block( $content, array() );
 		$twice = $this->interactivity->process_block( $once, array() );
 
-		$this->assertSame( 1, substr_count( $twice, 'xfn-tooltip-wrap' ) );
-		$this->assertStringNotContainsString(
-			'xfn-tooltip-wrap" data-wp-interactive="xfn-links" data-wp-context=\'{"isOpen":false}\'><span class="xfn-tooltip-wrap',
-			$twice
-		);
+		$this->assertSame( $once, $twice );
+		$this->assertSame( 1, substr_count( $twice, 'role="tooltip"' ) );
 	}
 
 	public function test_process_block_skips_non_xfn_links(): void {
@@ -94,7 +91,7 @@ class InteractivityTest extends WP_UnitTestCase {
 
 		$this->assertStringContainsString( 'xfn-pill-friend', $result );
 		$this->assertStringContainsString( 'xfn-pill-colleague', $result );
-		$this->assertSame( 2, substr_count( $result, 'xfn-tooltip-wrap' ) );
+		$this->assertSame( 2, substr_count( $result, 'role="tooltip"' ) );
 	}
 
 	public function test_process_block_removes_marker_attributes(): void {
@@ -119,6 +116,29 @@ class InteractivityTest extends WP_UnitTestCase {
 		$result = $this->interactivity->process_block( $content, array() );
 
 		$this->assertStringContainsString( 'xfn-tooltip-anchor', $result );
+	}
+
+	/**
+	 * Core styles submenu links through `.wp-block-navigation-item >
+	 * .wp-block-navigation-item__content`, so the anchor must stay a direct
+	 * child of its list item.
+	 */
+	public function test_navigation_anchor_stays_a_direct_child_of_its_item(): void {
+		$content = '<li class="wp-block-navigation-item"><a class="wp-block-navigation-item__content" href="https://ada.example.com" rel="nofollow friend"><span class="wp-block-navigation-item__label">Ada</span></a></li>';
+
+		$html = WP_HTML_Processor::create_fragment( '<ul>' . $this->interactivity->process_block( $content, array() ) . '</ul>' );
+		$this->assertTrue( $html->next_tag( 'A' ) );
+		$this->assertSame( array( 'HTML', 'BODY', 'UL', 'LI', 'A' ), $html->get_breadcrumbs() );
+
+		$tip_id = $html->get_attribute( 'aria-describedby' );
+		$this->assertIsString( $tip_id );
+		$roles = array();
+		while ( $html->next_tag() ) {
+			if ( $tip_id === $html->get_attribute( 'id' ) ) {
+				$roles[] = $html->get_attribute( 'role' );
+			}
+		}
+		$this->assertSame( array( 'tooltip' ), $roles );
 	}
 
 	public function test_init_registers_hooks(): void {
