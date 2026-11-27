@@ -41,6 +41,7 @@ final class XFN_Meta_Mirror {
 	 */
 	public static function init(): void {
 		add_action( 'init', [ __CLASS__, 'register_meta' ] );
+		add_action( 'post_updated', [ __CLASS__, 'sync_content_to_meta' ], 10, 3 );
 		add_action( 'save_post', [ __CLASS__, 'sync_meta_to_content' ], 20, 2 );
 		add_action(
 			'rest_api_init',
@@ -279,20 +280,56 @@ final class XFN_Meta_Mirror {
 	}
 
 	/**
-	 * On save, write meta-sourced relationships into post content, or rebuild an existing mirror from it.
+	 * When an update changes content, move an existing mirror to the links that change touched.
 	 *
-	 * Content wins whenever meta was not the last writer, so a restored revision
-	 * and the public directory report the same relationships as the mirror.
+	 * Restores, including the plain REST save Visual Revisions sends, rewrite
+	 * content without touching meta. Entries for links the change added,
+	 * removed, or re-related follow the new markup. Entries for links it left
+	 * alone, or that were never in the saved markup, keep their stored value,
+	 * so a pending write still lands through sync_meta_to_content().
+	 *
+	 * @param int      $post_id     Post ID.
+	 * @param \WP_Post $post_after  Post object after the update.
+	 * @param \WP_Post $post_before Post object before the update.
+	 */
+	public static function sync_content_to_meta( int $post_id, \WP_Post $post_after, \WP_Post $post_before ): void {
+		if ( wp_is_post_revision( $post_id )
+			|| $post_after->post_content === $post_before->post_content
+			|| ! metadata_exists( 'post', $post_id, self::META_KEY ) ) {
+			return;
+		}
+
+		$before = array_column( XFN_Content_Scanner::extract_xfn_links_from_post( $post_before ), 'rels', 'url' );
+		$after  = array_column( XFN_Content_Scanner::extract_xfn_links_from_post( $post_after ), 'rels', 'url' );
+
+		$rels_by_url = [];
+		foreach ( self::get_relationships( $post_id ) as $entry ) {
+			if ( ( $before[ $entry['url'] ] ?? null ) === ( $after[ $entry['url'] ] ?? null ) ) {
+				$rels_by_url[ $entry['url'] ] ??= $entry['rels'];
+			}
+		}
+
+		$relationships = [];
+		foreach ( $rels_by_url + $after as $url => $rels ) {
+			$relationships[] = [
+				'url'  => $url,
+				'rels' => $rels,
+			];
+		}
+
+		update_post_meta( $post_id, self::META_KEY, $relationships );
+	}
+
+	/**
+	 * On save, write meta-sourced relationships back into post content.
 	 *
 	 * @param int      $post_id Post ID.
 	 * @param \WP_Post $post    Post object.
 	 */
 	public static function sync_meta_to_content( int $post_id, \WP_Post $post ): void {
+		// Only sync if meta was the last writer.
 		$source = get_post_meta( $post_id, self::SOURCE_KEY, true );
-		if ( 'meta' !== $source ) {
-			if ( metadata_exists( 'post', $post_id, self::META_KEY ) ) {
-				update_post_meta( $post_id, self::META_KEY, XFN_Content_Scanner::extract_xfn_links_from_post( $post ) );
-			}
+		if ( 'meta' !== $source || wp_is_post_revision( $post_id ) ) {
 			return;
 		}
 

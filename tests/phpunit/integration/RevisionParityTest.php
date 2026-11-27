@@ -83,6 +83,17 @@ class RevisionParityTest extends WP_UnitTestCase {
 		$this->assertSame( array( $friend, self::RENDERED_ONLY ), XFN_Meta_Mirror::get_relationships( $post_id ) );
 	}
 
+	public function test_content_edit_keeps_a_pending_write_for_an_untouched_link(): void {
+		$colleague = array( array( 'url' => self::URL, 'rels' => array( 'colleague' ) ) );
+		$post_id   = $this->publish( self::FRIEND );
+		XFN_Meta_Mirror::set_relationships( $post_id, $colleague );
+
+		wp_update_post( array( 'ID' => $post_id, 'post_content' => self::FRIEND . '<p>An edit elsewhere.</p>' ) );
+
+		$this->assertStringContainsString( 'rel="nofollow colleague"', get_post( $post_id )->post_content );
+		$this->assertSame( $colleague, XFN_Meta_Mirror::get_relationships( $post_id ) );
+	}
+
 	/**
 	 * @dataProvider markup_read_by_mirror_and_directory
 	 */
