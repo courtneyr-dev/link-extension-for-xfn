@@ -98,14 +98,20 @@ class XFN_Interactivity {
 			$processor->set_attribute( 'data-xfn-tooltip-id', (string) $id );
 			$processor->add_class( 'xfn-tooltip-anchor' );
 			$processor->set_attribute( 'aria-describedby', $tip_id );
-			$processor->set_attribute( 'data-wp-interactive', 'xfn-links' );
-			$processor->set_attribute( 'data-wp-context', wp_json_encode( [ 'isOpen' => false ] ) );
+			// Another plugin may already drive this anchor, so every XFN
+			// directive names the xfn-links namespace and carries its own
+			// ---xfn-links ID beside that plugin's directives. An anchor with
+			// no directives gets the namespace so the runtime hydrates it.
+			if ( empty( $processor->get_attribute_names_with_prefix( 'data-wp-' ) ) ) {
+				$processor->set_attribute( 'data-wp-interactive', 'xfn-links' );
+			}
+			$processor->set_attribute( 'data-wp-context---xfn-links', 'xfn-links::' . wp_json_encode( [ 'isOpen' => false ] ) );
 			// The tooltip sits inside the link, so the pointer can travel
 			// onto it without leaving the link (WCAG 1.4.13 hoverable content).
-			$processor->set_attribute( 'data-wp-on--mouseenter', 'actions.showTooltip' );
-			$processor->set_attribute( 'data-wp-on--mouseleave', 'actions.hideTooltip' );
-			$processor->set_attribute( 'data-wp-on--focus', 'actions.showTooltip' );
-			$processor->set_attribute( 'data-wp-on--blur', 'actions.hideTooltip' );
+			$processor->set_attribute( 'data-wp-on--mouseenter---xfn-links', 'xfn-links::actions.showTooltip' );
+			$processor->set_attribute( 'data-wp-on--mouseleave---xfn-links', 'xfn-links::actions.hideTooltip' );
+			$processor->set_attribute( 'data-wp-on--focus---xfn-links', 'xfn-links::actions.showTooltip' );
+			$processor->set_attribute( 'data-wp-on--blur---xfn-links', 'xfn-links::actions.hideTooltip' );
 
 			$xfn_links[ $id ] = [
 				'rels'   => $parsed['xfn'],
@@ -181,7 +187,7 @@ class XFN_Interactivity {
 		// takes over once the Interactivity runtime attaches. aria-hidden
 		// keeps the open tooltip out of the link's accessible name; the
 		// link's aria-describedby still reads it as the description.
-		return '<span id="' . esc_attr( $tip_id ) . '" class="xfn-tooltip" role="tooltip" aria-hidden="true" hidden data-wp-bind--hidden="!context.isOpen">'
+		return '<span id="' . esc_attr( $tip_id ) . '" class="xfn-tooltip" role="tooltip" aria-hidden="true" hidden data-wp-bind--hidden="xfn-links::!context.isOpen">'
 			. '<span class="xfn-tooltip__arrow"></span>'
 			. '<span class="xfn-tooltip__content xfn-pills">'
 			. $pills
