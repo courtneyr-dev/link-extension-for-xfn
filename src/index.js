@@ -32,6 +32,7 @@ import {
 	combineRelValues,
 	getBlockRel,
 	setBlockXfn,
+	submenuRendersLink,
 } from './rel';
 
 /**
@@ -1367,9 +1368,11 @@ const withXFNControls = createHigherOrderComponent( ( BlockEdit ) => {
 			attributes.eventUrl;
 
 		const shouldShowXFN =
-			BLOCK_LEVEL_LINKS.includes( name ) ||
-			hasUrlAttribute ||
-			hasUrlValue;
+			( BLOCK_LEVEL_LINKS.includes( name ) ||
+				hasUrlAttribute ||
+				hasUrlValue ) &&
+			( name !== 'core/navigation-submenu' ||
+				submenuRendersLink( attributes, props.context ) );
 
 		// Only show inspector controls if setting is enabled
 		if ( ! shouldShowXFN || ! settings.enable_inspector_controls ) {

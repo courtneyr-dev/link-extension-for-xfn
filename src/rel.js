@@ -120,3 +120,25 @@ export function setBlockXfn( blockType, attributes, xfnValues ) {
 		metadata: Object.keys( metadata ).length ? metadata : undefined,
 	};
 }
+
+/**
+ * Whether core renders a Navigation Submenu's label as a hyperlink.
+ *
+ * Mirrors core's render: a submenu that opens on click renders a
+ * <button>, and an <a> without a URL is no hyperlink. The legacy
+ * openSubmenusOnClick context wins over submenuVisibility, as in
+ * block_core_navigation_submenu_get_submenu_visibility().
+ *
+ * @param {Object} attributes Submenu attributes.
+ * @param {Object} context    Block context from the parent Navigation.
+ * @return {boolean} True when the label renders as a link.
+ */
+export function submenuRendersLink( attributes, context = {} ) {
+	const legacy = context.openSubmenusOnClick;
+	const opensOnClick =
+		legacy === null || legacy === undefined
+			? context.submenuVisibility === 'click'
+			: Boolean( legacy );
+
+	return ! opensOnClick && Boolean( attributes.url );
+}
