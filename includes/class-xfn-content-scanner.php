@@ -186,14 +186,14 @@ final class XFN_Content_Scanner {
 
 		global $wpdb;
 
-		// Only fetch posts whose content contains a rel attribute to minimize processing.
+		// extract_xfn_links_from_post() decides which posts hold a rel attribute, so this only drops posts without "rel".
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Static LIKE prefilter on core columns with no WP_Query equivalent; result set is cached in a transient above.
 		$post_ids = $wpdb->get_col(
 			"SELECT ID FROM {$wpdb->posts}
 			 WHERE post_status = 'publish'
 			   AND post_type IN ('post', 'page')
 			   AND post_password = ''
-			   AND post_content LIKE '%rel=%'
+			   AND post_content LIKE '%rel%'
 			 ORDER BY ID DESC
 			 LIMIT 500"
 		);
