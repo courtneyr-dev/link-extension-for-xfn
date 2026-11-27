@@ -1,1 +1,1 @@
-import{getContext as e,store as i}from"@wordpress/interactivity";i("xfn-links",{actions:{showTooltip(){e().isOpen=!0},hideTooltip(){e().isOpen=!1},handleKeydown(i){"Escape"===i.key&&(e().isOpen=!1)}}});
+import{getContext as o,store as s,withSyncEvent as t}from"@wordpress/interactivity";s("xfn-links",{actions:{showTooltip(){o().isOpen=!0},hideTooltip(){o().isOpen=!1},handleKeydown:t(s=>{const t=o();"Escape"===s.key&&t.isOpen&&(s.stopPropagation(),t.isOpen=!1)})}});
