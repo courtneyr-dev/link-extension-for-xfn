@@ -57,7 +57,9 @@ class XFN_Interactivity {
 	 *
 	 * Two-pass approach:
 	 * 1. WP_HTML_Tag_Processor finds XFN links and adds Interactivity API attributes.
-	 * 2. Regex wraps marked links with tooltip containers.
+	 * 2. Regex appends each tooltip inside its link, so the link keeps its
+	 *    place in the markup. Core styles Navigation Link anchors as direct
+	 *    children of their list item.
 	 *
 	 * @param string $block_content Rendered block HTML.
 	 * @param array  $block         Block data.
@@ -96,14 +98,16 @@ class XFN_Interactivity {
 			$processor->set_attribute( 'data-xfn-tooltip-id', (string) $id );
 			$processor->add_class( 'xfn-tooltip-anchor' );
 			$processor->set_attribute( 'aria-describedby', $tip_id );
+			$processor->set_attribute( 'data-wp-interactive', 'xfn-links' );
+			$processor->set_attribute( 'data-wp-context', wp_json_encode( [ 'isOpen' => false ] ) );
+			// The tooltip sits inside the link, so the pointer can travel
+			// onto it without leaving the link (WCAG 1.4.13 hoverable content).
+			$processor->set_attribute( 'data-wp-on--mouseenter', 'actions.showTooltip' );
+			$processor->set_attribute( 'data-wp-on--mouseleave', 'actions.hideTooltip' );
 			$processor->set_attribute( 'data-wp-on--focus', 'actions.showTooltip' );
 			$processor->set_attribute( 'data-wp-on--blur', 'actions.hideTooltip' );
 			$processor->set_attribute( 'data-wp-on--keydown', 'actions.handleKeydown' );
 
-			// data-wp-on--mouseenter/mouseleave live on the .xfn-tooltip-wrap
-			// span (added in pass 2), not the anchor, so the pointer can
-			// travel from the link to the tooltip without it disappearing
-			// (WCAG 1.4.13 hoverable content).
 			$xfn_links[ $id ] = [
 				'rels'   => $parsed['xfn'],
 				'tip_id' => $tip_id,
@@ -118,18 +122,14 @@ class XFN_Interactivity {
 
 		$html = $processor->get_updated_html();
 
-		// Pass 2: Wrap each marked link with its tooltip container.
+		// Pass 2: Append each tooltip inside its marked link.
 		foreach ( $xfn_links as $id => $link_data ) {
 			$tooltip_html = self::build_tooltip_html( $link_data['rels'], $link_data['tip_id'] );
-			$context      = wp_json_encode( [ 'isOpen' => false ] );
 
 			$html = preg_replace_callback(
-				'/(<a\s[^>]*data-xfn-tooltip-id="' . $id . '"[^>]*>)(.*?)(<\/a>)/s',
-				static function ( $m ) use ( $tooltip_html, $context ) {
-					return '<span class="xfn-tooltip-wrap" data-wp-interactive="xfn-links" data-wp-context=\'' . $context . '\' data-wp-on--mouseenter="actions.showTooltip" data-wp-on--mouseleave="actions.hideTooltip">'
-						. $m[1] . $m[2] . $m[3]
-						. $tooltip_html
-						. '</span>';
+				'/(<a\s[^>]*data-xfn-tooltip-id="' . $id . '"[^>]*>.*?)(<\/a>)/s',
+				static function ( $m ) use ( $tooltip_html ) {
+					return $m[1] . $tooltip_html . $m[2];
 				},
 				$html,
 				1
@@ -179,8 +179,10 @@ class XFN_Interactivity {
 
 		// The literal `hidden` attribute keeps the tooltip hidden before
 		// hydration and with JavaScript disabled; data-wp-bind--hidden then
-		// takes over once the Interactivity runtime attaches.
-		return '<span id="' . esc_attr( $tip_id ) . '" class="xfn-tooltip" role="tooltip" hidden data-wp-bind--hidden="!context.isOpen">'
+		// takes over once the Interactivity runtime attaches. aria-hidden
+		// keeps the open tooltip out of the link's accessible name; the
+		// link's aria-describedby still reads it as the description.
+		return '<span id="' . esc_attr( $tip_id ) . '" class="xfn-tooltip" role="tooltip" aria-hidden="true" hidden data-wp-bind--hidden="!context.isOpen">'
 			. '<span class="xfn-tooltip__arrow"></span>'
 			. '<span class="xfn-tooltip__content xfn-pills">'
 			. $pills
