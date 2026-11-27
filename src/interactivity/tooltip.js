@@ -7,28 +7,40 @@
  */
 
 import './tooltip.scss';
-import { store, getContext, withSyncEvent } from '@wordpress/interactivity';
+import { store, getContext } from '@wordpress/interactivity';
+
+const openTooltips = new Set();
 
 store( 'xfn-links', {
 	actions: {
 		showTooltip() {
 			const context = getContext();
 			context.isOpen = true;
+			openTooltips.add( context );
 		},
 		hideTooltip() {
 			const context = getContext();
 			context.isOpen = false;
+			openTooltips.delete( context );
 		},
-		// Runs on the link and on the document. Escape closes an open tooltip
-		// and stops there, so a surrounding Navigation overlay stays open; the
-		// next Escape reaches the overlay. Other keys and an Escape with no open
-		// tooltip pass through.
-		handleKeydown: withSyncEvent( ( event ) => {
-			const context = getContext();
-			if ( event.key === 'Escape' && context.isOpen ) {
-				event.stopPropagation();
-				context.isOpen = false;
-			}
-		} ),
 	},
 } );
+
+// A hover tooltip must close on Escape wherever focus is (WCAG 2.2 SC
+// 1.4.13). Core's Navigation overlay stops Escape before it bubbles to the
+// document, so this listens in the capture phase. It stops only an Escape
+// that closed a tooltip; the next Escape reaches the overlay.
+document.addEventListener(
+	'keydown',
+	( event ) => {
+		if ( event.key !== 'Escape' || ! openTooltips.size ) {
+			return;
+		}
+		openTooltips.forEach( ( context ) => {
+			context.isOpen = false;
+		} );
+		openTooltips.clear();
+		event.stopPropagation();
+	},
+	true
+);

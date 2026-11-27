@@ -33,9 +33,6 @@ class InteractivityTest extends WP_UnitTestCase {
 		$this->assertStringContainsString( 'data-wp-on--mouseleave', $result );
 		$this->assertStringContainsString( 'data-wp-on--focus', $result );
 		$this->assertStringContainsString( 'data-wp-on--blur', $result );
-		$this->assertStringContainsString( 'data-wp-on--keydown', $result );
-		// Escape must reach an open hover tooltip while focus is elsewhere.
-		$this->assertStringContainsString( 'data-wp-on-document--keydown="actions.handleKeydown"', $result );
 	}
 
 	public function test_process_block_generates_pills_for_each_rel(): void {
