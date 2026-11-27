@@ -279,35 +279,6 @@ final class XFN_Meta_Mirror {
 	}
 
 	/**
-	 * Read XFN relationships from link markup, keyed by href as apply_to_content() matches them.
-	 *
-	 * @param string $content Post content HTML.
-	 * @return array List of { url, rels } entries.
-	 */
-	private static function read_from_content( string $content ): array {
-		$relationships = [];
-
-		$tags = new \WP_HTML_Tag_Processor( $content );
-		while ( $tags->next_tag( 'A' ) ) {
-			$href = $tags->get_attribute( 'href' );
-			$rel  = $tags->get_attribute( 'rel' );
-			if ( ! is_string( $href ) || ! is_string( $rel ) ) {
-				continue;
-			}
-
-			$xfn = XFN_Link_Extension::parse_rel_attribute( $rel )['xfn'];
-			if ( ! empty( $xfn ) ) {
-				$relationships[] = [
-					'url'  => $href,
-					'rels' => $xfn,
-				];
-			}
-		}
-
-		return $relationships;
-	}
-
-	/**
 	 * On save, write meta-sourced relationships into post content, or rebuild an existing mirror from it.
 	 *
 	 * Content wins whenever meta was not the last writer, so a restored revision
@@ -320,7 +291,7 @@ final class XFN_Meta_Mirror {
 		$source = get_post_meta( $post_id, self::SOURCE_KEY, true );
 		if ( 'meta' !== $source ) {
 			if ( metadata_exists( 'post', $post_id, self::META_KEY ) ) {
-				update_post_meta( $post_id, self::META_KEY, self::read_from_content( $post->post_content ) );
+				update_post_meta( $post_id, self::META_KEY, XFN_Content_Scanner::extract_xfn_links_from_post( $post ) );
 			}
 			return;
 		}

@@ -61,7 +61,11 @@ final class XFN_Content_Scanner {
 	private const TRANSIENT_TTL    = 5 * MINUTE_IN_SECONDS;
 
 	/**
-	 * Extract XFN links from a single post's content.
+	 * Extract XFN links from a single post's content, one per URL.
+	 *
+	 * The directory and the meta mirror both read links here. URLs resolve
+	 * against the home URL and pass the mirror's sanitizer, and the first
+	 * anchor for a URL wins.
 	 *
 	 * @since 1.0.0
 	 *
@@ -69,31 +73,26 @@ final class XFN_Content_Scanner {
 	 * @return array Array of associative arrays with post_id, url, rels keys.
 	 */
 	public static function extract_xfn_links_from_post( \WP_Post $post ): array {
-		$relationships = [];
-
-		if ( ! preg_match_all( '/<a\s+[^>]*href=["\']([^"\']+)["\'][^>]*>/i', $post->post_content, $matches, PREG_SET_ORDER ) ) {
-			return $relationships;
-		}
-
-		foreach ( $matches as $match ) {
-			$full_tag = $match[0];
-			$href     = $match[1];
-
-			if ( ! preg_match( '/rel=["\']([^"\']*)["\']/', $full_tag, $rel_match ) ) {
-				continue;
-			}
-
-			$parsed = XFN_Link_Extension::parse_rel_attribute( $rel_match[1] );
-			if ( ! empty( $parsed['xfn'] ) ) {
-				$relationships[] = [
-					'post_id' => $post->ID,
-					'url'     => $href,
-					'rels'    => $parsed['xfn'],
+		$links = [];
+		$base  = home_url( '/' );
+		$tags  = new \WP_HTML_Tag_Processor( $post->post_content );
+		while ( $tags->next_tag( 'A' ) ) {
+			$href = $tags->get_attribute( 'href' );
+			$rel  = $tags->get_attribute( 'rel' );
+			if ( is_string( $href ) && '' !== $href && is_string( $rel ) ) {
+				$links[] = [
+					'url'  => \WP_Http::make_absolute_url( $href, $base ),
+					'rels' => XFN_Link_Extension::parse_rel_attribute( $rel )['xfn'],
 				];
 			}
 		}
 
-		return $relationships;
+		$relationships = [];
+		foreach ( XFN_Meta_Mirror::sanitize_relationships( $links ) as $link ) {
+			$relationships[ $link['url'] ] ??= [ 'post_id' => $post->ID ] + $link;
+		}
+
+		return array_values( $relationships );
 	}
 
 	/**
