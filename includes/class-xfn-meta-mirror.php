@@ -280,13 +280,13 @@ final class XFN_Meta_Mirror {
 	}
 
 	/**
-	 * When an update changes content, move an existing mirror to the links that change touched.
+	 * When an update changes content, move an existing mirror to the new markup.
 	 *
-	 * Restores, including the plain REST save Visual Revisions sends, rewrite
-	 * content without touching meta. Entries for links the change added,
-	 * removed, or re-related follow the new markup. Entries for links it left
-	 * alone, or that were never in the saved markup, keep their stored value,
-	 * so a pending write still lands through sync_meta_to_content().
+	 * A restore rebuilds the mirror from the restored markup and drops any
+	 * pending write. After an ordinary edit, entries for links the change
+	 * added, removed, or re-related follow the new markup. Entries for links
+	 * it left alone, or that were never in the saved markup, keep their stored
+	 * value, so a pending write still lands through sync_meta_to_content().
 	 *
 	 * @param int      $post_id     Post ID.
 	 * @param \WP_Post $post_after  Post object after the update.
@@ -299,13 +299,16 @@ final class XFN_Meta_Mirror {
 			return;
 		}
 
-		$before = array_column( XFN_Content_Scanner::extract_xfn_links_from_post( $post_before ), 'rels', 'url' );
-		$after  = array_column( XFN_Content_Scanner::extract_xfn_links_from_post( $post_after ), 'rels', 'url' );
+		$after    = array_column( XFN_Content_Scanner::extract_xfn_links_from_post( $post_after ), 'rels', 'url' );
+		$restored = self::is_restore( $post_after );
 
 		$rels_by_url = [];
-		foreach ( self::get_relationships( $post_id ) as $entry ) {
-			if ( ( $before[ $entry['url'] ] ?? null ) === ( $after[ $entry['url'] ] ?? null ) ) {
-				$rels_by_url[ $entry['url'] ] ??= $entry['rels'];
+		if ( ! $restored ) {
+			$before = array_column( XFN_Content_Scanner::extract_xfn_links_from_post( $post_before ), 'rels', 'url' );
+			foreach ( self::get_relationships( $post_id ) as $entry ) {
+				if ( ( $before[ $entry['url'] ] ?? null ) === ( $after[ $entry['url'] ] ?? null ) ) {
+					$rels_by_url[ $entry['url'] ] ??= $entry['rels'];
+				}
 			}
 		}
 
@@ -318,6 +321,30 @@ final class XFN_Meta_Mirror {
 		}
 
 		update_post_meta( $post_id, self::META_KEY, $relationships );
+		if ( $restored ) {
+			delete_post_meta( $post_id, self::SOURCE_KEY );
+		}
+	}
+
+	/**
+	 * Determine whether a saved post's content restores one of its revisions.
+	 *
+	 * Visual Revisions restores through a plain REST save, and the
+	 * wp_restore_post_revision action fires only after the update, so the
+	 * saved content is the only signal both paths share. Autosaves don't
+	 * count: an ordinary save often carries the content of the last autosave.
+	 *
+	 * @param \WP_Post $post Post object after the update.
+	 * @return bool Whether the content equals a stored revision.
+	 */
+	private static function is_restore( \WP_Post $post ): bool {
+		foreach ( wp_get_post_revisions( $post->ID ) as $revision ) {
+			if ( ! wp_is_post_autosave( $revision ) && $revision->post_content === $post->post_content ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
