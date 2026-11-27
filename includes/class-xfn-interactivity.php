@@ -100,9 +100,9 @@ class XFN_Interactivity {
 			$processor->set_attribute( 'aria-describedby', $tip_id );
 			// Another plugin may already drive this anchor, so every XFN
 			// directive names the xfn-links namespace and carries its own
-			// ---xfn-links ID beside that plugin's directives. An anchor with
-			// no directives gets the namespace so the runtime hydrates it.
-			if ( empty( $processor->get_attribute_names_with_prefix( 'data-wp-' ) ) ) {
+			// ---xfn-links ID beside that plugin's directives. An anchor that
+			// isn't already an interactive root becomes one so the runtime hydrates it.
+			if ( null === $processor->get_attribute( 'data-wp-interactive' ) ) {
 				$processor->set_attribute( 'data-wp-interactive', 'xfn-links' );
 			}
 			$processor->set_attribute( 'data-wp-context---xfn-links', 'xfn-links::' . wp_json_encode( [ 'isOpen' => false ] ) );

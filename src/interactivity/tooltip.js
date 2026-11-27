@@ -7,16 +7,17 @@
  */
 
 import './tooltip.scss';
-import { store, getContext } from '@wordpress/interactivity';
+import { store, getContext, getElement } from '@wordpress/interactivity';
 
-const openTooltips = new Set();
+// Open tooltip contexts, keyed to the anchor that opened them.
+const openTooltips = new Map();
 
 store( 'xfn-links', {
 	actions: {
 		showTooltip() {
 			const context = getContext();
 			context.isOpen = true;
-			openTooltips.add( context );
+			openTooltips.set( context, getElement().ref );
 		},
 		hideTooltip() {
 			const context = getContext();
@@ -36,11 +37,17 @@ document.addEventListener(
 		if ( event.key !== 'Escape' || ! openTooltips.size ) {
 			return;
 		}
-		openTooltips.forEach( ( context ) => {
+		// A route swap can remove a hovered anchor without mouseleave; a
+		// tooltip that's no longer on the page mustn't swallow Escape.
+		let closedVisible = false;
+		openTooltips.forEach( ( anchor, context ) => {
 			context.isOpen = false;
+			closedVisible = closedVisible || Boolean( anchor?.isConnected );
 		} );
 		openTooltips.clear();
-		event.stopPropagation();
+		if ( closedVisible ) {
+			event.stopPropagation();
+		}
 	},
 	true
 );

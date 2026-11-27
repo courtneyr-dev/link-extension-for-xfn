@@ -142,6 +142,19 @@ class InteractivityTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A data-wp-key alone doesn't make an interactive root, so the anchor
+	 * still needs the XFN namespace to hydrate its tooltip.
+	 */
+	public function test_keyed_anchor_without_a_root_gets_the_xfn_namespace(): void {
+		$content = '<p><a href="https://ada.example.com" rel="friend" data-wp-key="ada">Ada</a></p>';
+
+		$tags = new WP_HTML_Tag_Processor( $this->interactivity->process_block( $content, array() ) );
+		$this->assertTrue( $tags->next_tag( 'a' ) );
+		$this->assertSame( 'xfn-links', $tags->get_attribute( 'data-wp-interactive' ) );
+		$this->assertSame( 'ada', $tags->get_attribute( 'data-wp-key' ) );
+	}
+
+	/**
 	 * Another plugin can already drive the anchor. Its namespace, context
 	 * and handler stay, and every XFN directive names its own namespace.
 	 */
