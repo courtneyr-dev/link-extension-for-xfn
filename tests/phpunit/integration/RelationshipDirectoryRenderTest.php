@@ -75,6 +75,22 @@ class RelationshipDirectoryRenderTest extends WP_UnitTestCase {
 		$this->assertSame( get_the_title( $post_id ), $titles[ $post_id ] ?? null );
 	}
 
+	/**
+	 * Each request restarts wp_unique_id(), so the first directory on two
+	 * routes shares its instance suffix. The rest of the key must differ
+	 * even when neither route has a queried object ID.
+	 */
+	public function test_key_differs_between_routes_without_a_queried_object(): void {
+		$route_keys = array();
+		foreach ( array( '/?s=alpha', '/?s=beta' ) as $route ) {
+			$this->go_to( home_url( $route ) );
+			$this->assertSame( 0, get_queried_object_id() );
+			$route_keys[] = preg_replace( '/-\d+$/', '', $this->directory( $this->render( 3 ) )['key'] );
+		}
+
+		$this->assertNotSame( $route_keys[0], $route_keys[1] );
+	}
+
 	private function render( int $limit ): string {
 		return render_block(
 			array(
