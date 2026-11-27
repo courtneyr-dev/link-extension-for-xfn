@@ -49,13 +49,11 @@ foreach ( $lexfn_links as $lexfn_i => $lexfn_link ) {
 
 // Each directory keeps its own links in its context, so two directories
 // with different limits on one page never read each other's list.
-$lexfn_context = wp_json_encode(
-	[
-		'searchTerm'   => '',
-		'activeFilter' => '',
-		'links'        => $lexfn_link_data,
-	]
-);
+$lexfn_context = [
+	'searchTerm'   => '',
+	'activeFilter' => '',
+	'links'        => $lexfn_link_data,
+];
 
 wp_interactivity_state(
 	'xfn-directory',
@@ -84,7 +82,7 @@ $lexfn_wrapper_attrs = get_block_wrapper_attributes(
 	<?php echo $lexfn_wrapper_attrs; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_block_wrapper_attributes() output is escaped by core. ?>
 	data-wp-interactive="xfn-directory"
 	data-wp-key="<?php echo esc_attr( $lexfn_key ); ?>"
-	data-wp-context='<?php echo esc_attr( $lexfn_context ); ?>'
+	<?php echo wp_interactivity_data_wp_context( $lexfn_context ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- core hex-encodes quotes, apostrophes, ampersands and tags in the JSON. ?>
 >
 	<?php
 	if ( $lexfn_show_search ) :
