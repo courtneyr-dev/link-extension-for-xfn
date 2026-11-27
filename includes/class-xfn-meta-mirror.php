@@ -41,6 +41,7 @@ final class XFN_Meta_Mirror {
 	 */
 	public static function init(): void {
 		add_action( 'init', [ __CLASS__, 'register_meta' ] );
+		add_action( 'post_updated', [ __CLASS__, 'sync_content_to_meta' ], 10, 3 );
 		add_action( 'save_post', [ __CLASS__, 'sync_meta_to_content' ], 20, 2 );
 		add_action(
 			'rest_api_init',
@@ -279,6 +280,78 @@ final class XFN_Meta_Mirror {
 	}
 
 	/**
+	 * When an update changes content, move the mirror to the new markup.
+	 *
+	 * A restore rebuilds the mirror from the restored markup and drops any
+	 * pending write. It creates the mirror when a post without one restores
+	 * markup with XFN links. An ordinary edit leaves a post without a mirror
+	 * alone. After an ordinary edit, entries for links the change
+	 * added, removed, or re-related follow the new markup. Entries for links
+	 * it left alone, or that were never in the saved markup, keep their stored
+	 * value, so a pending write still lands through sync_meta_to_content().
+	 *
+	 * @param int      $post_id     Post ID.
+	 * @param \WP_Post $post_after  Post object after the update.
+	 * @param \WP_Post $post_before Post object before the update.
+	 */
+	public static function sync_content_to_meta( int $post_id, \WP_Post $post_after, \WP_Post $post_before ): void {
+		if ( wp_is_post_revision( $post_id ) || $post_after->post_content === $post_before->post_content ) {
+			return;
+		}
+
+		$after    = array_column( XFN_Content_Scanner::extract_xfn_links_from_post( $post_after ), 'rels', 'url' );
+		$mirrored = metadata_exists( 'post', $post_id, self::META_KEY );
+		$restored = ( $mirrored || [] !== $after ) && self::is_restore( $post_after );
+		if ( ! $mirrored && ! $restored ) {
+			return;
+		}
+
+		$rels_by_url = [];
+		if ( ! $restored ) {
+			$before = array_column( XFN_Content_Scanner::extract_xfn_links_from_post( $post_before ), 'rels', 'url' );
+			foreach ( self::get_relationships( $post_id ) as $entry ) {
+				if ( ( $before[ $entry['url'] ] ?? null ) === ( $after[ $entry['url'] ] ?? null ) ) {
+					$rels_by_url[ $entry['url'] ] ??= $entry['rels'];
+				}
+			}
+		}
+
+		$relationships = [];
+		foreach ( $rels_by_url + $after as $url => $rels ) {
+			$relationships[] = [
+				'url'  => $url,
+				'rels' => $rels,
+			];
+		}
+
+		update_post_meta( $post_id, self::META_KEY, $relationships );
+		if ( $restored ) {
+			delete_post_meta( $post_id, self::SOURCE_KEY );
+		}
+	}
+
+	/**
+	 * Determine whether a saved post's content restores one of its revisions.
+	 *
+	 * Visual Revisions restores through a plain REST save, and the
+	 * wp_restore_post_revision action fires only after the update, so the
+	 * saved content is the only signal both paths share. Autosaves don't
+	 * count: an ordinary save often carries the content of the last autosave.
+	 *
+	 * @param \WP_Post $post Post object after the update.
+	 * @return bool Whether the content equals a stored revision.
+	 */
+	private static function is_restore( \WP_Post $post ): bool {
+		foreach ( wp_get_post_revisions( $post->ID ) as $revision ) {
+			if ( ! wp_is_post_autosave( $revision ) && $revision->post_content === $post->post_content ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
 	 * On save, write meta-sourced relationships back into post content.
 	 *
 	 * @param int      $post_id Post ID.
@@ -287,7 +360,7 @@ final class XFN_Meta_Mirror {
 	public static function sync_meta_to_content( int $post_id, \WP_Post $post ): void {
 		// Only sync if meta was the last writer.
 		$source = get_post_meta( $post_id, self::SOURCE_KEY, true );
-		if ( 'meta' !== $source ) {
+		if ( 'meta' !== $source || wp_is_post_revision( $post_id ) ) {
 			return;
 		}
 
@@ -298,6 +371,8 @@ final class XFN_Meta_Mirror {
 
 		$updated_content = self::apply_to_content( $post->post_content, $relationships );
 		if ( $updated_content !== $post->post_content ) {
+			// The writeback can reproduce historical markup, which must not read as a restore.
+			remove_action( 'post_updated', [ __CLASS__, 'sync_content_to_meta' ], 10 );
 			remove_action( 'save_post', [ __CLASS__, 'sync_meta_to_content' ], 20 );
 			wp_update_post(
 				[
@@ -306,6 +381,7 @@ final class XFN_Meta_Mirror {
 				]
 			);
 			add_action( 'save_post', [ __CLASS__, 'sync_meta_to_content' ], 20, 2 );
+			add_action( 'post_updated', [ __CLASS__, 'sync_content_to_meta' ], 10, 3 );
 		}
 
 		// Reset source flag.
