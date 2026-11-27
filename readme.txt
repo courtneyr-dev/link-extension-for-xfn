@@ -450,6 +450,8 @@ Frontend relationship tooltips require WordPress 7.0 or later. On WordPress 6.9 
 
 Full user documentation — installation, settings, common tasks, blocks, troubleshooting, privacy — lives at [courtneyr-dev.github.io/link-extension-for-xfn](https://courtneyr-dev.github.io/link-extension-for-xfn/).
 
+*Testing on a disposable site:* Use the [XFN relationship test cases](https://github.com/courtneyr-dev/indieweb-test-data/tree/main/cases/xfn) to import synthetic examples.
+
 == Upgrade Notice ==
 
 = 1.1.3 =

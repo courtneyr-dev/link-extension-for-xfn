@@ -211,6 +211,7 @@ class XFN_Link_Extension {
 				submit_button();
 				?>
 			</form>
+			<p><a href="<?php echo esc_url( 'https://github.com/courtneyr-dev/indieweb-test-data/tree/main/cases/xfn' ); ?>"><?php esc_html_e( 'XFN relationship test cases', 'link-extension-for-xfn' ); ?></a></p>
 		</div>
 		<?php
 	}
