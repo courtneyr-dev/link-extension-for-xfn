@@ -2,42 +2,42 @@
  * Relationship Directory Interactivity API view module.
  *
  * Handles search filtering and relationship type filtering on the frontend.
+ * Every value comes from the nearest directory's context, so each directory
+ * on a page filters only its own links.
  *
  * @package LinkExtensionForXFN
  */
 
 import { store, getContext } from "@wordpress/interactivity";
 
+function matchesLink(link, { searchTerm, activeFilter }) {
+  if (searchTerm) {
+    const haystack = [link.url, link.postTitle, ...link.rels]
+      .join(" ")
+      .toLowerCase();
+    if (!haystack.includes(searchTerm)) {
+      return false;
+    }
+  }
+
+  return !activeFilter || link.rels.includes(activeFilter);
+}
+
 const { state } = store("xfn-directory", {
   state: {
-    get links() {
-      return state.links || [];
+    get isHidden() {
+      const context = getContext();
+      return !matchesLink(context.links[context.linkIndex], context);
     },
-    get allRels() {
-      return state.allRels || [];
+    get isActiveFilter() {
+      const context = getContext();
+      return context.activeFilter === context.filterRel;
     },
     get resultsText() {
       const context = getContext();
-      const search = (context.searchTerm || "").toLowerCase();
-      const filter = context.activeFilter || "";
-      const links = state.links || [];
-
-      const count = links.filter((link) => {
-        if (search) {
-          const haystack = [link.url, link.postTitle, ...link.rels]
-            .join(" ")
-            .toLowerCase();
-          if (!haystack.includes(search)) {
-            return false;
-          }
-        }
-
-        if (filter && !link.rels.includes(filter)) {
-          return false;
-        }
-
-        return true;
-      }).length;
+      const count = context.links.filter((link) =>
+        matchesLink(link, context),
+      ).length;
 
       const i18n = state.i18n || {};
       const template =
@@ -53,10 +53,10 @@ const { state } = store("xfn-directory", {
       const context = getContext();
       context.searchTerm = event.target.value.toLowerCase();
     },
-    toggleFilter(event) {
+    toggleFilter() {
       const context = getContext();
-      const rel = event.target.dataset.rel;
-      context.activeFilter = context.activeFilter === rel ? "" : rel;
+      context.activeFilter =
+        context.activeFilter === context.filterRel ? "" : context.filterRel;
     },
     clearFilter() {
       const context = getContext();
@@ -64,62 +64,3 @@ const { state } = store("xfn-directory", {
     },
   },
 });
-
-/**
- * Register derived state getters for visibility and active filter status.
- *
- * WordPress Interactivity API uses `state.propertyName` in directives,
- * so we create dynamic getters for each link and filter.
- */
-function registerDerivedState() {
-  const links = state.links || [];
-  const allRels = state.allRels || [];
-
-  // Per-link hidden state.
-  links.forEach((link) => {
-    const key = `isHidden_${link.id}`;
-    if (!(key in state)) {
-      Object.defineProperty(state, key, {
-        get() {
-          const context = getContext();
-          const search = context.searchTerm || "";
-          const filter = context.activeFilter || "";
-
-          if (search) {
-            const haystack = [link.url, link.postTitle, ...link.rels]
-              .join(" ")
-              .toLowerCase();
-            if (!haystack.includes(search)) {
-              return true;
-            }
-          }
-
-          if (filter && !link.rels.includes(filter)) {
-            return true;
-          }
-
-          return false;
-        },
-        enumerable: true,
-        configurable: true,
-      });
-    }
-  });
-
-  // Per-filter active state.
-  allRels.forEach((rel) => {
-    const key = `isActiveFilter_${rel}`;
-    if (!(key in state)) {
-      Object.defineProperty(state, key, {
-        get() {
-          const context = getContext();
-          return context.activeFilter === rel;
-        },
-        enumerable: true,
-        configurable: true,
-      });
-    }
-  });
-}
-
-registerDerivedState();

@@ -1,6 +1,8 @@
 <?php
 namespace LinkExtensionForXFN\Tests\Integration;
 
+use WP_HTML_Processor;
+use WP_HTML_Tag_Processor;
 use WP_UnitTestCase;
 use XFN_Interactivity;
 
@@ -18,7 +20,6 @@ class InteractivityTest extends WP_UnitTestCase {
 
 		$result = $this->interactivity->process_block( $content, array() );
 
-		$this->assertStringContainsString( 'xfn-tooltip-wrap', $result );
 		$this->assertStringContainsString( 'data-wp-interactive="xfn-links"', $result );
 		$this->assertStringContainsString( 'xfn-tooltip', $result );
 		$this->assertStringContainsString( 'role="tooltip"', $result );
@@ -33,7 +34,6 @@ class InteractivityTest extends WP_UnitTestCase {
 		$this->assertStringContainsString( 'data-wp-on--mouseleave', $result );
 		$this->assertStringContainsString( 'data-wp-on--focus', $result );
 		$this->assertStringContainsString( 'data-wp-on--blur', $result );
-		$this->assertStringContainsString( 'data-wp-on--keydown', $result );
 	}
 
 	public function test_process_block_generates_pills_for_each_rel(): void {
@@ -56,11 +56,8 @@ class InteractivityTest extends WP_UnitTestCase {
 		$once  = $this->interactivity->process_block( $content, array() );
 		$twice = $this->interactivity->process_block( $once, array() );
 
-		$this->assertSame( 1, substr_count( $twice, 'xfn-tooltip-wrap' ) );
-		$this->assertStringNotContainsString(
-			'xfn-tooltip-wrap" data-wp-interactive="xfn-links" data-wp-context=\'{"isOpen":false}\'><span class="xfn-tooltip-wrap',
-			$twice
-		);
+		$this->assertSame( $once, $twice );
+		$this->assertSame( 1, substr_count( $twice, 'role="tooltip"' ) );
 	}
 
 	public function test_process_block_skips_non_xfn_links(): void {
@@ -94,7 +91,7 @@ class InteractivityTest extends WP_UnitTestCase {
 
 		$this->assertStringContainsString( 'xfn-pill-friend', $result );
 		$this->assertStringContainsString( 'xfn-pill-colleague', $result );
-		$this->assertSame( 2, substr_count( $result, 'xfn-tooltip-wrap' ) );
+		$this->assertSame( 2, substr_count( $result, 'role="tooltip"' ) );
 	}
 
 	public function test_process_block_removes_marker_attributes(): void {
@@ -119,6 +116,79 @@ class InteractivityTest extends WP_UnitTestCase {
 		$result = $this->interactivity->process_block( $content, array() );
 
 		$this->assertStringContainsString( 'xfn-tooltip-anchor', $result );
+	}
+
+	/**
+	 * Core styles submenu links through `.wp-block-navigation-item >
+	 * .wp-block-navigation-item__content`, so the anchor must stay a direct
+	 * child of its list item.
+	 */
+	public function test_navigation_anchor_stays_a_direct_child_of_its_item(): void {
+		$content = '<li class="wp-block-navigation-item"><a class="wp-block-navigation-item__content" href="https://ada.example.com" rel="nofollow friend"><span class="wp-block-navigation-item__label">Ada</span></a></li>';
+
+		$html = WP_HTML_Processor::create_fragment( '<ul>' . $this->interactivity->process_block( $content, array() ) . '</ul>' );
+		$this->assertTrue( $html->next_tag( 'A' ) );
+		$this->assertSame( array( 'HTML', 'BODY', 'UL', 'LI', 'A' ), $html->get_breadcrumbs() );
+
+		$tip_id = $html->get_attribute( 'aria-describedby' );
+		$this->assertIsString( $tip_id );
+		$roles = array();
+		while ( $html->next_tag() ) {
+			if ( $tip_id === $html->get_attribute( 'id' ) ) {
+				$roles[] = $html->get_attribute( 'role' );
+			}
+		}
+		$this->assertSame( array( 'tooltip' ), $roles );
+	}
+
+	/**
+	 * A data-wp-key alone doesn't make an interactive root, so the anchor
+	 * still needs the XFN namespace to hydrate its tooltip.
+	 */
+	public function test_keyed_anchor_without_a_root_gets_the_xfn_namespace(): void {
+		$content = '<p><a href="https://ada.example.com" rel="friend" data-wp-key="ada">Ada</a></p>';
+
+		$tags = new WP_HTML_Tag_Processor( $this->interactivity->process_block( $content, array() ) );
+		$this->assertTrue( $tags->next_tag( 'a' ) );
+		$this->assertSame( 'xfn-links', $tags->get_attribute( 'data-wp-interactive' ) );
+		$this->assertSame( 'ada', $tags->get_attribute( 'data-wp-key' ) );
+	}
+
+	/**
+	 * Another plugin can already drive the anchor. Its namespace, context
+	 * and handler stay, and every XFN directive names its own namespace.
+	 */
+	public function test_anchor_keeps_its_own_interactivity(): void {
+		$content = '<p><a href="https://ada.example.com" rel="friend" data-wp-interactive="other/plugin" data-wp-context=\'{"label":"kept"}\' data-wp-on--mouseenter="actions.track">Ada <span class="probe" data-wp-text="context.label"></span></a></p>';
+
+		$result = $this->interactivity->process_block( $content, array() );
+
+		$tags = new WP_HTML_Tag_Processor( $result );
+		$this->assertTrue( $tags->next_tag( 'a' ) );
+		$this->assertSame( 'other/plugin', $tags->get_attribute( 'data-wp-interactive' ) );
+		$this->assertSame( '{"label":"kept"}', $tags->get_attribute( 'data-wp-context' ) );
+		$this->assertSame( 'actions.track', $tags->get_attribute( 'data-wp-on--mouseenter' ) );
+		$xfn = array();
+		foreach ( $tags->get_attribute_names_with_prefix( 'data-wp-' ) as $name ) {
+			if ( str_ends_with( $name, '---xfn-links' ) ) {
+				$xfn[ $name ] = $tags->get_attribute( $name );
+			}
+		}
+		$this->assertTrue( $tags->next_tag( array( 'class_name' => 'xfn-tooltip' ) ) );
+		$xfn['tooltip hidden'] = $tags->get_attribute( 'data-wp-bind--hidden' );
+		$this->assertEquals(
+			array(
+				'data-wp-context---xfn-links'        => 'xfn-links::{"isOpen":false}',
+				'data-wp-on--mouseenter---xfn-links' => 'xfn-links::actions.showTooltip',
+				'data-wp-on--mouseleave---xfn-links' => 'xfn-links::actions.hideTooltip',
+				'data-wp-on--focus---xfn-links'      => 'xfn-links::actions.showTooltip',
+				'data-wp-on--blur---xfn-links'       => 'xfn-links::actions.hideTooltip',
+				'tooltip hidden'                     => 'xfn-links::!context.isOpen',
+			),
+			$xfn
+		);
+
+		$this->assertStringContainsString( '<span class="probe" data-wp-text="context.label">kept</span>', wp_interactivity_process_directives( $result ) );
 	}
 
 	public function test_init_registers_hooks(): void {
