@@ -203,6 +203,7 @@ const BLOCK_LEVEL_LINKS = [
 	'core/button',
 	'core/image',
 	'core/navigation-link',
+	'core/navigation-submenu',
 	'core/site-logo',
 	'core/post-title',
 	'core/query-title',

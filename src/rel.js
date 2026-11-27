@@ -62,6 +62,19 @@ export function combineRelValues( xfnValues, otherValues ) {
 }
 
 /**
+ * Whether the block type declares its own `rel` attribute.
+ *
+ * Navigation Link, Navigation Submenu, Button and Image declare one and
+ * render it on their anchor. The block's attributes can't answer this:
+ * the editor leaves unset attributes out, so a new Navigation Link has no
+ * `rel` key until something writes one.
+ *
+ * @param {Object} blockType Registered block type.
+ * @return {boolean} True when rel belongs in the `rel` attribute.
+ */
+const hasRelAttribute = ( blockType ) => Boolean( blockType?.attributes?.rel );
+
+/**
  * Read a block's current rel value.
  *
  * @param {Object} blockType  Registered block type.
@@ -69,15 +82,11 @@ export function combineRelValues( xfnValues, otherValues ) {
  * @return {string} The block's rel value.
  */
 export function getBlockRel( blockType, attributes ) {
-	if ( attributes.rel ) {
-		return attributes.rel;
-	}
-
-	if ( attributes.metadata?.rel ) {
-		return attributes.metadata.rel;
-	}
-
-	return '';
+	return (
+		( hasRelAttribute( blockType )
+			? attributes.rel
+			: attributes.metadata?.rel ) || ''
+	);
 }
 
 /**
@@ -93,9 +102,7 @@ export function setBlockXfn( blockType, attributes, xfnValues ) {
 	const { other } = parseRelAttribute( getBlockRel( blockType, attributes ) );
 	const rel = combineRelValues( xfnValues, other ) || undefined;
 
-	if ( attributes.hasOwnProperty( 'rel' ) ) {
-		return { rel };
-	}
-
-	return { metadata: { ...attributes.metadata, rel } };
+	return hasRelAttribute( blockType )
+		? { rel }
+		: { metadata: { ...attributes.metadata, rel } };
 }
