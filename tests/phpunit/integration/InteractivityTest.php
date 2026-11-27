@@ -2,6 +2,7 @@
 namespace LinkExtensionForXFN\Tests\Integration;
 
 use WP_HTML_Processor;
+use WP_HTML_Tag_Processor;
 use WP_UnitTestCase;
 use XFN_Interactivity;
 
@@ -138,6 +139,43 @@ class InteractivityTest extends WP_UnitTestCase {
 			}
 		}
 		$this->assertSame( array( 'tooltip' ), $roles );
+	}
+
+	/**
+	 * Another plugin can already drive the anchor. Its namespace, context
+	 * and handler stay, and every XFN directive names its own namespace.
+	 */
+	public function test_anchor_keeps_its_own_interactivity(): void {
+		$content = '<p><a href="https://ada.example.com" rel="friend" data-wp-interactive="other/plugin" data-wp-context=\'{"label":"kept"}\' data-wp-on--mouseenter="actions.track">Ada <span class="probe" data-wp-text="context.label"></span></a></p>';
+
+		$result = $this->interactivity->process_block( $content, array() );
+
+		$tags = new WP_HTML_Tag_Processor( $result );
+		$this->assertTrue( $tags->next_tag( 'a' ) );
+		$this->assertSame( 'other/plugin', $tags->get_attribute( 'data-wp-interactive' ) );
+		$this->assertSame( '{"label":"kept"}', $tags->get_attribute( 'data-wp-context' ) );
+		$this->assertSame( 'actions.track', $tags->get_attribute( 'data-wp-on--mouseenter' ) );
+		$xfn = array();
+		foreach ( $tags->get_attribute_names_with_prefix( 'data-wp-' ) as $name ) {
+			if ( str_ends_with( $name, '---xfn-links' ) ) {
+				$xfn[ $name ] = $tags->get_attribute( $name );
+			}
+		}
+		$this->assertTrue( $tags->next_tag( array( 'class_name' => 'xfn-tooltip' ) ) );
+		$xfn['tooltip hidden'] = $tags->get_attribute( 'data-wp-bind--hidden' );
+		$this->assertEquals(
+			array(
+				'data-wp-context---xfn-links'        => 'xfn-links::{"isOpen":false}',
+				'data-wp-on--mouseenter---xfn-links' => 'xfn-links::actions.showTooltip',
+				'data-wp-on--mouseleave---xfn-links' => 'xfn-links::actions.hideTooltip',
+				'data-wp-on--focus---xfn-links'      => 'xfn-links::actions.showTooltip',
+				'data-wp-on--blur---xfn-links'       => 'xfn-links::actions.hideTooltip',
+				'tooltip hidden'                     => 'xfn-links::!context.isOpen',
+			),
+			$xfn
+		);
+
+		$this->assertStringContainsString( '<span class="probe" data-wp-text="context.label">kept</span>', wp_interactivity_process_directives( $result ) );
 	}
 
 	public function test_init_registers_hooks(): void {
