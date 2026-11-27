@@ -450,6 +450,8 @@ Frontend relationship tooltips require WordPress 7.0 or later. On WordPress 6.9 
 
 Full user documentation — installation, settings, common tasks, blocks, troubleshooting, privacy — lives at [courtneyr-dev.github.io/link-extension-for-xfn](https://courtneyr-dev.github.io/link-extension-for-xfn/).
 
+*Testing on a disposable site:* Use the [XFN relationship test cases](https://github.com/courtneyr-dev/indieweb-test-data/tree/main/cases/xfn) to import synthetic examples.
+
 == Upgrade Notice ==
 
 = 1.1.3 =
@@ -457,8 +459,6 @@ Links from password-protected, private, draft and scheduled posts no longer appe
 
 = 1.1.2 =
 Documentation and screenshots only. Sites coming from 1.0.x also get 1.1.1, which makes three read-only XFN abilities public on the MCP Adapter's default server and removes the WP Pinch integration.
-
-*Testing on a disposable site:* Use the [XFN relationship test cases](https://github.com/courtneyr-dev/indieweb-test-data/tree/main/cases/xfn) to import synthetic examples.
 
 == Installation ==
 
